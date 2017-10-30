@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -86,8 +86,7 @@ public class OCRActivity extends SwipeBackActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: " + requestCode + " " + resultCode);
-        Log.d(TAG, "onActivityResult: " + Activity.RESULT_OK);
+
         if (requestCode == 1000 && resultCode == 0) {
             mView.dismiss();
             Toast.makeText(getApplicationContext(), "你取消了本次识别", Toast.LENGTH_SHORT).show();
@@ -96,7 +95,6 @@ public class OCRActivity extends SwipeBackActivity {
             Uri uri = data.getData();
             String filePath = getRealPathFromURI(uri);
             path = filePath;
-            Log.d(TAG, "onActivityResult: " + path);
             initData();
         }
 

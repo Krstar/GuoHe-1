@@ -2,12 +2,11 @@ package com.example.lyy.newjust.activity.One;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.webkit.WebChromeClient;
@@ -44,7 +43,6 @@ public class HistoryActivity extends SwipeBackActivity {
             newWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    Log.d(TAG, "shouldOverrideUrlLoading: " + url);
                     Intent browserIntent = new Intent(HistoryActivity.this, PopupActivity.class);
                     browserIntent.putExtra("URL", url);
                     startActivity(browserIntent);
@@ -73,6 +71,7 @@ public class HistoryActivity extends SwipeBackActivity {
         WebSettings webSettings = webView.getSettings();
         //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
         webSettings.setJavaScriptEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setSupportMultipleWindows(true);
         //设置自适应屏幕，两者合用
         webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
@@ -121,7 +120,7 @@ public class HistoryActivity extends SwipeBackActivity {
         //设置转的圈的颜色
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         //设置水波纹的颜色
-        mWaveSwipeRefreshLayout.setWaveColor(Color.rgb(135,206,235));
+        mWaveSwipeRefreshLayout.setWaveColor(Color.rgb(135, 206, 235));
         mWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -153,7 +152,12 @@ public class HistoryActivity extends SwipeBackActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                if (webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    webView.clearCache(true);
+                    this.finish();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -77,8 +77,6 @@ public class MemoryDayActivity extends SwipeBackActivity {
         for (int i = 0; i < colors.length; i++) {
             imageResources.add(Color.parseColor(colors[i]));
         }
-        Log.d(TAG, "onCreate: " + colors.length);
-        Log.d(TAG, "onCreate: " + imageResources.size());
 
         context = this;
         time.setToNow();
@@ -108,7 +106,6 @@ public class MemoryDayActivity extends SwipeBackActivity {
     }
 
     private void initSwipeMenuList() {
-
         SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu menu) {
@@ -162,7 +159,6 @@ public class MemoryDayActivity extends SwipeBackActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Log.d(TAG, "onItemClick: " + position + id);
                 String memory_date = dbMemoryList.get(position).getMemory_day();
                 String memory_content = dbMemoryList.get(position).getMemory_content();
                 Intent intent = new Intent(MemoryDayActivity.this, MemoryDetailActivity.class);
@@ -241,7 +237,6 @@ public class MemoryDayActivity extends SwipeBackActivity {
             Memory memory = new Memory(dbMemory.getMemory_content(), daysBetween, imageResources.get(i));
             memoryList.add(memory);
         }
-        Log.d(TAG, "initData: " + memoryList.size());
     }
 
     private void initData() {
@@ -251,7 +246,6 @@ public class MemoryDayActivity extends SwipeBackActivity {
         memoryList.clear();
         String today = year + "年" + (month + 1) + "月" + date + "日";
         dbMemoryList = DataSupport.findAll(DBMemory.class);
-        Log.d(TAG, "initData: " + dbMemoryList.size());
         for (DBMemory dbMemory : dbMemoryList) {
             int i = (int) (Math.random() * 150);
             String daysBetween = daysOfTwo_2(today, dbMemory.getMemory_day());
@@ -273,7 +267,6 @@ public class MemoryDayActivity extends SwipeBackActivity {
                 days = days * (-1);
                 return (days + "+");
             }
-            Log.d(TAG, "daysOfTwo_2: " + days);
             return (days + "");
         } catch (ParseException e) {
             e.printStackTrace();

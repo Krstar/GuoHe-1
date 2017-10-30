@@ -24,7 +24,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/material_white_1000">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,11 +41,12 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
+                    android:padding="20dp"
                     android:text="更新头像"
-                    android:textColor="@color/material_black_1000" />
+                    android:textColor="@color/material_black_1000"
+                    android:textSize="18sp" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/civ_header"
@@ -64,7 +66,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -73,9 +75,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
+                    android:padding="20dp"
                     android:text="姓名"
-                    android:textColor="@color/material_black_1000" />
+                    android:textColor="@color/material_black_1000"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -93,7 +96,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -102,9 +105,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
+                    android:padding="20dp"
                     android:text="学号"
-                    android:textColor="@color/material_black_1000" />
+                    android:textColor="@color/material_black_1000"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -122,7 +126,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -131,9 +135,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
+                    android:padding="20dp"
                     android:text="院系"
-                    android:textColor="@color/material_black_1000" />
+                    android:textColor="@color/material_black_1000"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -151,7 +156,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -160,9 +165,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
+                    android:padding="20dp"
                     android:text="专业"
-                    android:textColor="@color/material_black_1000" />
+                    android:textColor="@color/material_black_1000"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -181,7 +187,7 @@
             <LinearLayout
                 android:id="@+id/ll_birthday"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -190,9 +196,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
+                    android:padding="20dp"
                     android:text="生日"
-                    android:textColor="@color/material_black_1000" />
+                    android:textColor="@color/material_black_1000"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tv_birthday"
@@ -200,7 +207,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end|center_vertical"
-                    android:paddingRight="20dp" />
+                    android:paddingRight="20dp"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
@@ -212,7 +220,7 @@
             <LinearLayout
                 android:id="@+id/ll_constellation"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -221,9 +229,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
+                    android:padding="20dp"
                     android:text="星座"
-                    android:textColor="@color/material_black_1000" />
+                    android:textColor="@color/material_black_1000"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tv_constellation"
@@ -231,7 +240,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end|center_vertical"
-                    android:paddingRight="20dp" />
+                    android:paddingRight="20dp"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 

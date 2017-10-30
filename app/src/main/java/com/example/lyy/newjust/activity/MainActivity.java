@@ -21,7 +21,6 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Base64;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,25 +31,24 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.Memory.ModifyMemoryActivity;
-import com.example.lyy.newjust.activity.Tools.AudioActivity;
-import com.example.lyy.newjust.activity.One.ConstellationActivity;
-import com.example.lyy.newjust.activity.Tools.EMSActivity;
-import com.example.lyy.newjust.activity.Tools.EipActivity;
-import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
-import com.example.lyy.newjust.activity.Tools.OCRActivity;
+import com.example.lyy.newjust.activity.One.ConstellationActivity;
+import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.One.OneActivity;
+import com.example.lyy.newjust.activity.Tools.TranslateActivity;
+import com.example.lyy.newjust.activity.One.WeiBoActivity;
 import com.example.lyy.newjust.activity.Setting.ProfileActivity;
 import com.example.lyy.newjust.activity.Setting.SettingsActivity;
 import com.example.lyy.newjust.activity.Subject.SubjectActivity;
-import com.example.lyy.newjust.activity.One.TranslateActivity;
-import com.example.lyy.newjust.activity.One.WeiBoActivity;
+import com.example.lyy.newjust.activity.Tools.AudioActivity;
+import com.example.lyy.newjust.activity.Tools.EMSActivity;
+import com.example.lyy.newjust.activity.Tools.EipActivity;
+import com.example.lyy.newjust.activity.Tools.OCRActivity;
 import com.example.lyy.newjust.gson.Weather;
 import com.example.lyy.newjust.service.LongRunningService;
 import com.example.lyy.newjust.util.AppConstants;
+import com.example.lyy.newjust.util.DonateDialog;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.Util;
@@ -111,7 +109,6 @@ public class MainActivity extends AppCompatActivity
 
         // 判断是否是第一次开启应用
         boolean isFirstOpen = SpUtils.getBoolean(this, AppConstants.FIRST_OPEN);
-        Log.d(TAG, "onCreate: " + isFirstOpen);
         // 如果是第一次启动，则先进入功能引导页
         if (!isFirstOpen) {
             Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
@@ -142,8 +139,13 @@ public class MainActivity extends AppCompatActivity
 
         loadHeadPic();      //添加每日一图
 
-        setNotification();  //添加常驻通知栏
-
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        boolean isNotification = sharedPreferences.getBoolean("isNotification", false);
+        if (isNotification) {
+            setNotification();
+        } else {
+            cancelNotification();
+        }
     }
 
     //将背景图和状态栏融合到一起
@@ -216,7 +218,6 @@ public class MainActivity extends AppCompatActivity
         //设置有关存储信息的
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         headPicUrl = sharedPreferences.getString("head_pic", null);
-        Log.d(TAG, "init: " + headPicUrl);
         if (headPicUrl != null) {
             Glide.with(this).load(headPicUrl).crossFade().into(head_image_view);
         } else {
@@ -234,24 +235,8 @@ public class MainActivity extends AppCompatActivity
 
         mDrawer = (FlowingDrawer) findViewById(R.id.drawerlayout);
         mDrawer.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
-//        mDrawer.setOnDrawerStateChangeListener(new ElasticDrawer.OnDrawerStateChangeListener() {
-//            @Override
-//            public void onDrawerStateChange(int oldState, int newState) {
-//                if (newState == ElasticDrawer.STATE_CLOSED) {
-//                    Log.i("MainActivity", "Drawer STATE_CLOSED");
-//                } else if (newState == ElasticDrawer.STATE_OPEN) {
-//                    Log.i("MainActivity", "Drawer STATE_OPEN");
-//                }
-//            }
-//
-//            @Override
-//            public void onDrawerSlide(float openRatio, int offsetPixels) {
-//                //Log.i("MainActivity", "openRatio=" + openRatio + " ,offsetPixels=" + offsetPixels);
-//            }
-//        });
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //navigationView.setBackground(getResources().getDrawable(R.drawable.bg_our));
         navigationView.setNavigationItemSelectedListener(this);
 
         requestWeather();
@@ -414,9 +399,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Log.d(TAG, "onResponse: " + responseText);
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: " + responseText);
                     Weather weather = Util.handleWeatherResponse(responseText);
                     parseWeatherData(weather);
                 } else {
@@ -485,12 +468,24 @@ public class MainActivity extends AppCompatActivity
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                 .build();
         notification.flags = Notification.FLAG_ONGOING_EVENT; // 设置常驻 Flag
-        notificationManager.notify(1, notification);
+        notificationManager.notify(2, notification);
+    }
+
+    //弹出捐赠对话框
+    private void showDonateDialog() {
+        final DonateDialog donateDialog = new DonateDialog(this);
+        donateDialog.onCreateView();
+        donateDialog.setUiBeforShow();
+        //点击空白区域能不能退出
+        donateDialog.setCanceledOnTouchOutside(true);
+        //按返回键能不能退出
+        donateDialog.setCancelable(true);
+        donateDialog.show();
     }
 
     //取消顶部常驻通知栏
     private void cancelNotification() {
-        notificationManager.cancel(1);
+        notificationManager.cancel(2);
     }
 
     @Override
@@ -511,7 +506,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, "你点击了关于我们按钮", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_donate:
-                Toast.makeText(MainActivity.this, "你点击了支持捐赠按钮", Toast.LENGTH_SHORT).show();
+                showDonateDialog();
                 break;
             case R.id.action_exit:
                 this.finish();
@@ -520,9 +515,9 @@ public class MainActivity extends AppCompatActivity
                 mDrawer.openMenu();
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -579,8 +574,8 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.civ_header:
-                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-                startActivity(profileIntent);
+                Intent avatorIntent = new Intent(MainActivity.this, AvatarActivity.class);
+                startActivity(avatorIntent);
                 break;
             case R.id.iv_constellation:
                 constellation_en = sharedPreferences.getString("constellation_en", null);
@@ -637,7 +632,6 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         imageBase64 = sharedPreferences.getString("image", null);
-        Log.d(TAG, "onResume: " + imageBase64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
             ByteArrayInputStream bais = new ByteArrayInputStream(byte64);

@@ -15,7 +15,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,10 +28,14 @@ import com.example.lyy.newjust.R;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
 import com.githang.statusbar.StatusBarCompat;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+import com.yanzhenjie.permission.PermissionListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
@@ -80,6 +83,9 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
         mSwipeBackLayout.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
         // 滑动退出的效果只能从边界滑动才有效果，如果要扩大touch的范围，可以调用这个方法
         mSwipeBackLayout.setEdgeSize(200);
+
+        obtain_permission();
+
         init();
     }
 
@@ -129,6 +135,42 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
         }
 
     }
+
+    //权限获取
+    private void obtain_permission() {
+        AndPermission.with(this)
+                .requestCode(200)
+                .permission(
+                        Permission.STORAGE,
+                        Permission.CAMERA,
+                        Permission.MICROPHONE
+                )
+                .callback(listener)
+                .start();
+    }
+
+    //权限获取的监听器
+    private PermissionListener listener = new PermissionListener() {
+        @Override
+        public void onSucceed(int requestCode, List<String> grantedPermissions) {
+            // 权限申请成功回调。
+
+            // 这里的requestCode就是申请时设置的requestCode。
+            // 和onActivityResult()的requestCode一样，用来区分多个不同的请求。
+            if (requestCode == 200) {
+                // TODO ...
+            }
+        }
+
+        @Override
+        public void onFailed(int requestCode, List<String> deniedPermissions) {
+            // 权限申请失败回调。
+            if (requestCode == 200) {
+                // TODO ...
+                Toast.makeText(getApplicationContext(), "您还未获取权限", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     private void take_photos() {
         // 创建File对象，用于存储拍照后的图片
@@ -231,7 +273,6 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                     if (Build.VERSION.SDK_INT >= 19) {
                         // 4.4及以上系统使用这个方法处理图片
                         Uri uri = data.getData();
-                        Log.d(TAG, "onActivityResult: " + uri);
                         Intent cropIntent = new Intent(ProfileActivity.this, CropViewActivity.class);
                         cropIntent.putExtra("uri", uri.toString());
                         startActivity(cropIntent);
@@ -292,7 +333,6 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         imageBase64 = sharedPreferences.getString("image", null);
-        Log.d(TAG, "onResume: " + imageBase64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
             ByteArrayInputStream bais = new ByteArrayInputStream(byte64);

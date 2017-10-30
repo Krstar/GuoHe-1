@@ -2,13 +2,12 @@ package com.example.lyy.newjust.activity.One;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -41,7 +40,6 @@ public class ConstellationActivity extends SwipeBackActivity {
 
         url = "http://120.25.88.41/oneDay/xingzuo/index.html?select=" + constellation_en;
 
-        Log.d(TAG, "onCreate: "+url);
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
         // 设置滑动方向，可设置EDGE_LEFT, EDGE_RIGHT, EDGE_ALL, EDGE_BOTTOM
@@ -60,6 +58,7 @@ public class ConstellationActivity extends SwipeBackActivity {
 
         webView = (WebView) findViewById(R.id.constellation_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
 

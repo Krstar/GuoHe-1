@@ -86,13 +86,11 @@ public class ModifyMemoryActivity extends AppCompatActivity implements View.OnCl
 
     //显示日期选择弹窗
     private void showDatePicker() {
-        Log.d(TAG, "showDatePicker: " + year + " " + month + " " + date);
         DatePickerDialog dd = new DatePickerDialog(ModifyMemoryActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 choose_date = year + "年" + (month + 1) + "月" + day + "日";
                 tv_datePicker.setText(choose_date);
-                Log.d(TAG, "onDateSet: " + choose_date);
             }
         }, year, month, date);
         dd.show();

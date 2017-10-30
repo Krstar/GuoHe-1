@@ -11,18 +11,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.Audio;
 import com.githang.statusbar.StatusBarCompat;
 import com.shinelw.library.ColorArcProgressBar;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+import com.yanzhenjie.permission.PermissionListener;
+
+import java.util.List;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class AudioActivity extends SwipeBackActivity {
 
-//    private TextView volume;//显示音量的文本框
+    //    private TextView volume;//显示音量的文本框
     Audio MyAudio;//自己写的用于获取音量的类
     public MyHandler myHandler;//用于传递数据给主线程更新UI
 
@@ -32,16 +38,17 @@ public class AudioActivity extends SwipeBackActivity {
     //private NewCreditSesameView newCreditSesameView;
 
     private final int[] mColors = new int[]{
-            Color.rgb(135, 206, 250),
-            Color.rgb(135, 206, 235),
-            Color.rgb(135, 206, 235),
-            Color.rgb(95, 158, 160)
+            Color.rgb(245, 222, 179),
+            Color.rgb(255, 228, 181),
+            Color.rgb(255, 165, 0)
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio);
+
+        obtain_permission();
 
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
 
@@ -74,6 +81,42 @@ public class AudioActivity extends SwipeBackActivity {
         progressbar = (ColorArcProgressBar) findViewById(R.id.bar1);
 
     }
+
+    //权限获取
+    private void obtain_permission() {
+        AndPermission.with(this)
+                .requestCode(200)
+                .permission(
+                        Permission.STORAGE,
+                        Permission.CAMERA,
+                        Permission.MICROPHONE
+                )
+                .callback(listener)
+                .start();
+    }
+
+    //权限获取的监听器
+    private PermissionListener listener = new PermissionListener() {
+        @Override
+        public void onSucceed(int requestCode, List<String> grantedPermissions) {
+            // 权限申请成功回调。
+
+            // 这里的requestCode就是申请时设置的requestCode。
+            // 和onActivityResult()的requestCode一样，用来区分多个不同的请求。
+            if (requestCode == 200) {
+                // TODO ...
+            }
+        }
+
+        @Override
+        public void onFailed(int requestCode, List<String> deniedPermissions) {
+            // 权限申请失败回调。
+            if (requestCode == 200) {
+                // TODO ...
+                Toast.makeText(getApplicationContext(), "您还未获取权限", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     class MyHandler extends Handler {
         @Override

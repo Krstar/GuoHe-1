@@ -15,9 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.adapter.Memory;
 import com.example.lyy.newjust.db.DBMemory;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.flyco.dialog.listener.OnOperItemClickL;
@@ -76,7 +74,6 @@ public class MemoryDetailActivity extends SwipeBackActivity {
 
         Intent intent = getIntent();
         position = intent.getIntExtra("position", 0);
-        Log.d(TAG, "init: " + position);
         String memory_date = intent.getStringExtra("memory_date");
         String memory_content = intent.getStringExtra("memory_content");
 
@@ -132,8 +129,6 @@ public class MemoryDetailActivity extends SwipeBackActivity {
     }
 
     private void deleteItem(int position) {
-        Log.d(TAG, "onResume: ");
-
         DBMemory memory = DBMemory.findAll(DBMemory.class).get(position);
         if (memory.isSaved()) {
             memory.delete();
@@ -142,7 +137,6 @@ public class MemoryDetailActivity extends SwipeBackActivity {
     }
 
     private void modifyItem(int position) {
-        Log.d(TAG, "modifyItem: " + position);
         List<DBMemory> dbMemoryList = DataSupport.findAll(DBMemory.class);
         String memory_date = dbMemoryList.get(position).getMemory_day();
         String memory_content = dbMemoryList.get(position).getMemory_content();
@@ -215,7 +209,6 @@ public class MemoryDetailActivity extends SwipeBackActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
         Time time = new Time("GMT+8");
         time.setToNow();
         int year = time.year;

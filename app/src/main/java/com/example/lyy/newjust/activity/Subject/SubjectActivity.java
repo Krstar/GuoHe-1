@@ -1,6 +1,5 @@
 package com.example.lyy.newjust.activity.Subject;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -207,17 +205,7 @@ public class SubjectActivity extends SwipeBackActivity implements MaterialTabLis
                 dbSubject.save();
                 dbSubjectList.add(dbSubject);
             }
-//            for (int i = 0; i < gSubjectList.size(); i++) {
-//                Fragment fragment=new FragmentLayout();
-//                Bundle bundle=new Bundle();
-//                bundle.putString("name",gSubjectList.get(i).getCourse_name());
-//                bundle.putString("credit",gSubjectList.get(i).getCredit());
-//                bundle.putString("score",gSubjectList.get(i).getScore());
-//                fragment.setArguments(bundle);
-//            }
-            Log.d(TAG, "parseJSONData: " + dbSubjectList.size());
             chooseResult(gSubjectList);
-            Log.d(TAG, "parseJSONToDB: " + gSubjectList.size());
         } else {
             Toast.makeText(getApplicationContext(), "服务器没有响应", Toast.LENGTH_SHORT).show();
         }
@@ -240,7 +228,6 @@ public class SubjectActivity extends SwipeBackActivity implements MaterialTabLis
     private void showScoreResult(List<Subject> subjects_List) {
         if (subjects_List.size() != 0) {
             SubjectAdapter subjectAdapter = new SubjectAdapter(SubjectActivity.this, R.layout.item_subjects, subjects_List);
-            Log.d(TAG, "showResult: " + subjects_List.size());
             FragmentLayout fragment = adapter.getCurrentFragment();
             View view = fragment.getView();
             ListView listView = view.findViewById(R.id.subject_list_item);
@@ -327,6 +314,7 @@ public class SubjectActivity extends SwipeBackActivity implements MaterialTabLis
             }
             super.setPrimaryItem(container, position, object);
         }
+
         public FragmentLayout getCurrentFragment() {
             return mCurrentFragment;
         }

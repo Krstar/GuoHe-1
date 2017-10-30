@@ -3,7 +3,6 @@ package com.example.lyy.newjust.activity.Subject;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,8 +39,6 @@ public class FragmentLayout extends Fragment {
         SubjectAdapter subjectAdapter = new SubjectAdapter(getActivity(), R.layout.item_subjects, adapter_list_kaoshi);
         ListView listView = view.findViewById(R.id.subject_list_item);
         listView.setAdapter(subjectAdapter);
-
-        Log.d(TAG, "onCreateView: "+"第一次执行了");
 
         return view;
     }

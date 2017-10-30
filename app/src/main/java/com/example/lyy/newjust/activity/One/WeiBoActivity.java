@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -55,6 +56,7 @@ public class WeiBoActivity extends SwipeBackActivity {
 
         webView = (WebView) findViewById(R.id.weibo_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
 
@@ -92,6 +94,7 @@ public class WeiBoActivity extends SwipeBackActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                webView.clearCache(true);
                 this.finish();
                 break;
         }

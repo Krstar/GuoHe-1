@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="今日糗事"
+                android:text="地  气"
                 android:textColor="@color/material_white_1000"
                 android:textSize="20sp" />
         </android.support.v7.widget.Toolbar>
@@ -27,7 +27,6 @@
 
     <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
         android:id="@+id/weibo_swipe"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

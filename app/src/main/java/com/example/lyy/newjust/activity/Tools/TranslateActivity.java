@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.activity.One;
+package com.example.lyy.newjust.activity.Tools;
 
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -36,9 +36,9 @@ public class TranslateActivity extends SwipeBackActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
                 String script = "document.getElementsByClassName(\"img-w index-red\")[0].remove()";
                 view.loadUrl("javascript:"+script);
+                super.onPageFinished(view, url);
             }
         });
         webView.loadUrl("http://m.iciba.com");

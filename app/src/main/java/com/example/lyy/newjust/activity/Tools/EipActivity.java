@@ -1,10 +1,14 @@
 package com.example.lyy.newjust.activity.Tools;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager;
+import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -16,6 +20,7 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 public class EipActivity extends SwipeBackActivity {
 
     private WebView webView;
+    private static final String TAG = "EipActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +38,26 @@ public class EipActivity extends SwipeBackActivity {
 
         webView = (WebView) findViewById(R.id.eip_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                String script = "document.getElementsByTagName('li')[2].remove()";
+                view.loadUrl("javascript:" + script);
+//                String removeScript = "function removeDOM(){document.getElementsByTagName('li')[2].remove();document.getElementsByClassName('z-top mb10')[0].remove();}";
+//                view.loadUrl("javascript:" + removeScript);     //注入js函数
+//                view.loadUrl("javascript:removeDOM()");         //调用js函数
+            }
+        });
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                Log.d(TAG, "onDownloadStart: " + url);
+                Uri uri = Uri.parse(url);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
         webView.loadUrl("https://www.jiuwa.net/");
     }
 
@@ -42,6 +66,8 @@ public class EipActivity extends SwipeBackActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
             webView.goBack();// 返回前一个页面
             return true;
+        } else {
+            webView.clearCache(true);
         }
         return super.onKeyDown(keyCode, event);
     }

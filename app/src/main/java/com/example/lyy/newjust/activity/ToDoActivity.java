@@ -89,14 +89,11 @@ public class ToDoActivity extends SwipeBackActivity implements BatListener, OnIt
 
         toDos = DataSupport.findAll(ToDo.class);
 
-        Log.d(TAG, "onCreate: " + toDos.size());
-
         mRecyclerView.getView().setAdapter(mAdapter = new BatAdapter(mGoals = new ArrayList<BatModel>() {
             {
                 for (ToDo toDo : toDos) {
                     Goal goal = new Goal(toDo.getContent());
                     goal.setChecked(toDo.isFinished());
-                    Log.d(TAG, "instance initializer: " + toDo.getContent() + " " + toDo.isFinished());
                     add(goal);
                 }
             }
@@ -135,7 +132,6 @@ public class ToDoActivity extends SwipeBackActivity implements BatListener, OnIt
     @Override
     public void add(String string) {
         mGoals.add(0, new Goal(string));
-        Log.d(TAG, "add: " + mGoals.size());
         mAdapter.notify(AnimationType.ADD, 0);
         refreshWidget();
     }
@@ -143,7 +139,6 @@ public class ToDoActivity extends SwipeBackActivity implements BatListener, OnIt
     @Override
     public void delete(int position) {
         mGoals.remove(position);
-        Log.d(TAG, "delete: " + position);
         mAdapter.notify(AnimationType.REMOVE, position);
         refreshWidget();
     }
@@ -179,10 +174,8 @@ public class ToDoActivity extends SwipeBackActivity implements BatListener, OnIt
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: " + mGoals.size());
         DataSupport.deleteAll(ToDo.class);
         for (int i = 0; i < mGoals.size(); i++) {
-            Log.d(TAG, "move: " + mGoals.get(i).getText() + mGoals.get(i).isChecked());
             ToDo todo = new ToDo();
             todo.setContent(mGoals.get(i).getText());
             todo.setFinished(mGoals.get(i).isChecked());

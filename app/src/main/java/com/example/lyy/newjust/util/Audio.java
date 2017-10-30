@@ -75,7 +75,7 @@ public class Audio {
                     // 大概一秒十次
                     synchronized (mLock) {
                         try {
-                            mLock.wait(500);
+                            mLock.wait(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

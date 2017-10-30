@@ -40,7 +40,7 @@
         <activity android:name=".activity.Tools.EMSActivity" />
         <activity android:name=".activity.Tools.OCRActivity" />
         <activity android:name=".activity.Tools.EipActivity" />
-        <activity android:name=".activity.One.TranslateActivity" />
+        <activity android:name=".activity.Tools.TranslateActivity" />
         <activity android:name=".activity.Tools.AudioActivity" />
         <activity android:name=".activity.One.HistoryActivity" />
         <activity android:name=".activity.WelcomeActivity" />
@@ -51,7 +51,7 @@
         <activity android:name=".activity.Memory.MemoryDayActivity" />
         <activity android:name=".activity.One.ConstellationActivity" />
         <activity android:name=".activity.Memory.ModifyMemoryActivity" />
-        <activity android:name=".activity.Memory.MemoryDetailActivity"></activity>
+        <activity android:name=".activity.Memory.MemoryDetailActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -72,7 +72,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
-
         <receiver
             android:name=".util.AlarmReceiver"
             android:process=":remote" />
@@ -81,13 +80,13 @@
             android:name=".service.ToDoListViewService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-
         <service
             android:name=".service.LongRunningService"
             android:enabled="true"
             android:exported="true" />
 
-
+        <activity android:name=".activity.AvatarActivity" />
+        <activity android:name=".activity.Setting.FeedBackActivity"></activity>
     </application>
 
 </manifest>

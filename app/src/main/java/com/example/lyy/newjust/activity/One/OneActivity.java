@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -53,6 +54,7 @@ public class OneActivity extends SwipeBackActivity {
 
         webView = (WebView) findViewById(R.id.one_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
 
@@ -60,7 +62,7 @@ public class OneActivity extends SwipeBackActivity {
         //设置转的圈的颜色
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         //设置水波纹的颜色
-        mWaveSwipeRefreshLayout.setWaveColor(Color.rgb(135,206,235));
+        mWaveSwipeRefreshLayout.setWaveColor(Color.rgb(135, 206, 235));
         mWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -90,7 +92,12 @@ public class OneActivity extends SwipeBackActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                if (webView.canGoBack()){
+                    webView.goBack();
+                }else {
+                    webView.clearCache(true);
+                    this.finish();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

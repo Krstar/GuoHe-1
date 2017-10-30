@@ -6,9 +6,8 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -18,13 +17,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.MainActivity;
 import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
-import com.githang.statusbar.StatusBarCompat;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
@@ -72,10 +67,12 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
         switch_notification.setOnCheckedChangeListener(this);
 
         LinearLayout ll_profile = (LinearLayout) findViewById(R.id.ll_profile);
+        LinearLayout ll_feedback = (LinearLayout) findViewById(R.id.ll_feedback);
         ll_profile.setOnClickListener(this);
+        ll_feedback.setOnClickListener(this);
 
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        boolean isNotification = sharedPreferences.getBoolean("isNotification", true);
+        boolean isNotification = sharedPreferences.getBoolean("isNotification", false);
         switch_notification.setChecked(isNotification);
         if (isNotification) {
             setNotification();
@@ -105,12 +102,12 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                 .build();
         notification.flags = Notification.FLAG_ONGOING_EVENT; // 设置常驻 Flag
-        notificationManager.notify(1, notification);
+        notificationManager.notify(2, notification);
     }
 
     //取消顶部常驻通知栏
     private void cancelNotification() {
-        notificationManager.cancel(1);
+        notificationManager.cancel(2);
     }
 
 
@@ -128,8 +125,12 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_profile:
-                Intent intent = new Intent(SettingsActivity.this, ProfileActivity.class);
-                startActivity(intent);
+                Intent profile_Intent = new Intent(SettingsActivity.this, ProfileActivity.class);
+                startActivity(profile_Intent);
+                break;
+            case R.id.ll_feedback:
+                Intent feedbackIntent = new Intent(SettingsActivity.this, FeedBackActivity.class);
+                startActivity(feedbackIntent);
                 break;
         }
     }
