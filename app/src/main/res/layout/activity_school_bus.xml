@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_white_1000"
+    tools:context="com.example.lyy.newjust.activity.SchoolBusActivity"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/history_toolbar"
+        android:id="@+id/school_bus_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary">
@@ -15,26 +17,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="历史上的今天"
+            android:text="校车时刻"
             android:textColor="@color/material_white_1000"
             android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
 
-    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-        android:id="@+id/history_swipe"
+    <WebView
+        android:id="@+id/school_bus_webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <WebView
-            android:id="@+id/history_web_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </WebView>
-
-    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
-
+    </WebView>
 
 </LinearLayout>
-
-

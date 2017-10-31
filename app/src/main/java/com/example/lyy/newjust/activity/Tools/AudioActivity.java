@@ -147,10 +147,17 @@ public class AudioActivity extends SwipeBackActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                MyAudio.cancel();
                 this.finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyAudio.cancel();
     }
 
     @Override

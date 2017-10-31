@@ -45,7 +45,8 @@ public class DonateDialog extends MaterialDialog {
         tv_cancel = inflate.findViewById(R.id.tv_cancel);
         btn_alipay = inflate.findViewById(R.id.btn_alipay);
 
-        tv_content.setText("如果你觉得本应用好用并且想让本应用一直活下去的话,欢迎捐赠!你们的支持与捐赠将是我一直更新下去的动力和维护软件必需的来源!\n");
+        tv_content.setText("假如此App为您带来了便利与舒适，假如您愿意支持我们。我们希望能得到小小的赞赏，这是一种莫大的肯定与鼓励。\n" +
+                "金钱是保持自由的一种工具，我们诚挚祈望未来与你同在。\n");
 
         return inflate;
     }

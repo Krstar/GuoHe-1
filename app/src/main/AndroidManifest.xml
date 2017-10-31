@@ -86,7 +86,8 @@
             android:exported="true" />
 
         <activity android:name=".activity.AvatarActivity" />
-        <activity android:name=".activity.Setting.FeedBackActivity"></activity>
+        <activity android:name=".activity.Setting.FeedBackActivity" />
+        <activity android:name=".activity.SchoolBusActivity"></activity>
     </application>
 
 </manifest>

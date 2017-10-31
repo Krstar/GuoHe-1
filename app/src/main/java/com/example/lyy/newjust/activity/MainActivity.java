@@ -537,6 +537,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_pe:
                 Toast.makeText(MainActivity.this, "你点击了体育课查询按钮", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_school_bus:
+                Intent school_busIntent = new Intent(MainActivity.this, SchoolBusActivity.class);
+                startActivity(school_busIntent);
+                break;
             case R.id.nav_setting:
                 Intent settings_intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settings_intent);
