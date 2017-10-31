@@ -3,7 +3,7 @@
     android:initialLayout="@layout/todo_widget_layout"
     android:minHeight="120dp"
     android:minWidth="280dp"
-    android:previewImage="@mipmap/ic_launcher"
+    android:previewImage="@drawable/widget_preview_img"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="0">
     <!--

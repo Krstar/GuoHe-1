@@ -28,13 +28,19 @@
         <item name="overlapAnchor">false</item>     <!--设置不覆盖锚点-->
         <item name="android:dropDownVerticalOffset">4dp</item>
         <item name="android:layout_marginRight">4dp</item>
-        <!--<item name="android:popupBackground">@color/material_blue_700</item>-->
+        <!--<item name="android:popupBackground">@color/material_white_1000</item>-->
     </style>
 
     <style name="HeadImageTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <!-- ToolBar菜单样式 -->
+    <style name="ToolbarTheme" parent="AppTheme">
+        <item name="android:actionMenuTextColor">@color/material_black_1000</item> <!--  敲定颜色-->
+        <item name="android:textSize">18sp</item> <!--  搞掂字体大小-->
     </style>
 
 </resources>

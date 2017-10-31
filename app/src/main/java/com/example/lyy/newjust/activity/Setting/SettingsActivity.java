@@ -68,8 +68,10 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
 
         LinearLayout ll_profile = (LinearLayout) findViewById(R.id.ll_profile);
         LinearLayout ll_feedback = (LinearLayout) findViewById(R.id.ll_feedback);
+        LinearLayout ll_about_us = (LinearLayout) findViewById(R.id.ll_about_us);
         ll_profile.setOnClickListener(this);
         ll_feedback.setOnClickListener(this);
+        ll_about_us.setOnClickListener(this);
 
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         boolean isNotification = sharedPreferences.getBoolean("isNotification", false);
@@ -131,6 +133,10 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
             case R.id.ll_feedback:
                 Intent feedbackIntent = new Intent(SettingsActivity.this, FeedBackActivity.class);
                 startActivity(feedbackIntent);
+                break;
+            case R.id.ll_about_us:
+                Intent aboutIntent = new Intent(SettingsActivity.this, AboutUSActivity.class);
+                startActivity(aboutIntent);
                 break;
         }
     }

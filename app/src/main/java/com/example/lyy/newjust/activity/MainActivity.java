@@ -36,6 +36,7 @@ import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
 import com.example.lyy.newjust.activity.One.ConstellationActivity;
 import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.One.OneActivity;
+import com.example.lyy.newjust.activity.Setting.FeedBackActivity;
 import com.example.lyy.newjust.activity.Tools.TranslateActivity;
 import com.example.lyy.newjust.activity.One.WeiBoActivity;
 import com.example.lyy.newjust.activity.Setting.ProfileActivity;
@@ -497,13 +498,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
-            case R.id.action_about:
-                Toast.makeText(MainActivity.this, "你点击了关于我们按钮", Toast.LENGTH_SHORT).show();
+            case R.id.action_help:
+                Intent helpIntent = new Intent(MainActivity.this, FeedBackActivity.class);
+                startActivity(helpIntent);
                 break;
             case R.id.action_donate:
                 showDonateDialog();
@@ -517,7 +515,6 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

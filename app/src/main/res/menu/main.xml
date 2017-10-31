@@ -3,16 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_donate"
-        android:orderInCategory="100"
+        android:icon="@drawable/ic_menu_donate"
         android:title="@string/action_donate"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_about"
+        android:id="@+id/action_help"
+        android:icon="@drawable/ic_menu_help"
         android:orderInCategory="100"
-        android:title="@string/action_about"
+        android:title="@string/action_help"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_exit"
+        android:icon="@drawable/ic_menu_close"
         android:orderInCategory="100"
         android:title="@string/action_exit"
         app:showAsAction="never" />

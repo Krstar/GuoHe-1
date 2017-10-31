@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.lyy.newjust.R;
-import com.flyco.animation.Attention.ShakeHorizontal;
 import com.flyco.animation.Attention.Swing;
 import com.flyco.dialog.widget.MaterialDialog;
 

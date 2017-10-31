@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">NewJUST</string>
+    <string name="app_name">i JUST</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_bg">更换背景</string>
     <string name="action_donate">支持捐赠</string>
-    <string name="action_about">关于我们</string>
+    <string name="action_help">帮助反馈</string>
     <string name="action_exit">退出应用</string>
 
     <string name="action_add">添加纪念日</string>
