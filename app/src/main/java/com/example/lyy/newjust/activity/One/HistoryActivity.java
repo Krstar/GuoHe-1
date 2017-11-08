@@ -71,7 +71,7 @@ public class HistoryActivity extends SwipeBackActivity {
         WebSettings webSettings = webView.getSettings();
         //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
         webSettings.setJavaScriptEnabled(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setSupportMultipleWindows(true);
         //设置自适应屏幕，两者合用
         webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
@@ -128,6 +128,7 @@ public class HistoryActivity extends SwipeBackActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        webView.clearCache(true);
                         webView.loadUrl(webView.getUrl());
                         mWaveSwipeRefreshLayout.setRefreshing(false);
                     }

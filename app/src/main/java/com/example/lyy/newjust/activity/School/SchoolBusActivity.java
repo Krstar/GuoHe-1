@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.activity;
+package com.example.lyy.newjust.activity.School;
 
 import android.graphics.Color;
 import android.os.Bundle;

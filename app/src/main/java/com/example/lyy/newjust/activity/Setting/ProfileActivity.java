@@ -25,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.AppConstants;
+import com.example.lyy.newjust.util.SpUtils;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
 import com.githang.statusbar.StatusBarCompat;
@@ -54,9 +56,6 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
 
     private TextView tv_constellation;
     private TextView tv_birthday;
-
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
     private String birthday;
     private String constellation;
@@ -100,17 +99,15 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_back_blue);
         }
 
-        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        editor = getSharedPreferences("data", MODE_PRIVATE).edit();
+        constellation = SpUtils.getString(this, "constellation", null);
+        constellation_en = SpUtils.getString(this, "constellation_en", null);
+        birthday = SpUtils.getString(this, "birthday", null);
+        year = SpUtils.getInt(this, "year", 1994);
+        month = SpUtils.getInt(this, "month", 12);
+        day = SpUtils.getInt(this, "day", 1);
 
-        constellation = sharedPreferences.getString("constellation", null);
-        constellation_en = sharedPreferences.getString("constellation_en", null);
-        birthday = sharedPreferences.getString("birthday", null);
-        year = sharedPreferences.getInt("year", 1994);
-        month = sharedPreferences.getInt("month", 12);
-        day = sharedPreferences.getInt("day", 1);
 
-        imageBase64 = sharedPreferences.getString("image", null);
+        imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
 
         LinearLayout ll_birthday = (LinearLayout) findViewById(R.id.ll_birthday);
         LinearLayout ll_constellation = (LinearLayout) findViewById(R.id.ll_constellation);
@@ -212,14 +209,13 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                 tv_birthday.setText(temp_birthday);
                 tv_constellation.setText(temp_constellation);
 
-                editor.putInt("year", year);
-                editor.putInt("month", month);
-                editor.putInt("day", day);
+                SpUtils.putInt(ProfileActivity.this, "year", year);
+                SpUtils.putInt(ProfileActivity.this, "month", month);
+                SpUtils.putInt(ProfileActivity.this, "day", day);
 
-                editor.putString("birthday", temp_birthday);
-                editor.putString("constellation", temp_constellation);
-                editor.putString("constellation_en", temp_constellation_en);
-                editor.apply();
+                SpUtils.putString(ProfileActivity.this, "birthday", temp_birthday);
+                SpUtils.putString(ProfileActivity.this, "constellation", temp_constellation);
+                SpUtils.putString(ProfileActivity.this, "constellation_en", temp_constellation_en);
             }
         }, year, month, day);
         dd.show();
@@ -332,7 +328,7 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        imageBase64 = sharedPreferences.getString("image", null);
+        imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
             ByteArrayInputStream bais = new ByteArrayInputStream(byte64);

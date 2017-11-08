@@ -20,18 +20,15 @@ import android.widget.LinearLayout;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
+import com.example.lyy.newjust.util.AppConstants;
+import com.example.lyy.newjust.util.SpUtils;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class SettingsActivity extends SwipeBackActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    private SwitchCompat switch_notification;
-
     private NotificationManager notificationManager;
-
-    private SharedPreferences.Editor editor;
-    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +60,7 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
 
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        switch_notification = (SwitchCompat) findViewById(R.id.switch_notification);
+        SwitchCompat switch_notification = (SwitchCompat) findViewById(R.id.switch_notification);
         switch_notification.setOnCheckedChangeListener(this);
 
         LinearLayout ll_profile = (LinearLayout) findViewById(R.id.ll_profile);
@@ -73,8 +70,7 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
         ll_feedback.setOnClickListener(this);
         ll_about_us.setOnClickListener(this);
 
-        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        boolean isNotification = sharedPreferences.getBoolean("isNotification", false);
+        boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
         switch_notification.setChecked(isNotification);
         if (isNotification) {
             setNotification();
@@ -145,14 +141,11 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
     public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
         if (checked) {
             setNotification();
-            editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-            editor.putBoolean("isNotification", true);
-            editor.apply();
+            SpUtils.putBoolean(this, AppConstants.IS_NOTIFICATION, true);
         } else {
             cancelNotification();
-            editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-            editor.putBoolean("isNotification", false);
-            editor.apply();
+            SpUtils.putBoolean(this, AppConstants.IS_NOTIFICATION, false);
+
         }
     }
 }

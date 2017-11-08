@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -36,12 +35,13 @@ import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
 import com.example.lyy.newjust.activity.One.ConstellationActivity;
 import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.One.OneActivity;
+import com.example.lyy.newjust.activity.School.SchoolBusActivity;
+import com.example.lyy.newjust.activity.School.SubjectsActivity;
 import com.example.lyy.newjust.activity.Setting.FeedBackActivity;
 import com.example.lyy.newjust.activity.Tools.TranslateActivity;
 import com.example.lyy.newjust.activity.One.WeiBoActivity;
 import com.example.lyy.newjust.activity.Setting.ProfileActivity;
 import com.example.lyy.newjust.activity.Setting.SettingsActivity;
-import com.example.lyy.newjust.activity.Subject.SubjectActivity;
 import com.example.lyy.newjust.activity.Tools.AudioActivity;
 import com.example.lyy.newjust.activity.Tools.EMSActivity;
 import com.example.lyy.newjust.activity.Tools.EipActivity;
@@ -96,9 +96,6 @@ public class MainActivity extends AppCompatActivity
 
     private FlowingDrawer mDrawer;
 
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-
     private PullToRefreshView mPullToRefreshView;
 
     private NotificationManager notificationManager;
@@ -140,8 +137,7 @@ public class MainActivity extends AppCompatActivity
 
         loadHeadPic();      //添加每日一图
 
-        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        boolean isNotification = sharedPreferences.getBoolean("isNotification", false);
+        boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
         if (isNotification) {
             setNotification();
         } else {
@@ -217,8 +213,7 @@ public class MainActivity extends AppCompatActivity
         head_image_view = (ImageView) findViewById(R.id.head_image_view);
 
         //设置有关存储信息的
-        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        headPicUrl = sharedPreferences.getString("head_pic", null);
+        headPicUrl = SpUtils.getString(this, AppConstants.HEAD_PIC_URL);
         if (headPicUrl != null) {
             Glide.with(this).load(headPicUrl).crossFade().into(head_image_view);
         } else {
@@ -243,7 +238,7 @@ public class MainActivity extends AppCompatActivity
         requestWeather();
 
         //设置菜单栏头像
-        imageBase64 = sharedPreferences.getString("image", null);
+        imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         civ_header = (CircleImageView) findViewById(R.id.civ_header);
         civ_header.setOnClickListener(this);
         if (imageBase64 != null) {
@@ -315,7 +310,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        boolean isNotification = sharedPreferences.getBoolean("isNotification", true);
+        boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
         if (isNotification) {
             setNotification();
         } else {
@@ -435,10 +430,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String headPic = response.body().string();
-                editor = getSharedPreferences("data", MODE_PRIVATE).edit();
-                editor.putString("head_pic", headPic);
+                SpUtils.putString(MainActivity.this, AppConstants.HEAD_PIC_URL, headPic);
                 headPicUrl = headPic;
-                editor.apply();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -525,7 +518,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_grade:
-                Intent search_subject_intent = new Intent(MainActivity.this, SubjectActivity.class);
+                Intent search_subject_intent = new Intent(MainActivity.this, SubjectsActivity.class);
                 startActivity(search_subject_intent);
                 break;
             case R.id.nav_library:
@@ -579,7 +572,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(avatorIntent);
                 break;
             case R.id.iv_constellation:
-                constellation_en = sharedPreferences.getString("constellation_en", null);
+                constellation_en = SpUtils.getString(this, AppConstants.EN_CONSTELLATION);
                 if (constellation_en != null) {
                     Intent constellationIntent = new Intent(MainActivity.this, ConstellationActivity.class);
                     constellationIntent.putExtra("constellation_en", constellation_en);
@@ -632,7 +625,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        imageBase64 = sharedPreferences.getString("image", null);
+        imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
             ByteArrayInputStream bais = new ByteArrayInputStream(byte64);

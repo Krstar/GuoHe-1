@@ -31,14 +31,14 @@ public class PopupActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_popup);
 
-        StatusBarCompat.setStatusBarColor(this, Color.rgb(0,172,193));
+        StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
 
         Intent intent = getIntent();
         String url = intent.getStringExtra("URL");
 
         webView = (WebView) findViewById(R.id.detail_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
 
@@ -70,6 +70,7 @@ public class PopupActivity extends SwipeBackActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        webView.clearCache(true);
                         webView.loadUrl(webView.getUrl());
                         mWaveSwipeRefreshLayout.setRefreshing(false);
                     }

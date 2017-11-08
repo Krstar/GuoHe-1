@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.AppConstants;
+import com.example.lyy.newjust.util.SpUtils;
 import com.oginotihiro.cropview.CropUtil;
 import com.oginotihiro.cropview.CropView;
 
@@ -26,8 +28,6 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
 
     private CropView cropView;
     private LinearLayout btnlay;
-    private Button doneBtn;
-    private Button cancelBtn;
 
     private Bitmap croppedBitmap;
 
@@ -41,8 +41,8 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
 
         cropView = (CropView) findViewById(R.id.cropView);
         btnlay = (LinearLayout) findViewById(R.id.btnlay);
-        doneBtn = (Button) findViewById(R.id.doneBtn);
-        cancelBtn = (Button) findViewById(R.id.cancelBtn);
+        Button doneBtn = (Button) findViewById(R.id.doneBtn);
+        Button cancelBtn = (Button) findViewById(R.id.cancelBtn);
 
         doneBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
@@ -74,10 +74,8 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
                     croppedBitmap.compress(Bitmap.CompressFormat.PNG, 50, baos);
                     String imageBase64 = new String(Base64.encode(baos.toByteArray(), 0));
 
-                    SharedPreferences sPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sPreferences.edit();
-                    editor.putString("image", imageBase64);
-                    editor.apply();
+
+                    SpUtils.putString(CropViewActivity.this, AppConstants.IMAGE_BASE_64,imageBase64);
 
                     Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
                     CropUtil.saveOutput(CropViewActivity.this, destination, croppedBitmap, 90);

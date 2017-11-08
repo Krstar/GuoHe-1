@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.activity.Subject;
+package com.example.lyy.newjust.activity;
 
 
 import android.os.Bundle;

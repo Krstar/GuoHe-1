@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.Subject.SlideFragment;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.github.paolorotolo.appintro.AppIntro;

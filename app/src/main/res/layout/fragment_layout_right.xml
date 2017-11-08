@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp">
 
@@ -50,7 +50,7 @@
             </LinearLayout>
 
             <ListView
-                android:id="@+id/subject_list_item"
+                android:id="@+id/right_subject_list_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

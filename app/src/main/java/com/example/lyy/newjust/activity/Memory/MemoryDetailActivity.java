@@ -17,7 +17,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.db.DBMemory;
+import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.SpUtils;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
 
@@ -91,7 +93,8 @@ public class MemoryDetailActivity extends SwipeBackActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
         bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
-        String bingPic = sharedPreferences.getString("head_pic", null);
+//        String bingPic = sharedPreferences.getString("head_pic", null);
+        String bingPic = SpUtils.getString(this, AppConstants.HEAD_PIC_URL);
         if (bingPic != null) {
             Glide.with(this).load(bingPic).crossFade().into(bingPicImg);
         } else {
@@ -155,9 +158,10 @@ public class MemoryDetailActivity extends SwipeBackActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String head_pic = response.body().string();
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MemoryDetailActivity.this).edit();
-                editor.putString("head_pic", head_pic);
-                editor.apply();
+//                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MemoryDetailActivity.this).edit();
+//                editor.putString("head_pic", head_pic);
+//                editor.apply();
+                SpUtils.putString(MemoryDetailActivity.this, AppConstants.HEAD_PIC_URL, head_pic);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

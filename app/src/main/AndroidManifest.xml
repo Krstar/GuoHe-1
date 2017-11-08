@@ -30,7 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.Subject.SubjectActivity" />
         <activity
             android:name=".activity.HeadImageActivity"
             android:theme="@style/HeadImageTheme" />
@@ -87,8 +86,9 @@
 
         <activity android:name=".activity.AvatarActivity" />
         <activity android:name=".activity.Setting.FeedBackActivity" />
-        <activity android:name=".activity.SchoolBusActivity" />
-        <activity android:name=".activity.Setting.AboutUSActivity"></activity>
+        <activity android:name=".activity.School.SchoolBusActivity" />
+        <activity android:name=".activity.Setting.AboutUSActivity" />
+        <activity android:name=".activity.School.SubjectsActivity"></activity>
     </application>
 
 </manifest>

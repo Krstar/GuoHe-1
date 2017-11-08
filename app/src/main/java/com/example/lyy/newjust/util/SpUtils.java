@@ -8,12 +8,12 @@ import android.content.SharedPreferences;
  */
 
 public class SpUtils {
-    private static final String spFileName = "app";
+    private static final String spFileName = "data";
 
     public static String getString(Context context, String strKey) {
         SharedPreferences setPreferences = context.getSharedPreferences(
                 spFileName, Context.MODE_PRIVATE);
-        String result = setPreferences.getString(strKey, "");
+        String result = setPreferences.getString(strKey, null);
         return result;
     }
 

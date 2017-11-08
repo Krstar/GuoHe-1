@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.AppConstants;
+import com.example.lyy.newjust.util.SpUtils;
 
 import java.io.ByteArrayInputStream;
 
@@ -24,9 +26,7 @@ public class AvatarActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_avatar);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-
-        String imageBase64 = sharedPreferences.getString("image", null);
+        String imageBase64=SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
 
         ImageView iv_avator = (ImageView) findViewById(R.id.iv_avator);
         if (imageBase64 != null) {

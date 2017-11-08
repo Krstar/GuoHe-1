@@ -58,7 +58,7 @@ public class ConstellationActivity extends SwipeBackActivity {
 
         webView = (WebView) findViewById(R.id.constellation_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
 
@@ -74,6 +74,7 @@ public class ConstellationActivity extends SwipeBackActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        webView.clearCache(true);
                         webView.loadUrl(webView.getUrl());
                         mWaveSwipeRefreshLayout.setRefreshing(false);
                     }
