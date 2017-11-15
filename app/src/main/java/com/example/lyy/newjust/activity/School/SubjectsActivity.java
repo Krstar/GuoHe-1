@@ -24,10 +24,13 @@ import com.example.lyy.newjust.adapter.Subject;
 import com.example.lyy.newjust.adapter.SubjectAdapter;
 import com.example.lyy.newjust.db.DBSubject;
 import com.example.lyy.newjust.gson.g_Subject;
+import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.SpUtils;
 import com.githang.statusbar.StatusBarCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +45,8 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SubjectsActivity extends SwipeBackActivity {
@@ -92,11 +97,12 @@ public class SubjectsActivity extends SwipeBackActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_back_blue);
         }
 
         mViewPager = (ViewPager) findViewById(R.id.vp_view);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        mViewPager.setOffscreenPageLimit(2);
 
         mInflater = LayoutInflater.from(this);
         view1 = mInflater.inflate(R.layout.fragment_layout_left, null);
@@ -125,10 +131,20 @@ public class SubjectsActivity extends SwipeBackActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case 0:
-                        showLeftScoreResult();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showLeftScoreResult();
+                            }
+                        });
                         break;
                     case 1:
-                        showRightScoreResult();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showRightScoreResult();
+                            }
+                        });
                         break;
                     default:
                         break;
@@ -149,8 +165,14 @@ public class SubjectsActivity extends SwipeBackActivity {
     }
 
     private void searchPointRequest() {
-        String pointUrl = "http://120.25.88.41/point";
-        HttpUtil.sendHttpRequest(pointUrl, new Callback() {
+        String pointUrl = "http://120.25.88.41/vpnJidian";
+        String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+        String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        RequestBody requestBody = new FormBody.Builder()
+                .add("username", username)
+                .add("password", password)
+                .build();
+        HttpUtil.sendPostHttpRequest(pointUrl, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -159,6 +181,7 @@ public class SubjectsActivity extends SwipeBackActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
+                Log.d(TAG, "onResponse: " + responseText);
                 showPointResult(responseText);
             }
         });
@@ -193,9 +216,15 @@ public class SubjectsActivity extends SwipeBackActivity {
 
     //发出分数查询的请求
     private void searchScoreRequest() {
-        String url = "http://120.25.88.41";
+        String url = "http://120.25.88.41/vpnScore";
 
-        HttpUtil.sendHttpRequest(url, new Callback() {
+        String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+        String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        RequestBody requestBody = new FormBody.Builder()
+                .add("username", username)
+                .add("password", password)
+                .build();
+        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -216,16 +245,6 @@ public class SubjectsActivity extends SwipeBackActivity {
             Gson gson = new Gson();
             List<g_Subject> gSubjectList = gson.fromJson(response, new TypeToken<List<g_Subject>>() {
             }.getType());
-//            for (int i = 0; i < gSubjectList.size(); i++) {
-//                DBSubject dbSubject = new DBSubject();
-//                dbSubject.setCourse_name(gSubjectList.get(i).getCourse_name());
-//                dbSubject.setCredit(gSubjectList.get(i).getCredit());
-//                dbSubject.setExamination_method(gSubjectList.get(i).getExamination_method());
-//                dbSubject.setScore(gSubjectList.get(i).getScore());
-//                dbSubject.setStart_semester(gSubjectList.get(i).getStart_semester());
-//                dbSubject.save();
-//                dbSubjectList.add(dbSubject);
-//            }
             chooseResult(gSubjectList);
         } else {
             Toast.makeText(getApplicationContext(), "服务器没有响应", Toast.LENGTH_SHORT).show();
@@ -267,6 +286,17 @@ public class SubjectsActivity extends SwipeBackActivity {
             ListView listView = (ListView) findViewById(R.id.right_subject_list_item);
             listView.setAdapter(subjectAdapter);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override

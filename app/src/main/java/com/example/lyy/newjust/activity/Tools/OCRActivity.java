@@ -22,6 +22,7 @@ import com.baidu.ocr.ui.camera.CameraActivity;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.FileUtil;
 import com.roger.catloadinglibrary.CatLoadingView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -159,5 +160,15 @@ public class OCRActivity extends SwipeBackActivity {
             cursor.close();
         }
         return result;
+    }
+
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

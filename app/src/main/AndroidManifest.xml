@@ -10,9 +10,13 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
-        android:name="org.litepal.LitePalApplication"
+        android:name=".AndroidApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_ijust"
         android:label="@string/app_name"
@@ -88,7 +92,20 @@
         <activity android:name=".activity.Setting.FeedBackActivity" />
         <activity android:name=".activity.School.SchoolBusActivity" />
         <activity android:name=".activity.Setting.AboutUSActivity" />
-        <activity android:name=".activity.School.SubjectsActivity"></activity>
+        <activity android:name=".activity.School.SubjectsActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.School.CourseTable.CourseTableActivity"></activity>
+
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5a0bb1c5b27b0a09a1000057" />
+        <meta-data
+            android:name="UMENG_MESSAGE_SECRET"
+            android:value="4d869c324bbbff0ada86425167d408b1">
+        </meta-data>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Wandoujia" />
     </application>
 
 </manifest>

@@ -18,6 +18,7 @@ import com.flyco.dialog.widget.ActionSheetDialog;
 import com.github.ppamorim.dragger.DraggerActivity;
 import com.github.ppamorim.dragger.DraggerPosition;
 import com.github.ppamorim.dragger.DraggerView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 
@@ -100,6 +101,17 @@ public class HeadImageActivity extends DraggerActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override

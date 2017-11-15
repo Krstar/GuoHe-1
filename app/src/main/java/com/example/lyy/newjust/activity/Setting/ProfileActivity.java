@@ -19,17 +19,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.lyy.newjust.Model.Goal;
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.activity.LoginActivity;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
 import com.githang.statusbar.StatusBarCompat;
+import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.PermissionListener;
@@ -131,6 +135,45 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
             civ_header.setImageBitmap(bitmap);
         }
 
+        TextView tv_stu_name = (TextView) findViewById(R.id.tv_stu_name);
+        TextView tv_stu_id = (TextView) findViewById(R.id.tv_stu_id);
+        TextView tv_stu_academy = (TextView) findViewById(R.id.tv_stu_academy);
+        TextView tv_stu_major = (TextView) findViewById(R.id.tv_stu_major);
+
+        String stu_name = SpUtils.getString(getApplicationContext(), AppConstants.STU_NAME, "");
+        String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID, "");
+        String stu_academy = SpUtils.getString(getApplicationContext(), AppConstants.STU_ACADEMY, "");
+        String stu_major = SpUtils.getString(getApplicationContext(), AppConstants.STU_MAJOR, "");
+
+        tv_stu_name.setText(stu_name);
+        tv_stu_id.setText(stu_id);
+        tv_stu_major.setText(stu_major);
+        tv_stu_academy.setText(stu_academy);
+
+        final Button btn_login = (Button) findViewById(R.id.btn_login);
+        final boolean isLogin = SpUtils.getBoolean(getApplicationContext(), AppConstants.LOGIN);
+        if (isLogin){
+            btn_login.setText("退出登录");
+        }
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isLogin) {
+                    SpUtils.remove(getApplicationContext(), AppConstants.LOGIN);
+                    SpUtils.remove(getApplicationContext(), AppConstants.STU_ACADEMY);
+                    SpUtils.remove(getApplicationContext(), AppConstants.STU_ID);
+                    SpUtils.remove(getApplicationContext(), AppConstants.STU_MAJOR);
+                    SpUtils.remove(getApplicationContext(), AppConstants.STU_NAME);
+                    SpUtils.remove(getApplicationContext(), AppConstants.STU_PASS);
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "退出成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     //权限获取
@@ -328,6 +371,7 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
@@ -335,5 +379,10 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
             Bitmap bitmap = BitmapFactory.decodeStream(bais);
             civ_header.setImageBitmap(bitmap);
         }
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

@@ -18,6 +18,7 @@ import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.oginotihiro.cropview.CropUtil;
 import com.oginotihiro.cropview.CropView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -98,5 +99,16 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
     private void reset() {
         cropView.setVisibility(View.GONE);
         btnlay.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

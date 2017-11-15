@@ -27,6 +27,7 @@ import com.example.lyy.newjust.adapter.Memory;
 import com.example.lyy.newjust.adapter.MemoryAdapter;
 import com.example.lyy.newjust.db.DBMemory;
 import com.githang.statusbar.StatusBarCompat;
+import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
@@ -298,8 +299,14 @@ public class MemoryDayActivity extends SwipeBackActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         memoryList.clear();
         initData();
         initSwipeMenuList();
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

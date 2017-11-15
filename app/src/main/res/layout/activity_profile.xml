@@ -81,6 +81,7 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_stu_name"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -111,6 +112,7 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_stu_id"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -141,6 +143,7 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_stu_academy"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -171,6 +174,7 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_stu_major"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -207,8 +211,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end|center_vertical"
-                    android:paddingRight="20dp"
-                    android:textSize="18sp" />
+                    android:paddingRight="20dp" />
 
             </LinearLayout>
 
@@ -240,8 +243,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end|center_vertical"
-                    android:paddingRight="20dp"
-                    android:textSize="18sp" />
+                    android:paddingRight="20dp" />
 
             </LinearLayout>
 
@@ -249,6 +251,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/material_blue_grey_100" />
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:background="@color/material_grey_200"
+                android:text="登录" />
 
         </LinearLayout>
 

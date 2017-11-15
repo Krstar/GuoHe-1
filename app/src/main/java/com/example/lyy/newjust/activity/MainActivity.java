@@ -20,6 +20,7 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -35,17 +37,18 @@ import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
 import com.example.lyy.newjust.activity.One.ConstellationActivity;
 import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.One.OneActivity;
+import com.example.lyy.newjust.activity.One.WeiBoActivity;
+import com.example.lyy.newjust.activity.School.CourseTable.CourseTableActivity;
 import com.example.lyy.newjust.activity.School.SchoolBusActivity;
 import com.example.lyy.newjust.activity.School.SubjectsActivity;
 import com.example.lyy.newjust.activity.Setting.FeedBackActivity;
-import com.example.lyy.newjust.activity.Tools.TranslateActivity;
-import com.example.lyy.newjust.activity.One.WeiBoActivity;
 import com.example.lyy.newjust.activity.Setting.ProfileActivity;
 import com.example.lyy.newjust.activity.Setting.SettingsActivity;
 import com.example.lyy.newjust.activity.Tools.AudioActivity;
 import com.example.lyy.newjust.activity.Tools.EMSActivity;
 import com.example.lyy.newjust.activity.Tools.EipActivity;
 import com.example.lyy.newjust.activity.Tools.OCRActivity;
+import com.example.lyy.newjust.activity.Tools.TranslateActivity;
 import com.example.lyy.newjust.gson.Weather;
 import com.example.lyy.newjust.service.LongRunningService;
 import com.example.lyy.newjust.util.AppConstants;
@@ -53,12 +56,14 @@ import com.example.lyy.newjust.util.DonateDialog;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.Util;
-import com.githang.statusbar.StatusBarCompat;
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.message.IUmengRegisterCallback;
+import com.umeng.message.PushAgent;
 import com.yalantis.taurus.PullToRefreshView;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -114,24 +119,34 @@ public class MainActivity extends AppCompatActivity
             finish();
             return;
         }
-        StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
-        setContentView(R.layout.activity_main);
 
-
-        Intent service = new Intent(this, LongRunningService.class);
-        startService(service);
-
-        StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 127, 193));
+        changeStatusBar();  //将背景图和状态栏融合到一起的方法
 
         //设置状态栏和toolbar颜色一致
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
             localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
         }
+        setContentView(R.layout.activity_main);
 
-        changeStatusBar();  //将背景图和状态栏融合到一起的方法
+        //判断是否已经登录
+        boolean isLogIn = SpUtils.getBoolean(this, AppConstants.LOGIN);
+        // 如果没有登陆，则先进入登陆页
+        if (!isLogIn) {
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
+        } else {
+            TextView tv_stu_name = (TextView) findViewById(R.id.tv_stu_name);
+            TextView tv_stu_id = (TextView) findViewById(R.id.tv_stu_id);
+            String stu_name = SpUtils.getString(getApplicationContext(), AppConstants.STU_NAME);
+            String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+            tv_stu_id.setText(stu_id);
+            tv_stu_name.setText(stu_name);
+        }
 
-        obtain_permission();//获取权限
+        Intent service = new Intent(this, LongRunningService.class);
+        startService(service);
 
         init();             //初始化相关控件
 
@@ -157,41 +172,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //权限获取
-    private void obtain_permission() {
-        AndPermission.with(this)
-                .requestCode(200)
-                .permission(
-                        Permission.STORAGE,
-                        Permission.CAMERA,
-                        Permission.MICROPHONE
-                )
-                .callback(listener)
-                .start();
-    }
-
-    //权限获取的监听器
-    private PermissionListener listener = new PermissionListener() {
-        @Override
-        public void onSucceed(int requestCode, List<String> grantedPermissions) {
-            // 权限申请成功回调。
-
-            // 这里的requestCode就是申请时设置的requestCode。
-            // 和onActivityResult()的requestCode一样，用来区分多个不同的请求。
-            if (requestCode == 200) {
-                // TODO ...
-            }
-        }
-
-        @Override
-        public void onFailed(int requestCode, List<String> deniedPermissions) {
-            // 权限申请失败回调。
-            if (requestCode == 200) {
-                // TODO ...
-                Toast.makeText(getApplicationContext(), "您还未获取权限", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
     //初始化相关控件
     private void init() {
@@ -599,7 +579,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(memoryIntent);
                 break;
             case R.id.iv_schedule:
-                Toast.makeText(MainActivity.this, "课程表", Toast.LENGTH_SHORT).show();
+                Intent courseIntent = new Intent(MainActivity.this, CourseTableActivity.class);
+                startActivity(courseIntent);
                 break;
             case R.id.iv_history:
                 Intent historyIntent = new Intent(MainActivity.this, HistoryActivity.class);
@@ -619,12 +600,16 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_eat:
                 break;
+            case R.id.iv_health:
+                Toast.makeText(MainActivity.this, "该功能暂未上线，敬请期待！", Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
@@ -632,6 +617,11 @@ public class MainActivity extends AppCompatActivity
             Bitmap bitmap = BitmapFactory.decodeStream(bais);
             civ_header.setImageBitmap(bitmap);
         }
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
 }

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.db.DBMemory;
 import com.githang.statusbar.StatusBarCompat;
+import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
@@ -115,7 +116,12 @@ public class ModifyMemoryActivity extends AppCompatActivity implements View.OnCl
             dbMemoryList.get(position).save();
             Toast.makeText(ModifyMemoryActivity.this, "已修改", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
     }
 
     @Override
@@ -145,5 +151,10 @@ public class ModifyMemoryActivity extends AppCompatActivity implements View.OnCl
                 showDatePicker();
                 break;
         }
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

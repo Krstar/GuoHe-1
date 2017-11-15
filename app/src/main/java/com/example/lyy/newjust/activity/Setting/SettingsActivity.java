@@ -22,6 +22,7 @@ import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
@@ -66,9 +67,12 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
         LinearLayout ll_profile = (LinearLayout) findViewById(R.id.ll_profile);
         LinearLayout ll_feedback = (LinearLayout) findViewById(R.id.ll_feedback);
         LinearLayout ll_about_us = (LinearLayout) findViewById(R.id.ll_about_us);
+        LinearLayout ll_share = (LinearLayout) findViewById(R.id.ll_share);
+
         ll_profile.setOnClickListener(this);
         ll_feedback.setOnClickListener(this);
         ll_about_us.setOnClickListener(this);
+        ll_share.setOnClickListener(this);
 
         boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
         switch_notification.setChecked(isNotification);
@@ -134,7 +138,17 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
                 Intent aboutIntent = new Intent(SettingsActivity.this, AboutUSActivity.class);
                 startActivity(aboutIntent);
                 break;
+            case R.id.ll_share:
+                shareApp();
+                break;
         }
+    }
+
+    private void shareApp() {
+        Intent intent1 = new Intent(Intent.ACTION_SEND);
+        intent1.putExtra(Intent.EXTRA_TEXT, "http://u5413978.viewer.maka.im/k/L3OW3S5E");
+        intent1.setType("text/plain");
+        startActivity(Intent.createChooser(intent1, "i Just"));
     }
 
     @Override
@@ -147,5 +161,16 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
             SpUtils.putBoolean(this, AppConstants.IS_NOTIFICATION, false);
 
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

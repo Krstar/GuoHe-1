@@ -22,6 +22,7 @@ import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
+import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
@@ -213,6 +214,7 @@ public class MemoryDetailActivity extends SwipeBackActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         Time time = new Time("GMT+8");
         time.setToNow();
         int year = time.year;
@@ -225,5 +227,10 @@ public class MemoryDetailActivity extends SwipeBackActivity {
         tv_memory_date.setText(memory.getMemory_day());
         tv_memory_content.setText(memory.getMemory_content());
         tv_between.setText(daysBetween);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

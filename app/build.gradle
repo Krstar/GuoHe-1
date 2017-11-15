@@ -72,5 +72,9 @@ dependencies {
     compile 'homhomlin.lib:sldinglayout:0.9.0'
     compile 'com.github.yalantis:taurus:1.0.2'
     compile 'com.github.ppamorim:dragger:1.2'
+    compile 'com.github.shem8:material-login:2.1.1'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile 'com.umeng.analytics:analytics:latest.integration'
     testCompile 'junit:junit:4.12'
+    compile project(':PushSDK')
 }

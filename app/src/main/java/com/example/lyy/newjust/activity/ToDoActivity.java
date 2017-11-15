@@ -21,6 +21,7 @@ import com.example.lyy.newjust.Model.Goal;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.db.ToDo;
 import com.githang.statusbar.StatusBarCompat;
+import com.umeng.analytics.MobclickAgent;
 import com.yalantis.beamazingtoday.interfaces.AnimationType;
 import com.yalantis.beamazingtoday.interfaces.BatModel;
 import com.yalantis.beamazingtoday.listeners.BatListener;
@@ -182,5 +183,16 @@ public class ToDoActivity extends SwipeBackActivity implements BatListener, OnIt
             todo.save();
         }
         refreshWidget();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }
