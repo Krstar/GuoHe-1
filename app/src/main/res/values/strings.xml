@@ -9,6 +9,10 @@
     <string name="action_help">帮助反馈</string>
     <string name="action_exit">退出应用</string>
 
+    <string name="action_update_course">更新课表</string>
+    <string name="action_change_year">更改学期</string>
+    <string name="action_change_background">更换背景</string>
+
     <string name="action_add">添加纪念日</string>
     <string name="action_sure">完成添加</string>
     <string name="action_share">分享</string>

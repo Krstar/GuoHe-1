@@ -13,9 +13,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.text.format.Time;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -292,7 +290,7 @@ public class MemoryDayActivity extends SwipeBackActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.memory_toolbar_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_memory, menu);
         return true;
     }
 

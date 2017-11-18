@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -25,6 +26,9 @@ import java.util.Calendar;
 import java.util.List;
 
 public class CourseTableView extends RelativeLayout {
+
+    private static final String TAG = "CourseTableView";
+
     // 课程格子的背景图
     private static final int[] COURSE_BG = {R.drawable.course_info_light_blue, R.drawable.course_info_green,
             R.drawable.course_info_red, R.drawable.course_info_blue, R.drawable.course_info_yellow,
@@ -123,7 +127,6 @@ public class CourseTableView extends RelativeLayout {
         datesOfMonth = getOneWeekDatesOfMonth();
     }
 
-
     private void drawFrame() {
         initSize();
         // 绘制第一行
@@ -205,11 +208,13 @@ public class CourseTableView extends RelativeLayout {
             tv.setPadding(twoW, twoW, twoW, twoW);
 
             //更改课表的字体大小
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             tv.setEllipsize(TextUtils.TruncateAt.END);
             tv.setLines(7);
             tv.setTextColor(Color.rgb(255, 255, 255));
-            tv.setBackgroundResource(COURSE_BG[day - 1]);
+            tv.setBackgroundResource(c.getBg_Color());
+//            tv.setBackgroundResource(COURSE_BG[day - 1]);
+//            tv.setBackgroundColor(c.getBg_Color());
             tv.setLayoutParams(flp);
             tv.setOnClickListener(new OnClickListener() {
                 @Override

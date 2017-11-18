@@ -14,6 +14,16 @@ public class Course implements Serializable {
     private String des;
     private int spanNum = 2;// Ĭ�Ͽ�Խ����
 
+    private int bg_Color;
+
+    public int getBg_Color() {
+        return bg_Color;
+    }
+
+    public void setBg_Color(int bg_Color) {
+        this.bg_Color = bg_Color;
+    }
+
     private String ClassRoomName;
     private String ClassTypeName;
 
@@ -60,7 +70,7 @@ public class Course implements Serializable {
 
     @Override
     public String toString() {
-        return "Course [jieci=" + jieci + ", day=" + day + ", des=" + des
+        return "DBCourse [jieci=" + jieci + ", day=" + day + ", des=" + des
                 + ", spanNun=" + spanNum + "]";
     }
 

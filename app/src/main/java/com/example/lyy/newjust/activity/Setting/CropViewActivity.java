@@ -34,6 +34,8 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
 
     private Uri uri;
 
+    private String flag;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +52,18 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
 
         Intent intent = getIntent();
         uri = Uri.parse(intent.getStringExtra("uri"));
+        flag = intent.getStringExtra("flag");
 
         cropView.setVisibility(View.VISIBLE);
         btnlay.setVisibility(View.VISIBLE);
 
-        cropView.of(uri).asSquare().initialize(CropViewActivity.this);
-
+        if (flag.equals("header")){
+            cropView.of(uri).asSquare().initialize(CropViewActivity.this);
+        }else if (flag.equals("course")){
+            cropView.of(uri)
+                    .withAspect(9, 16)
+                    .initialize(CropViewActivity.this);
+        }
     }
 
     @Override
@@ -75,11 +83,14 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
                     croppedBitmap.compress(Bitmap.CompressFormat.PNG, 50, baos);
                     String imageBase64 = new String(Base64.encode(baos.toByteArray(), 0));
 
-
-                    SpUtils.putString(CropViewActivity.this, AppConstants.IMAGE_BASE_64,imageBase64);
+                    if (flag.equals("header")){
+                        SpUtils.putString(CropViewActivity.this, AppConstants.IMAGE_BASE_64, imageBase64);
+                    }else if (flag.equals("course")){
+                        SpUtils.putString(CropViewActivity.this, AppConstants.BG_COURSE_64, imageBase64);
+                    }
 
                     Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
-                    CropUtil.saveOutput(CropViewActivity.this, destination, croppedBitmap, 90);
+                    CropUtil.saveOutput(CropViewActivity.this, destination, croppedBitmap, 80);
 
                     runOnUiThread(new Runnable() {
                         @Override

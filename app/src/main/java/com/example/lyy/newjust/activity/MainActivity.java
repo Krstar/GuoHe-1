@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,6 +48,7 @@ import com.example.lyy.newjust.activity.Tools.EMSActivity;
 import com.example.lyy.newjust.activity.Tools.EipActivity;
 import com.example.lyy.newjust.activity.Tools.OCRActivity;
 import com.example.lyy.newjust.activity.Tools.TranslateActivity;
+import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.gson.Weather;
 import com.example.lyy.newjust.service.LongRunningService;
 import com.example.lyy.newjust.util.AppConstants;
@@ -62,21 +62,24 @@ import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.message.IUmengRegisterCallback;
-import com.umeng.message.PushAgent;
 import com.yalantis.taurus.PullToRefreshView;
-import com.yanzhenjie.permission.AndPermission;
-import com.yanzhenjie.permission.Permission;
-import com.yanzhenjie.permission.PermissionListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
@@ -122,11 +125,6 @@ public class MainActivity extends AppCompatActivity
 
         changeStatusBar();  //将背景图和状态栏融合到一起的方法
 
-        //设置状态栏和toolbar颜色一致
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
-            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
-        }
         setContentView(R.layout.activity_main);
 
         //判断是否已经登录
@@ -143,6 +141,8 @@ public class MainActivity extends AppCompatActivity
             String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
             tv_stu_id.setText(stu_id);
             tv_stu_name.setText(stu_name);
+
+            requestCourseStartInfo();
         }
 
         Intent service = new Intent(this, LongRunningService.class);
@@ -160,18 +160,32 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+//    //将背景图和状态栏融合到一起
+//    private void changeStatusBar() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            //透明状态栏
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        }
+//    }
+
     //将背景图和状态栏融合到一起
     private void changeStatusBar() {
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            );
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            View decorView = getWindow().getDecorView();
+//            decorView.setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//            );
+//            getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(getResources().getColor(android.R.color.transparent));
+            }
         }
     }
-
 
     //初始化相关控件
     private void init() {
@@ -363,6 +377,181 @@ public class MainActivity extends AppCompatActivity
     };
     //设置底部弹窗按钮--------------------------结束----------------------------
 
+    //发送查询课程开始的日期的请求
+    private void requestCourseStartInfo() {
+        String url = "http://120.25.88.41/StartYearAndWeek";
+        HttpUtil.sendHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    try {
+                        JSONObject object = new JSONObject(data);
+                        String StartWeek = object.getString("StartWeek");
+                        String StartYear = object.getString("StartYear");
+                        if (StartWeek != null && StartYear != null) {
+                            String this_week = WeeksOfTwo_2(thisWeek(), StartWeek);
+                            int week = Integer.parseInt(this_week);
+                            requestCourseInfo(StartYear, week);
+
+                            SpUtils.putString(getApplicationContext(), AppConstants.START_YEAR, StartYear);
+                            SpUtils.putString(getApplicationContext(), AppConstants.START_WEEK, StartWeek);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    //发送查询课表的请求
+    private void requestCourseInfo(final String year, final int this_week) {
+        String url = "http://120.25.88.41/vpnKebiao";
+        String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+        String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        RequestBody requestBody = new FormBody.Builder()
+                .add("username", stu_id)
+                .add("password", stu_pass)
+                .add("semester", year)
+                .build();
+
+        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    Log.d(TAG, "onResponse: " + data);
+                    try {
+                        JSONArray jsonArray = new JSONArray(data);
+                        JSONObject object = jsonArray.getJSONObject(this_week - 1);
+                        JSONArray innerArray = object.getJSONArray(year + "_" + this_week);
+
+                        for (int i = 0; i < 5; i++) {
+                            JSONObject monday = innerArray.getJSONObject(i);
+                            if (!monday.getString("monday").equals("")) {
+                                DBCourse course = new DBCourse();
+                                course.setDay(1);
+                                course.setJieci((i * 2) + 1);
+                                course.setDes(monday.getString("monday"));
+                                course.save();
+                            }
+
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            JSONObject tuesday = innerArray.getJSONObject(i);
+                            if (!tuesday.getString("tuesday").equals("")) {
+                                DBCourse course = new DBCourse();
+                                course.setDay(2);
+                                course.setJieci((i * 2) + 1);
+                                course.setDes(tuesday.getString("tuesday"));
+                                course.save();
+                            }
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            JSONObject wednesday = innerArray.getJSONObject(i);
+                            if (!wednesday.getString("wednesday").equals("")) {
+                                DBCourse course = new DBCourse();
+                                course.setDay(3);
+                                course.setJieci((i * 2) + 1);
+                                course.setDes(wednesday.getString("wednesday"));
+                                course.save();
+                            }
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            JSONObject thursday = innerArray.getJSONObject(i);
+                            if (!thursday.getString("thursday").equals("")) {
+                                DBCourse course = new DBCourse();
+                                course.setDay(4);
+                                course.setJieci((i * 2) + 1);
+                                course.setDes(thursday.getString("thursday"));
+                                course.save();
+                            }
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            JSONObject friday = innerArray.getJSONObject(i);
+                            if (!friday.getString("friday").equals("")) {
+                                DBCourse course = new DBCourse();
+                                course.setDay(5);
+                                course.setJieci((i * 2) + 1);
+                                course.setDes(friday.getString("friday"));
+                                course.save();
+                            }
+
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            JSONObject saturday = innerArray.getJSONObject(i);
+                            if (!saturday.getString("saturday").equals("")) {
+                                DBCourse course = new DBCourse();
+                                course.setDay(6);
+                                course.setJieci((i * 2) + 1);
+                                course.setDes(saturday.getString("saturday"));
+                                course.save();
+                            }
+
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            JSONObject sunday = innerArray.getJSONObject(i);
+                            if (!sunday.getString("sunday").equals("")) {
+                                DBCourse course = new DBCourse();
+                                course.setDay(7);
+                                course.setJieci((i * 2) + 1);
+                                course.setDes(sunday.getString("sunday"));
+                                course.save();
+                            }
+                        }
+//                        Looper.prepare();
+//                        Toast.makeText(getApplicationContext(), "课程表导入成功", Toast.LENGTH_SHORT).show();
+//                        Looper.loop();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    //获取当前日期
+    private String thisWeek() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        String str = formatter.format(curDate);
+        return str;
+    }
+
+    //判断两个时间段内的天数差
+    private String WeeksOfTwo_2(String day1, String day2) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            //跨年不会出现问题
+            //如果时间为：2016-03-18 11:59:59 和 2016-03-19 00:00:01的话差值为 0
+            Date fDate = sdf.parse(day1);
+            Date oDate = sdf.parse(day2);
+            long week;
+            long days = (oDate.getTime() - fDate.getTime()) / (1000 * 3600 * 24);
+            if (days < 0) {
+                days = days * (-1);
+                week = (days / 7) + 1;
+                return (week + "");
+            }
+            week = (days / 7) + 1;
+            return (week + "");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //发送查询天气的请求
     private void requestWeather() {
         String weatherUrl = "https://free-api.heweather.com/v5/weather?city=CN101190301&key=38c845e8310644ee83a8a7bba9b9be64";
@@ -465,7 +654,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

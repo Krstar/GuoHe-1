@@ -23,10 +23,22 @@
                 android:textSize="20sp" />
         </android.support.v7.widget.Toolbar>
 
-        <com.example.lyy.newjust.activity.School.CourseTable.CourseTableView
-            android:id="@+id/ctv"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_course_table"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+            <com.example.lyy.newjust.activity.School.CourseTable.CourseTableView
+                android:id="@+id/ctv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
 
     </LinearLayout>
 

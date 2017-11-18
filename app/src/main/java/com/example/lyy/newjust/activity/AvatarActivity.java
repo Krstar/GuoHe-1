@@ -35,7 +35,6 @@ public class AvatarActivity extends AppCompatActivity {
             ByteArrayInputStream bais = new ByteArrayInputStream(byte64);
             Bitmap bitmap = BitmapFactory.decodeStream(bais);
             iv_avator.setImageBitmap(bitmap);
-            //Glide.with(this).load(byte64).into(iv_avator);
         } else {
             iv_avator.setImageResource(R.drawable.header);
             //Toasty.warning(getApplicationContext(), "你还没有设置头像", Toast.LENGTH_SHORT).show();

@@ -1,7 +1,10 @@
 package com.example.lyy.newjust.activity.School;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -10,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.activity.LoginActivity;
+import com.example.lyy.newjust.activity.MainActivity;
+import com.example.lyy.newjust.activity.Setting.FeedBackActivity;
 import com.example.lyy.newjust.adapter.Point;
 import com.example.lyy.newjust.adapter.PointAdapter;
 import com.example.lyy.newjust.adapter.Subject;
 import com.example.lyy.newjust.adapter.SubjectAdapter;
-import com.example.lyy.newjust.db.DBSubject;
 import com.example.lyy.newjust.gson.g_Subject;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
@@ -35,7 +41,6 @@ import com.umeng.analytics.MobclickAgent;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -165,6 +170,7 @@ public class SubjectsActivity extends SwipeBackActivity {
     }
 
     private void searchPointRequest() {
+        final ProgressDialog dialog = ProgressDialog.show(SubjectsActivity.this, null, "绩点导入中,请稍后……", true, false);
         String pointUrl = "http://120.25.88.41/vpnJidian";
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
@@ -175,14 +181,27 @@ public class SubjectsActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(pointUrl, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                dialog.dismiss();
 
+                Looper.prepare();
+                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                Looper.loop();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Log.d(TAG, "onResponse: " + responseText);
-                showPointResult(responseText);
+                if (response.isSuccessful()) {
+                    String responseText = response.body().string();
+                    showPointResult(responseText);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "绩点导入成功!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         });
     }
@@ -216,6 +235,7 @@ public class SubjectsActivity extends SwipeBackActivity {
 
     //发出分数查询的请求
     private void searchScoreRequest() {
+        final ProgressDialog dialog = ProgressDialog.show(SubjectsActivity.this, null, "成绩导入中,请稍后……", true, false);
         String url = "http://120.25.88.41/vpnScore";
 
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
@@ -227,14 +247,27 @@ public class SubjectsActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                dialog.dismiss();
 
+                Looper.prepare();
+                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                Looper.loop();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Log.d(TAG, "onResponse: " + responseText);
-                handleScoreResponse(responseText);
+                if (response.isSuccessful()) {
+                    String responseText = response.body().string();
+                    handleScoreResponse(responseText);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "成绩导入成功!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         });
     }
@@ -300,6 +333,12 @@ public class SubjectsActivity extends SwipeBackActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -307,11 +346,6 @@ public class SubjectsActivity extends SwipeBackActivity {
                 break;
         }
         return true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     //ViewPager适配器

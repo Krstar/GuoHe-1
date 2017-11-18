@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.activity;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothA2dp;
 import android.content.Intent;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.activity.Setting.CropViewActivity;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
@@ -70,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 loginPass.setError("");
 
+                final ProgressDialog dialog = ProgressDialog.show(LoginActivity.this, null, "正在登录,请稍后……", true, false);
+
                 String url = "http://120.25.88.41/vpnInfo";
                 RequestBody requestBody = new FormBody.Builder()
                         .add("username", user)
@@ -78,14 +82,17 @@ public class LoginActivity extends AppCompatActivity {
                 HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
+                        dialog.dismiss();
+
+                        Looper.prepare();
                         Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         SpUtils.putBoolean(getApplicationContext(), AppConstants.LOGIN, true);
                         String result = response.body().string();
-                        Log.d(TAG, "onResponse: " + result);
                         if (response.isSuccessful()) {
                             Log.d(TAG, "onResponseSuccess: " + result);
                             try {
@@ -93,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String academy = object.getString("academy");
                                 String name = object.getString("name");
                                 String major = object.getString("major");
-                                String stu_id = object.getString("studentId");
+                                String stu_id = object.getString("class_num");
 
                                 SpUtils.putString(getApplicationContext(), AppConstants.STU_ID, user);
                                 SpUtils.putString(getApplicationContext(), AppConstants.STU_PASS, pass);
@@ -106,11 +113,23 @@ public class LoginActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "登陆成功!", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            Looper.loop();
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), "登录成功!", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            });
+//                            Looper.prepare();
+//                            Toast.makeText(getApplicationContext(), "登陆成功!", Toast.LENGTH_LONG).show();
+//                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                            startActivity(intent);
+//                            finish();
+//                            Looper.loop();
                         } else {
                             Log.d(TAG, "onResponseFailure: " + result);
                             Looper.prepare();

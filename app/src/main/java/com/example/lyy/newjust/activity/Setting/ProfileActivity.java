@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.lyy.newjust.Model.Goal;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.LoginActivity;
+import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.flyco.dialog.listener.OnOperItemClickL;
@@ -37,6 +38,8 @@ import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.PermissionListener;
+
+import org.litepal.crud.DataSupport;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -152,7 +155,7 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
 
         final Button btn_login = (Button) findViewById(R.id.btn_login);
         final boolean isLogin = SpUtils.getBoolean(getApplicationContext(), AppConstants.LOGIN);
-        if (isLogin){
+        if (isLogin) {
             btn_login.setText("退出登录");
         }
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +168,7 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_MAJOR);
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_NAME);
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_PASS);
+                    DataSupport.deleteAll(DBCourse.class);
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
                     Toast.makeText(getApplicationContext(), "退出成功", Toast.LENGTH_SHORT).show();
@@ -299,8 +303,8 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                         // 将拍摄的照片显示出来
                         Intent cropIntent = new Intent(ProfileActivity.this, CropViewActivity.class);
                         cropIntent.putExtra("uri", imageUri.toString());
+                        cropIntent.putExtra("flag", "header");
                         startActivity(cropIntent);
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -313,6 +317,7 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                         // 4.4及以上系统使用这个方法处理图片
                         Uri uri = data.getData();
                         Intent cropIntent = new Intent(ProfileActivity.this, CropViewActivity.class);
+                        cropIntent.putExtra("flag", "header");
                         cropIntent.putExtra("uri", uri.toString());
                         startActivity(cropIntent);
                     } else {

@@ -45,9 +45,9 @@ public class EipActivity extends SwipeBackActivity {
                 super.onPageFinished(view, url);
                 String script = "document.getElementsByTagName('li')[2].remove()";
                 view.loadUrl("javascript:" + script);
-//                String removeScript = "function removeDOM(){document.getElementsByTagName('li')[2].remove();document.getElementsByClassName('z-top mb10')[0].remove();}";
-//                view.loadUrl("javascript:" + removeScript);     //注入js函数
-//                view.loadUrl("javascript:removeDOM()");         //调用js函数
+                String removeScript = "function removeDOM(){document.getElementsByClassName('tm')[0].remove()}";
+                view.loadUrl("javascript:" + removeScript);     //注入js函数
+                view.loadUrl("javascript:removeDOM()");         //调用js函数
             }
         });
         webView.setDownloadListener(new DownloadListener() {

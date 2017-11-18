@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -140,7 +139,7 @@ public class ModifyMemoryActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_memory_toolbar_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_add_memory, menu);
         return true;
     }
 

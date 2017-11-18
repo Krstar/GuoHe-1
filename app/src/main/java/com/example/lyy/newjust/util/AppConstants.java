@@ -39,4 +39,16 @@ public class AppConstants {
     //记录密码
     public static final String STU_PASS = "stu_pass";
 
+    //记录课表开始的学年
+    public static final String START_YEAR = "start_year";
+
+    //记录课表开始的日期
+    public static final String START_WEEK = "start_week";
+
+    //记录当前周次
+    public static final String THIS_WEEK = "this_week";
+
+    //记录课表的背景图片的base64
+    public static final String BG_COURSE_64="bg_course_64";
+
 }
