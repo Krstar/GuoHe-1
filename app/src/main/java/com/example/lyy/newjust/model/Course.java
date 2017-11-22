@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.activity.School.CourseTable;
+package com.example.lyy.newjust.model;
 
 
 import java.io.Serializable;

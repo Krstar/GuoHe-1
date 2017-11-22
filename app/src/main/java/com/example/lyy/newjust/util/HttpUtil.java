@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.util;
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -16,6 +17,7 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    //异步发送post请求
     public static void sendPostHttpRequest(String address, RequestBody requestBody, Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(address).post(requestBody).build();

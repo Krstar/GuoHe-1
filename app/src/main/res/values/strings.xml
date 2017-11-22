@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">i Just</string>
+    <string name="app_name">果核</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -16,6 +16,7 @@
     <string name="action_add">添加纪念日</string>
     <string name="action_sure">完成添加</string>
     <string name="action_share">分享</string>
+    <string name="action_switch">切换</string>
 
     <string name="Save">Save</string>
     <string name="Complete">Complete</string>
@@ -25,10 +26,15 @@
 
     <string name="item_theme">皮肤</string>
     <string name="item_setting">设置</string>
+    <string name="item_share">分享此应用</string>
+
+    <string name="item_ao_lan">奥兰系统</string>
+    <string name="item_todo">待办事项</string>
     <string name="item_library">馆藏查询</string>
     <string name="item_classroom">空教室查询</string>
     <string name="item_grade">成绩查询</string>
-    <string name="item_pe">体育课查询</string>
+    <string name="item_pe">俱乐部</string>
+    <string name="item_exercise">早操查询</string>
     <string name="item_school_bus">校车查询</string>
     <string name="item_myday">我的一天</string>
     <string name="title_activity_settings">Settings</string>
@@ -106,8 +112,9 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="appwidget_text">待办事项</string>
+    <string name="todo_widget_text">待办事项</string>
     <string name="add_widget">Add widget</string>
 
+    <string name="course_widget_text">课程表</string>
 
 </resources>

@@ -14,10 +14,10 @@ import com.example.lyy.newjust.util.AlarmReceiver;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-public class LongRunningService extends Service {
-    private static final String TAG = "LongRunningService";
+public class AlarmService extends Service {
+    private static final String TAG = "AlarmService";
 
-    public LongRunningService() {
+    public AlarmService() {
     }
 
     @Override

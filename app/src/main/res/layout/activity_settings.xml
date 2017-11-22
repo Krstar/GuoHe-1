@@ -57,7 +57,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"
@@ -69,23 +69,23 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="10dp"
+                            android:padding="15dp"
                             app:srcCompat="@drawable/ic_menu_go" />
 
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/ll_password"
+                        android:id="@+id/ll_show_grade"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"
-                            android:text="密码锁定"
+                            android:text="成绩查看方式"
                             android:textColor="@color/material_black_1000"
                             android:textSize="18sp" />
 
@@ -93,55 +93,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="10dp"
-                            app:srcCompat="@drawable/ic_menu_go" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_backup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="6"
-                            android:padding="20dp"
-                            android:text="数据备份"
-                            android:textColor="@color/material_black_1000"
-                            android:textSize="18sp" />
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:padding="10dp"
-                            app:srcCompat="@drawable/ic_menu_go" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_recovery"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="6"
-                            android:padding="20dp"
-                            android:text="数据恢复"
-                            android:textColor="@color/material_black_1000"
-                            android:textSize="18sp" />
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:padding="10dp"
+                            android:padding="15dp"
                             app:srcCompat="@drawable/ic_menu_go" />
 
                     </LinearLayout>
@@ -175,7 +127,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"
@@ -187,7 +139,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="10dp"
+                            android:padding="15dp"
                             app:srcCompat="@drawable/ic_menu_go" />
 
                     </LinearLayout>
@@ -199,7 +151,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"
@@ -211,7 +163,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="10dp"
+                            android:padding="15dp"
                             app:srcCompat="@drawable/ic_menu_go" />
 
                     </LinearLayout>
@@ -223,7 +175,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"
@@ -244,7 +196,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="2"
-                            android:padding="10dp"
+                            android:padding="15dp"
                             app:srcCompat="@drawable/ic_menu_go" />
 
                     </LinearLayout>
@@ -256,7 +208,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"
@@ -268,7 +220,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:padding="10dp"
+                            android:padding="15dp"
                             app:srcCompat="@drawable/ic_menu_go" />
 
                     </LinearLayout>
@@ -303,7 +255,7 @@
 
                         <TextView
                             android:id="@+id/textView"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"
@@ -329,7 +281,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6"
                             android:padding="20dp"

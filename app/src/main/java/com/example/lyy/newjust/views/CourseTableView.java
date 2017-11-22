@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.activity.School.CourseTable;
+package com.example.lyy.newjust.views;
 
 
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -20,6 +19,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.model.Course;
+import com.example.lyy.newjust.util.DensityUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;

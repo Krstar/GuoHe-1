@@ -2,9 +2,12 @@ package com.example.lyy.newjust.activity.Memory;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +29,7 @@ import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,7 +46,7 @@ public class MemoryDetailActivity extends SwipeBackActivity {
 
     private static final String TAG = "MemoryDetailActivity";
 
-    private ImageView bingPicImg;
+    private ImageView bgImg;
 
     private int position;
 
@@ -91,18 +95,24 @@ public class MemoryDetailActivity extends SwipeBackActivity {
         tv_memory_content.setText(memory_content);
         tv_between.setText(daysBetween);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        bgImg = (ImageView) findViewById(R.id.bing_pic_img);
+        String bg_memory_64 = SpUtils.getString(getApplicationContext(), AppConstants.BG_MEMORY_64);
+        String bgPic = SpUtils.getString(this, AppConstants.HEAD_PIC_URL);
+        if (bg_memory_64 != null) {
+            byte[] byte64 = Base64.decode(bg_memory_64, 0);
+            ByteArrayInputStream bais = new ByteArrayInputStream(byte64);
+            Bitmap bitmap = BitmapFactory.decodeStream(bais);
+            bgImg.setImageBitmap(bitmap);
+        } else if (bg_memory_64 == null) {
+            if (bgPic != null) {
+                Glide.with(this).load(bgPic).crossFade().into(bgImg);
+            } else {
+                loadBingPic();
+            }
 
-        bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
-//        String bingPic = sharedPreferences.getString("head_pic", null);
-        String bingPic = SpUtils.getString(this, AppConstants.HEAD_PIC_URL);
-        if (bingPic != null) {
-            Glide.with(this).load(bingPic).crossFade().into(bingPicImg);
-        } else {
-            loadBingPic();
         }
 
-        bingPicImg.setOnLongClickListener(new View.OnLongClickListener() {
+        bgImg.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 final String[] stringItems = {"分享", "编辑", "删除"};
@@ -159,15 +169,12 @@ public class MemoryDetailActivity extends SwipeBackActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String head_pic = response.body().string();
-//                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MemoryDetailActivity.this).edit();
-//                editor.putString("head_pic", head_pic);
-//                editor.apply();
                 SpUtils.putString(MemoryDetailActivity.this, AppConstants.HEAD_PIC_URL, head_pic);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "run: ");
-                        Glide.with(MemoryDetailActivity.this).load(head_pic).into(bingPicImg);
+                        Glide.with(MemoryDetailActivity.this).load(head_pic).into(bgImg);
                     }
                 });
             }

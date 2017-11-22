@@ -1,6 +1,5 @@
-package com.example.lyy.newjust.activity;
+package com.example.lyy.newjust.activity.Main;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;

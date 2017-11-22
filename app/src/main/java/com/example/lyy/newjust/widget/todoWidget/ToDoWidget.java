@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.util;
+package com.example.lyy.newjust.widget.todoWidget;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
@@ -14,10 +14,8 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.ToDoActivity;
+import com.example.lyy.newjust.activity.School.ToDoActivity;
 import com.example.lyy.newjust.db.ToDo;
-import com.example.lyy.newjust.service.ToDoListViewFactory;
-import com.example.lyy.newjust.service.ToDoListViewService;
 
 import org.litepal.crud.DataSupport;
 
@@ -28,9 +26,9 @@ import java.util.List;
  */
 
 @TargetApi(Build.VERSION_CODES.CUPCAKE)
-public class ToDoWidgetProvider extends AppWidgetProvider {
+public class ToDoWidget extends AppWidgetProvider {
 
-    private static final String TAG = "ToDoWidgetProvider";
+    private static final String TAG = "ToDoWidget";
 
     String clickAction = "com.tamic.WidgetProvider.onclick";
     int i = 0;
@@ -40,11 +38,11 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
                          int[] appWidgetIds) {
         // 获取Widget的组件名
         ComponentName thisWidget = new ComponentName(context,
-                ToDoWidgetProvider.class);
+                ToDoWidget.class);
 
         // 创建一个RemoteView
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                R.layout.todo_widget_layout);
+                R.layout.widget_todo);
 
         // 把这个Widget绑定到RemoteViewsService
         Intent intent = new Intent(context, ToDoListViewService.class);
@@ -57,7 +55,7 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
         remoteViews.setEmptyView(R.id.widget_list, R.layout.none_data);
 
         // 点击列表触发事件
-        Intent clickIntent = new Intent(context, ToDoWidgetProvider.class);
+        Intent clickIntent = new Intent(context, ToDoWidget.class);
         // 设置Action，方便在onReceive中区别点击事件
         clickIntent.setAction(clickAction);
         clickIntent.setData(Uri.parse(clickIntent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -75,7 +73,7 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
 
         // 刷新按钮
         final Intent refreshIntent = new Intent(context,
-                ToDoWidgetProvider.class);
+                ToDoWidget.class);
         refreshIntent.setAction("refresh");
         final PendingIntent refreshPendingIntent = PendingIntent.getBroadcast(
                 context, 0, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -101,7 +99,7 @@ public class ToDoWidgetProvider extends AppWidgetProvider {
         if (action.equals("refresh")) {
             // 刷新Widget
             final AppWidgetManager mgr = AppWidgetManager.getInstance(context);
-            final ComponentName cn = new ComponentName(context, ToDoWidgetProvider.class);
+            final ComponentName cn = new ComponentName(context, ToDoWidget.class);
 
             List<ToDo> toDos = DataSupport.findAll(ToDo.class);
 

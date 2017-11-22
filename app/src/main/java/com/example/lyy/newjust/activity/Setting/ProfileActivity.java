@@ -3,7 +3,6 @@ package com.example.lyy.newjust.activity.Setting;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -25,10 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.lyy.newjust.Model.Goal;
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.LoginActivity;
+import com.example.lyy.newjust.activity.Main.LoginActivity;
+import com.example.lyy.newjust.activity.MainActivity;
 import com.example.lyy.newjust.db.DBCourse;
+import com.example.lyy.newjust.db.DBCurrentCourse;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.flyco.dialog.listener.OnOperItemClickL;
@@ -168,8 +168,16 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_MAJOR);
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_NAME);
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_PASS);
+                    SpUtils.remove(getApplicationContext(), AppConstants.STU_PE_PASS);
                     DataSupport.deleteAll(DBCourse.class);
+                    DataSupport.deleteAll(DBCurrentCourse.class);
+
+                    finish();
+                    SettingsActivity.SettingActivity.finish();
+                    MainActivity.mainActivity.finish();
+
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//关掉所要到的界面中间的activity
                     startActivity(intent);
                     Toast.makeText(getApplicationContext(), "退出成功", Toast.LENGTH_SHORT).show();
                 } else {

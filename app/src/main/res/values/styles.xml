@@ -23,6 +23,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+
     <!--设置右上角menu弹窗的背景颜色-->
     <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
         <item name="overlapAnchor">false</item>     <!--设置不覆盖锚点-->

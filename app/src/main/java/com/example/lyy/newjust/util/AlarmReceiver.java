@@ -10,8 +10,8 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.NotificationCompat;
 
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.ToDoActivity;
-import com.example.lyy.newjust.service.LongRunningService;
+import com.example.lyy.newjust.activity.School.ToDoActivity;
+import com.example.lyy.newjust.service.AlarmService;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -30,7 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         sendNotification(context, intent);
 
         //再次开启LongRunningService这个服务，从而可以
-        Intent i = new Intent(context, LongRunningService.class);
+        Intent i = new Intent(context, AlarmService.class);
         context.startService(i);
     }
 

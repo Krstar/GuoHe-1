@@ -5,25 +5,17 @@
 
         <menu android:checkableBehavior="single">
             <item
-                android:id="@+id/nav_grade"
-                android:icon="@drawable/ic_menu_grade"
-                android:title="@string/item_grade" />
-            <item
-                android:id="@+id/nav_library"
-                android:icon="@drawable/ic_menu_library"
-                android:title="@string/item_library" />
-            <item
-                android:id="@+id/nav_school_bus"
-                android:icon="@drawable/ic_menu_school_bus"
-                android:title="@string/item_school_bus" />
-            <item
-                android:id="@+id/nav_classroom"
-                android:icon="@drawable/ic_menu_classroom"
-                android:title="@string/item_classroom" />
+                android:id="@+id/nav_todo"
+                android:icon="@drawable/ic_menu_todo"
+                android:title="@string/item_todo" />
             <item
                 android:id="@+id/nav_pe"
                 android:icon="@drawable/ic_menu_pe"
                 android:title="@string/item_pe" />
+            <item
+                android:id="@+id/nav_ao_lan"
+                android:icon="@drawable/ic_menu_ao_lan"
+                android:title="@string/item_ao_lan" />
         </menu>
 
     </item>
@@ -39,6 +31,10 @@
                 android:id="@+id/nav_theme"
                 android:icon="@drawable/ic_menu_theme"
                 android:title="@string/item_theme" />
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/item_share" />
         </menu>
     </item>
 

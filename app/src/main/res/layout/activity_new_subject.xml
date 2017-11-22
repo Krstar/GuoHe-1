@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.lyy.newjust.activity.School.SchoolBusActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/new_subject_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/material_white_1000"
+        android:fitsSystemWindows="true"
+        app:layout_collapseMode="pin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="成绩"
+            android:textColor="#000000"
+            android:textSize="25sp" />
+    </android.support.v7.widget.Toolbar>
+
+</LinearLayout>

@@ -39,16 +39,25 @@ public class AppConstants {
     //记录密码
     public static final String STU_PASS = "stu_pass";
 
-    //记录课表开始的学年
-    public static final String START_YEAR = "start_year";
+    //记录体育课密码
+    public static final String STU_PE_PASS = "stu_pe_pass";
 
-    //记录课表开始的日期
-    public static final String START_WEEK = "start_week";
+    //记录服务器上的当前周次
+    public static final String SERVER_THIS_WEEK = "this_week";
 
-    //记录当前周次
-    public static final String THIS_WEEK = "this_week";
+    //记录本地保存的当前周次
+    public static final String LOCAL_CURRENT_WEEK = "current_week";
+
+    //记录今天是周几
+    public static final String TODAY = "today";
 
     //记录课表的背景图片的base64
-    public static final String BG_COURSE_64="bg_course_64";
+    public static final String BG_COURSE_64 = "bg_course_64";
+
+    //记录纪念日的背景图片的base64
+    public static final String BG_MEMORY_64 = "bg_memory_64";
+
+    //记录成绩的查看方式，默认是按照学科类型查看
+    public static final String SHOW_GRADE = "show_grade";
 
 }

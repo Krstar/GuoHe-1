@@ -8,7 +8,7 @@
     android:paddingBottom="10dp">
 
     <LinearLayout
-        android:id="@+id/nav_eat"
+        android:id="@+id/nav_grade"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -21,19 +21,19 @@
             android:layout_weight="4"
             android:padding="30dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_menu_eat" />
+            app:srcCompat="@drawable/ic_menu_grade" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="吃货" />
+            android:text="查成绩" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/nav_todo"
+        android:id="@+id/nav_library"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -46,18 +46,19 @@
             android:layout_weight="4"
             android:padding="30dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_menu_todo" />
+            app:srcCompat="@drawable/ic_menu_library" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="待办" />
+            android:text="查馆藏" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/nav_school_bus"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -70,18 +71,19 @@
             android:layout_weight="4"
             android:padding="30dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_menu_daka" />
+            app:srcCompat="@drawable/ic_menu_school_bus" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="打卡" />
+            android:text="查校车" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/nav_classroom"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -94,14 +96,14 @@
             android:layout_weight="4"
             android:padding="30dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_menu_more" />
+            app:srcCompat="@drawable/ic_menu_classroom" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="待定" />
+            android:text="空教室" />
 
     </LinearLayout>
 

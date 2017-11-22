@@ -15,6 +15,7 @@
             android:background="@color/colorPrimary">
 
             <TextView
+                android:id="@+id/tv_course_table_toolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -33,7 +34,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-            <com.example.lyy.newjust.activity.School.CourseTable.CourseTableView
+            <com.example.lyy.newjust.views.CourseTableView
                 android:id="@+id/ctv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

@@ -35,9 +35,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.HeadImageActivity"
+            android:name=".activity.Main.HeadImageActivity"
             android:theme="@style/HeadImageTheme" />
-        <activity android:name=".activity.ToDoActivity" />
+        <activity android:name=".activity.School.ToDoActivity" />
         <activity android:name=".activity.Setting.SettingsActivity" />
         <activity android:name=".activity.Setting.ProfileActivity" />
         <activity android:name=".activity.Tools.EMSActivity" />
@@ -46,7 +46,7 @@
         <activity android:name=".activity.Tools.TranslateActivity" />
         <activity android:name=".activity.Tools.AudioActivity" />
         <activity android:name=".activity.One.HistoryActivity" />
-        <activity android:name=".activity.WelcomeActivity" />
+        <activity android:name=".activity.Main.WelcomeActivity" />
         <activity android:name=".activity.One.WeiBoActivity" />
         <activity android:name=".activity.One.OneActivity" />
         <activity android:name=".activity.Setting.CropViewActivity" />
@@ -66,46 +66,51 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".util.ToDoWidgetProvider">
+        <receiver android:name=".widget.todoWidget.ToDoWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info" />
+                android:resource="@xml/todo_widget_info" />
         </receiver>
         <receiver
             android:name=".util.AlarmReceiver"
             android:process=":remote" />
 
         <service
-            android:name=".service.ToDoListViewService"
+            android:name=".widget.todoWidget.ToDoListViewService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name=".service.LongRunningService"
+            android:name=".service.AlarmService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.AvatarActivity" />
+        <activity android:name=".activity.Main.AvatarActivity" />
         <activity android:name=".activity.Setting.FeedBackActivity" />
         <activity android:name=".activity.School.SchoolBusActivity" />
         <activity android:name=".activity.Setting.AboutUSActivity" />
         <activity android:name=".activity.School.SubjectsActivity" />
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.School.CourseTable.CourseTableActivity"></activity>
+        <activity android:name=".activity.Main.LoginActivity" />
+        <activity android:name=".activity.School.CourseTableActivity" />
 
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5a0bb1c5b27b0a09a1000057" />
         <meta-data
             android:name="UMENG_MESSAGE_SECRET"
-            android:value="4d869c324bbbff0ada86425167d408b1">
-        </meta-data>
+            android:value="4d869c324bbbff0ada86425167d408b1" />
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="Wandoujia" />
+
+        <activity android:name=".activity.School.LibraryActivity" />
+        <activity android:name=".activity.School.ClassRoomActivity" />
+        <activity android:name=".activity.School.PEActivity" />
+        <activity android:name=".activity.School.AoLanActivity" />
+        <activity android:name=".activity.School.NewSubjectActivity"></activity>
     </application>
 
 </manifest>

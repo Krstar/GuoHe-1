@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.Model;
+package com.example.lyy.newjust.model;
 
 import com.yalantis.beamazingtoday.interfaces.BatModel;
 

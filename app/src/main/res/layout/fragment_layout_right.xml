@@ -52,7 +52,7 @@
             <ListView
                 android:id="@+id/right_subject_list_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
             </ListView>
 

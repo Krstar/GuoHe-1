@@ -1,13 +1,13 @@
-package com.example.lyy.newjust.activity;
+package com.example.lyy.newjust.activity.Main;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.activity.MainActivity;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.github.paolorotolo.appintro.AppIntro;

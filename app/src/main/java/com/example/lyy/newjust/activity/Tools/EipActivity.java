@@ -3,14 +3,16 @@ package com.example.lyy.newjust.activity.Tools;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.webkit.DownloadListener;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
 import com.umeng.analytics.MobclickAgent;
@@ -22,6 +24,8 @@ public class EipActivity extends SwipeBackActivity {
 
     private WebView webView;
     private static final String TAG = "EipActivity";
+
+    private ProgressBar pg1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,21 @@ public class EipActivity extends SwipeBackActivity {
             }
         });
         webView.loadUrl("https://www.jiuwa.net/");
+
+        pg1 = (ProgressBar) findViewById(R.id.progressBar1);
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                // TODO 自动生成的方法存根
+                if (newProgress == 100) {
+                    pg1.setVisibility(View.GONE);//加载完网页进度条消失
+                } else {
+                    pg1.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                    pg1.setProgress(newProgress);//设置进度值
+                }
+
+            }
+        });
     }
 
     @Override

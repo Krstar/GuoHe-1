@@ -5,26 +5,24 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.LoginActivity;
-import com.example.lyy.newjust.activity.MainActivity;
-import com.example.lyy.newjust.activity.Setting.FeedBackActivity;
 import com.example.lyy.newjust.adapter.Point;
 import com.example.lyy.newjust.adapter.PointAdapter;
 import com.example.lyy.newjust.adapter.Subject;
@@ -53,7 +51,9 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import shortbread.Shortcut;
 
+@Shortcut(id = "grade", icon = R.drawable.ic_menu_grade, shortLabel = "查成绩")
 public class SubjectsActivity extends SwipeBackActivity {
 
     private static final String TAG = "SubjectsActivity";
@@ -107,7 +107,7 @@ public class SubjectsActivity extends SwipeBackActivity {
         mViewPager = (ViewPager) findViewById(R.id.vp_view);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(2);//参数为预加载数量，系统最小值为1。慎用！预加载数量过多低端机子受不了
 
         mInflater = LayoutInflater.from(this);
         view1 = mInflater.inflate(R.layout.fragment_layout_left, null);
@@ -136,20 +136,10 @@ public class SubjectsActivity extends SwipeBackActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case 0:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                showLeftScoreResult();
-                            }
-                        });
+                        showLeftScoreResult();
                         break;
                     case 1:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                showRightScoreResult();
-                            }
-                        });
+                        showRightScoreResult();
                         break;
                     default:
                         break;
@@ -171,6 +161,9 @@ public class SubjectsActivity extends SwipeBackActivity {
 
     private void searchPointRequest() {
         final ProgressDialog dialog = ProgressDialog.show(SubjectsActivity.this, null, "绩点导入中,请稍后……", true, false);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+
         String pointUrl = "http://120.25.88.41/vpnJidian";
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
@@ -198,7 +191,6 @@ public class SubjectsActivity extends SwipeBackActivity {
                         @Override
                         public void run() {
                             dialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "绩点导入成功!", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -240,6 +232,7 @@ public class SubjectsActivity extends SwipeBackActivity {
 
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
                 .add("password", password)
@@ -264,7 +257,6 @@ public class SubjectsActivity extends SwipeBackActivity {
                         @Override
                         public void run() {
                             dialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "成绩导入成功!", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -337,12 +329,21 @@ public class SubjectsActivity extends SwipeBackActivity {
         super.onDestroy();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_switch_subjects, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.action_switch:
+                Intent in = new Intent(SubjectsActivity.this, NewSubjectActivity.class);
+                startActivity(in);
                 break;
         }
         return true;

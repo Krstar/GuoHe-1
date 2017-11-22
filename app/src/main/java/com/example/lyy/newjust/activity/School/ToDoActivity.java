@@ -1,26 +1,21 @@
-package com.example.lyy.newjust.activity;
+package com.example.lyy.newjust.activity.School;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.lyy.newjust.Model.Goal;
+import com.example.lyy.newjust.model.Goal;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.db.ToDo;
-import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 import com.yalantis.beamazingtoday.interfaces.AnimationType;
 import com.yalantis.beamazingtoday.interfaces.BatModel;

@@ -1,8 +1,11 @@
 package com.example.lyy.newjust.activity.Setting;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -12,28 +15,40 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
+import com.example.lyy.newjust.activity.School.CourseTableActivity;
+import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.umeng.analytics.MobclickAgent;
+
+import org.litepal.crud.DataSupport;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class SettingsActivity extends SwipeBackActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
+    private static final String TAG = "SettingsActivity";
+
     private NotificationManager notificationManager;
+
+    public static SwipeBackActivity SettingActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SettingActivity = this;
 
         //去掉Activity上面的状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -68,11 +83,13 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
         LinearLayout ll_feedback = (LinearLayout) findViewById(R.id.ll_feedback);
         LinearLayout ll_about_us = (LinearLayout) findViewById(R.id.ll_about_us);
         LinearLayout ll_share = (LinearLayout) findViewById(R.id.ll_share);
+        LinearLayout ll_show_grade = (LinearLayout) findViewById(R.id.ll_show_grade);
 
         ll_profile.setOnClickListener(this);
         ll_feedback.setOnClickListener(this);
         ll_about_us.setOnClickListener(this);
         ll_share.setOnClickListener(this);
+        ll_show_grade.setOnClickListener(this);
 
         boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
         switch_notification.setChecked(isNotification);
@@ -112,7 +129,6 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
         notificationManager.cancel(2);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -141,8 +157,47 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
             case R.id.ll_share:
                 shareApp();
                 break;
+            case R.id.ll_show_grade:
+                showSingleChoiceDialog();
+                break;
         }
     }
+
+    int yourChoice;
+
+    private void showSingleChoiceDialog() {
+        final String[] items = {"按学年查询", "按学科类型查询"};
+        yourChoice = 0;
+        AlertDialog.Builder singleChoiceDialog =
+                new AlertDialog.Builder(SettingsActivity.this);
+        singleChoiceDialog.setTitle("请选择成绩查看方式");
+        // 第二个参数是默认选项，此处设置为0
+        singleChoiceDialog.setSingleChoiceItems(items, 0,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        yourChoice = which;
+                    }
+                });
+        singleChoiceDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (yourChoice) {
+                            case 0:
+                                SpUtils.putString(getApplicationContext(), AppConstants.SHOW_GRADE, "学年");
+                                break;
+                            case 1:
+                                SpUtils.putString(getApplicationContext(), AppConstants.SHOW_GRADE, "学科");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        singleChoiceDialog.show();
+    }
+
 
     private void shareApp() {
         Intent intent1 = new Intent(Intent.ACTION_SEND);

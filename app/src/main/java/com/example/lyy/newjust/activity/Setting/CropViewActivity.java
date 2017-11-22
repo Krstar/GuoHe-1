@@ -63,6 +63,10 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
             cropView.of(uri)
                     .withAspect(9, 16)
                     .initialize(CropViewActivity.this);
+        }else if (flag.equals("memory")){
+            cropView.of(uri)
+                    .withAspect(9, 16)
+                    .initialize(CropViewActivity.this);
         }
     }
 
@@ -87,6 +91,8 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
                         SpUtils.putString(CropViewActivity.this, AppConstants.IMAGE_BASE_64, imageBase64);
                     }else if (flag.equals("course")){
                         SpUtils.putString(CropViewActivity.this, AppConstants.BG_COURSE_64, imageBase64);
+                    }else if (flag.equals("memory")){
+                        SpUtils.putString(CropViewActivity.this, AppConstants.BG_MEMORY_64, imageBase64);
                     }
 
                     Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));

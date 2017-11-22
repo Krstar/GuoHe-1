@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="NewJUST"></dbname>
-    <version value="4"></version>
+    <version value="5"></version>
 
     <list>
         <mapping class="com.example.lyy.newjust.db.ToDo"></mapping>
         <mapping class="com.example.lyy.newjust.db.DBSubject"></mapping>
         <mapping class="com.example.lyy.newjust.db.DBMemory"></mapping>
         <mapping class="com.example.lyy.newjust.db.DBCourse"></mapping>
+        <mapping class="com.example.lyy.newjust.db.DBCurrentCourse"></mapping>
     </list>
 </litepal>

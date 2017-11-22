@@ -9,6 +9,8 @@ import com.umeng.message.PushAgent;
 
 import org.litepal.LitePalApplication;
 
+import shortbread.Shortbread;
+
 /**
  * Created by lyy on 2017/11/15.
  */
@@ -23,6 +25,7 @@ public class AndroidApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Shortbread.create(this);
         context = getApplicationContext();
         LitePalApplication.initialize(context);
 

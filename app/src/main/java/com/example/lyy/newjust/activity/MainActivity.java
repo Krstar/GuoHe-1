@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -32,14 +33,24 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.activity.Main.AvatarActivity;
+import com.example.lyy.newjust.activity.Main.HeadImageActivity;
+import com.example.lyy.newjust.activity.Main.LoginActivity;
+import com.example.lyy.newjust.activity.Main.WelcomeActivity;
 import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
 import com.example.lyy.newjust.activity.One.ConstellationActivity;
 import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.One.OneActivity;
 import com.example.lyy.newjust.activity.One.WeiBoActivity;
-import com.example.lyy.newjust.activity.School.CourseTable.CourseTableActivity;
+import com.example.lyy.newjust.activity.School.AoLanActivity;
+import com.example.lyy.newjust.activity.School.ClassRoomActivity;
+import com.example.lyy.newjust.activity.School.CourseTableActivity;
+import com.example.lyy.newjust.activity.School.LibraryActivity;
+import com.example.lyy.newjust.activity.School.NewSubjectActivity;
+import com.example.lyy.newjust.activity.School.PEActivity;
 import com.example.lyy.newjust.activity.School.SchoolBusActivity;
 import com.example.lyy.newjust.activity.School.SubjectsActivity;
+import com.example.lyy.newjust.activity.School.ToDoActivity;
 import com.example.lyy.newjust.activity.Setting.FeedBackActivity;
 import com.example.lyy.newjust.activity.Setting.ProfileActivity;
 import com.example.lyy.newjust.activity.Setting.SettingsActivity;
@@ -48,9 +59,8 @@ import com.example.lyy.newjust.activity.Tools.EMSActivity;
 import com.example.lyy.newjust.activity.Tools.EipActivity;
 import com.example.lyy.newjust.activity.Tools.OCRActivity;
 import com.example.lyy.newjust.activity.Tools.TranslateActivity;
-import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.gson.Weather;
-import com.example.lyy.newjust.service.LongRunningService;
+import com.example.lyy.newjust.service.AlarmService;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.DonateDialog;
 import com.example.lyy.newjust.util.HttpUtil;
@@ -64,18 +74,15 @@ import com.nightonke.boommenu.BoomMenuButton;
 import com.umeng.analytics.MobclickAgent;
 import com.yalantis.taurus.PullToRefreshView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -86,6 +93,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final String TAG = "MainActivity";
+
+    public static AppCompatActivity mainActivity;
 
     private static int index = 0;
 
@@ -112,6 +121,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity = this;
 
         // 判断是否是第一次开启应用
         boolean isFirstOpen = SpUtils.getBoolean(this, AppConstants.FIRST_OPEN);
@@ -141,16 +151,16 @@ public class MainActivity extends AppCompatActivity
             String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
             tv_stu_id.setText(stu_id);
             tv_stu_name.setText(stu_name);
-
-            requestCourseStartInfo();
         }
 
-        Intent service = new Intent(this, LongRunningService.class);
-        startService(service);
+        Intent alarmService = new Intent(this, AlarmService.class);
+        startService(alarmService);
 
         init();             //初始化相关控件
 
         loadHeadPic();      //添加每日一图
+
+        requestWeather();   //发送查询天气的请求
 
         boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
         if (isNotification) {
@@ -160,24 +170,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    //将背景图和状态栏融合到一起
-//    private void changeStatusBar() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            //透明状态栏
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        }
-//    }
-
     //将背景图和状态栏融合到一起
     private void changeStatusBar() {
-//        if (Build.VERSION.SDK_INT >= 21) {
-//            View decorView = getWindow().getDecorView();
-//            decorView.setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_FULLSCREEN
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//            );
-//            getWindow().setStatusBarColor(Color.TRANSPARENT);
-//        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -229,8 +223,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        requestWeather();
-
         //设置菜单栏头像
         imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         civ_header = (CircleImageView) findViewById(R.id.civ_header);
@@ -255,7 +247,7 @@ public class MainActivity extends AppCompatActivity
         Glide.with(this).load(R.drawable.bg_weibo).into(iv_weibo);
         Glide.with(this).load(R.drawable.bg_every_day).into(iv_one);
         Glide.with(this).load(R.drawable.bg_memory).into(iv_memory);
-        Glide.with(this).load(R.drawable.bg_schedule).into(iv_schedule);
+        Glide.with(this).load(R.drawable.bg_schedule).bitmapTransform(new BlurTransformation(this, 10)).into(iv_schedule);
         Glide.with(this).load(R.drawable.bg_history).into(iv_history);
 
         iv_constellation.setOnClickListener(this);
@@ -266,10 +258,19 @@ public class MainActivity extends AppCompatActivity
         iv_schedule.setOnClickListener(this);
         iv_history.setOnClickListener(this);
 
-        LinearLayout nav_todo = (LinearLayout) findViewById(R.id.nav_todo);
-        LinearLayout nav_eat = (LinearLayout) findViewById(R.id.nav_eat);
-        nav_todo.setOnClickListener(this);
-        nav_eat.setOnClickListener(this);
+        LinearLayout ll_schedule = (LinearLayout) findViewById(R.id.ll_schedule);
+
+        LinearLayout nav_library = (LinearLayout) findViewById(R.id.nav_library);
+        LinearLayout nav_grade = (LinearLayout) findViewById(R.id.nav_grade);
+        LinearLayout nav_school_bus = (LinearLayout) findViewById(R.id.nav_school_bus);
+        LinearLayout nav_classroom = (LinearLayout) findViewById(R.id.nav_classroom);
+
+        ll_schedule.setOnClickListener(this);
+
+        nav_library.setOnClickListener(this);
+        nav_grade.setOnClickListener(this);
+        nav_school_bus.setOnClickListener(this);
+        nav_classroom.setOnClickListener(this);
 
         //设置底部弹窗
         showBoomMenu();
@@ -371,186 +372,11 @@ public class MainActivity extends AppCompatActivity
     private static int[] imageResources = new int[]{
             R.drawable.ic_menu_ems,
             R.drawable.ic_menu_ocr,
-            R.drawable.ic_menu_library,
+            R.drawable.ic_menu_audio,
             R.drawable.ic_menu_translate,
             R.drawable.ic_menu_eip
     };
     //设置底部弹窗按钮--------------------------结束----------------------------
-
-    //发送查询课程开始的日期的请求
-    private void requestCourseStartInfo() {
-        String url = "http://120.25.88.41/StartYearAndWeek";
-        HttpUtil.sendHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    try {
-                        JSONObject object = new JSONObject(data);
-                        String StartWeek = object.getString("StartWeek");
-                        String StartYear = object.getString("StartYear");
-                        if (StartWeek != null && StartYear != null) {
-                            String this_week = WeeksOfTwo_2(thisWeek(), StartWeek);
-                            int week = Integer.parseInt(this_week);
-                            requestCourseInfo(StartYear, week);
-
-                            SpUtils.putString(getApplicationContext(), AppConstants.START_YEAR, StartYear);
-                            SpUtils.putString(getApplicationContext(), AppConstants.START_WEEK, StartWeek);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
-
-    //发送查询课表的请求
-    private void requestCourseInfo(final String year, final int this_week) {
-        String url = "http://120.25.88.41/vpnKebiao";
-        String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("username", stu_id)
-                .add("password", stu_pass)
-                .add("semester", year)
-                .build();
-
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Log.d(TAG, "onResponse: " + data);
-                    try {
-                        JSONArray jsonArray = new JSONArray(data);
-                        JSONObject object = jsonArray.getJSONObject(this_week - 1);
-                        JSONArray innerArray = object.getJSONArray(year + "_" + this_week);
-
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject monday = innerArray.getJSONObject(i);
-                            if (!monday.getString("monday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(1);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(monday.getString("monday"));
-                                course.save();
-                            }
-
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject tuesday = innerArray.getJSONObject(i);
-                            if (!tuesday.getString("tuesday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(2);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(tuesday.getString("tuesday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject wednesday = innerArray.getJSONObject(i);
-                            if (!wednesday.getString("wednesday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(3);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(wednesday.getString("wednesday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject thursday = innerArray.getJSONObject(i);
-                            if (!thursday.getString("thursday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(4);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(thursday.getString("thursday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject friday = innerArray.getJSONObject(i);
-                            if (!friday.getString("friday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(5);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(friday.getString("friday"));
-                                course.save();
-                            }
-
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject saturday = innerArray.getJSONObject(i);
-                            if (!saturday.getString("saturday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(6);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(saturday.getString("saturday"));
-                                course.save();
-                            }
-
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject sunday = innerArray.getJSONObject(i);
-                            if (!sunday.getString("sunday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(7);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(sunday.getString("sunday"));
-                                course.save();
-                            }
-                        }
-//                        Looper.prepare();
-//                        Toast.makeText(getApplicationContext(), "课程表导入成功", Toast.LENGTH_SHORT).show();
-//                        Looper.loop();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
-
-    //获取当前日期
-    private String thisWeek() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-        String str = formatter.format(curDate);
-        return str;
-    }
-
-    //判断两个时间段内的天数差
-    private String WeeksOfTwo_2(String day1, String day2) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            //跨年不会出现问题
-            //如果时间为：2016-03-18 11:59:59 和 2016-03-19 00:00:01的话差值为 0
-            Date fDate = sdf.parse(day1);
-            Date oDate = sdf.parse(day2);
-            long week;
-            long days = (oDate.getTime() - fDate.getTime()) / (1000 * 3600 * 24);
-            if (days < 0) {
-                days = days * (-1);
-                week = (days / 7) + 1;
-                return (week + "");
-            }
-            week = (days / 7) + 1;
-            return (week + "");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     //发送查询天气的请求
     private void requestWeather() {
@@ -558,13 +384,15 @@ public class MainActivity extends AppCompatActivity
         HttpUtil.sendHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Looper.prepare();
+                Toast.makeText(getApplicationContext(), "天气请求失败", Toast.LENGTH_SHORT).show();
+                Looper.loop();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
                 if (response.isSuccessful()) {
+                    String responseText = response.body().string();
                     Weather weather = Util.handleWeatherResponse(responseText);
                     parseWeatherData(weather);
                 } else {
@@ -593,7 +421,9 @@ public class MainActivity extends AppCompatActivity
         HttpUtil.sendHttpRequest(requestHeadPic, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Looper.prepare();
+                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_LONG).show();
+                Looper.loop();
             }
 
             @Override
@@ -651,6 +481,14 @@ public class MainActivity extends AppCompatActivity
         notificationManager.cancel(2);
     }
 
+    //分享此应用
+    private void shareApp() {
+        Intent intent1 = new Intent(Intent.ACTION_SEND);
+        intent1.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + "http://u5413978.viewer.maka.im/k/L3OW3S5E");
+        intent1.setType("text/plain");
+        startActivity(Intent.createChooser(intent1, "i Just"));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -686,30 +524,32 @@ public class MainActivity extends AppCompatActivity
         mDrawer.closeMenu();
 
         switch (item.getItemId()) {
-            case R.id.nav_grade:
-                Intent search_subject_intent = new Intent(MainActivity.this, SubjectsActivity.class);
-                startActivity(search_subject_intent);
+            case R.id.nav_todo:
+                Intent todo_intent = new Intent(MainActivity.this, ToDoActivity.class);
+                startActivity(todo_intent);
                 break;
-            case R.id.nav_library:
-                Toast.makeText(MainActivity.this, "你点击了馆藏查询按钮", Toast.LENGTH_SHORT).show();
-                break;
+
             case R.id.nav_pe:
-                Toast.makeText(MainActivity.this, "你点击了体育课查询按钮", Toast.LENGTH_SHORT).show();
+                Intent peIntent = new Intent(MainActivity.this, PEActivity.class);
+                startActivity(peIntent);
                 break;
-            case R.id.nav_school_bus:
-                Intent school_busIntent = new Intent(MainActivity.this, SchoolBusActivity.class);
-                startActivity(school_busIntent);
-                break;
+
             case R.id.nav_setting:
                 Intent settings_intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settings_intent);
                 break;
-            case R.id.nav_classroom:
-                Toast.makeText(MainActivity.this, "你点击了查询空教室按钮", Toast.LENGTH_SHORT).show();
-                break;
+
             case R.id.nav_theme:
-                Toast.makeText(MainActivity.this, "你点击了更换皮肤按钮", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "换肤功能正在集成中，敬请期待！", Toast.LENGTH_SHORT).show();
                 break;
+
+            case R.id.nav_share:
+                shareApp();
+                break;
+
+            case R.id.nav_ao_lan:
+                Intent aolanIntent = new Intent(MainActivity.this, AoLanActivity.class);
+                startActivity(aolanIntent);
         }
 
         return true;
@@ -736,6 +576,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_schedule:
+                Intent scheduleIntent = new Intent(MainActivity.this, CourseTableActivity.class);
+                startActivity(scheduleIntent);
+                break;
             case R.id.civ_header:
                 Intent avatorIntent = new Intent(MainActivity.this, AvatarActivity.class);
                 startActivity(avatorIntent);
@@ -783,14 +627,31 @@ public class MainActivity extends AppCompatActivity
                 Intent oneIntent = new Intent(MainActivity.this, OneActivity.class);
                 startActivity(oneIntent);
                 break;
-            case R.id.nav_todo:
-                Intent todoIntent = new Intent(MainActivity.this, ToDoActivity.class);
-                startActivity(todoIntent);
-                break;
-            case R.id.nav_eat:
-                break;
             case R.id.iv_health:
                 Toast.makeText(MainActivity.this, "该功能暂未上线，敬请期待！", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_library:
+                Intent libraryIntent = new Intent(MainActivity.this, LibraryActivity.class);
+                startActivity(libraryIntent);
+                break;
+            case R.id.nav_grade:
+                String show_grade = SpUtils.getString(getApplicationContext(), AppConstants.SHOW_GRADE, "学科");
+                if (show_grade.equals("学科")) {
+                    Intent gradeIntent = new Intent(MainActivity.this, SubjectsActivity.class);
+                    startActivity(gradeIntent);
+                } else if (show_grade.equals("学年")) {
+                    Intent gradeIntent = new Intent(MainActivity.this, NewSubjectActivity.class);
+                    startActivity(gradeIntent);
+                }
+                break;
+            case R.id.nav_school_bus:
+                Intent busIntent = new Intent(MainActivity.this, SchoolBusActivity.class);
+                startActivity(busIntent);
+                break;
+            case R.id.nav_classroom:
+                Intent classroomIntent = new Intent(MainActivity.this, ClassRoomActivity.class);
+                startActivity(classroomIntent);
                 break;
         }
     }

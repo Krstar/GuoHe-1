@@ -1,7 +1,6 @@
-package com.example.lyy.newjust.activity;
+package com.example.lyy.newjust.activity.Main;
 
 import android.app.ProgressDialog;
-import android.bluetooth.BluetoothA2dp;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Looper;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.activity.Setting.CropViewActivity;
+import com.example.lyy.newjust.activity.MainActivity;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
@@ -27,7 +26,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import es.dmoral.toasty.Toasty;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -83,7 +81,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         dialog.dismiss();
-
                         Looper.prepare();
                         Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
                         Looper.loop();
@@ -93,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call call, Response response) throws IOException {
                         SpUtils.putBoolean(getApplicationContext(), AppConstants.LOGIN, true);
                         String result = response.body().string();
-                        if (response.isSuccessful()) {
+                        if (response.code() == 200) {
                             Log.d(TAG, "onResponseSuccess: " + result);
                             try {
                                 JSONObject object = new JSONObject(result);
@@ -118,23 +115,20 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     dialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "登录成功!", Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    Toast.makeText(getApplicationContext(), "登录成功!", Toast.LENGTH_SHORT).show();
                                 }
                             });
-//                            Looper.prepare();
-//                            Toast.makeText(getApplicationContext(), "登陆成功!", Toast.LENGTH_LONG).show();
-//                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                            startActivity(intent);
-//                            finish();
-//                            Looper.loop();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
                         } else {
-                            Log.d(TAG, "onResponseFailure: " + result);
-                            Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "账号或密码有误，请重新输入", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), "账号或密码有误，请重新输入", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                             return;
                         }
                     }
@@ -171,6 +165,13 @@ public class LoginActivity extends AppCompatActivity {
                 Snackbar.make(login, "Register success!", Snackbar.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        SpUtils.putBoolean(getApplicationContext(), AppConstants.LOGIN, false);
+        finish();
     }
 
     //将背景图和状态栏融合到一起

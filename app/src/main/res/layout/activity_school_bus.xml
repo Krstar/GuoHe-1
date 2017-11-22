@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.lyy.newjust.activity.School.SchoolBusActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.lyy.newjust.activity.School.SchoolBusActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/school_bus_toolbar"
@@ -21,6 +21,14 @@
             android:textColor="@color/material_white_1000"
             android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
+
+    <ProgressBar
+        android:id="@+id/school_bus_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dip"
+        android:progressDrawable="@drawable/bg_progress"
+        android:visibility="gone" />
 
     <WebView
         android:id="@+id/school_bus_webview"

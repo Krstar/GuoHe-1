@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.activity;
+package com.example.lyy.newjust.activity.Main;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

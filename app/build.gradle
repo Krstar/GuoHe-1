@@ -75,6 +75,8 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:2.0.1'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.github.f0ris.sweetalert:library:1.5.1'
+    compile 'com.github.matthiasrobbers:shortbread:1.0.2'
+    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.0.2'
     testCompile 'junit:junit:4.12'
     compile project(':PushSDK')
 }
