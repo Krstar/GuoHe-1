@@ -108,9 +108,11 @@
 
         <activity android:name=".activity.School.LibraryActivity" />
         <activity android:name=".activity.School.ClassRoomActivity" />
-        <activity android:name=".activity.School.PEActivity" />
+        <activity android:name=".activity.School.ClubActivity" />
         <activity android:name=".activity.School.AoLanActivity" />
-        <activity android:name=".activity.School.NewSubjectActivity"></activity>
+        <activity android:name=".activity.School.NewSubjectActivity" />
+        <activity android:name=".activity.School.BookListActivity" />
+        <activity android:name=".activity.School.BookDetailActivity"></activity>
     </application>
 
 </manifest>

@@ -9,4 +9,4 @@
     app:loginHint="学号"
     app:loginPasswordHint="密码"
     app:loginTextColor="@color/material_blue_400"
-    app:loginTitle="i Just" />
+    app:loginTitle="果核" />

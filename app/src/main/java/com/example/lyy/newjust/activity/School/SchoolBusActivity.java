@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -61,7 +62,7 @@ public class SchoolBusActivity extends SwipeBackActivity {
         //自适应屏幕
         webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webView.getSettings().setLoadWithOverviewMode(true);
-        webView.loadUrl("http://120.25.88.41/oneDay/shikebiao.html");
+        webView.loadUrl(UrlUtil.SCHOOL_BUS);
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {

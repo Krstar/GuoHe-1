@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -22,13 +23,9 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class WeiBoActivity extends SwipeBackActivity {
 
-    private static final String TAG = "HistoryActivity";
-
     private WebView webView;
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
-
-    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +34,7 @@ public class WeiBoActivity extends SwipeBackActivity {
 
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
 
-        url = "http://120.25.88.41/oneDay/diqi/index.html";
+        String url = UrlUtil.DI_QI;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();

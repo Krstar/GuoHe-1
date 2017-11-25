@@ -12,6 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -22,8 +23,6 @@ public class AboutUSActivity extends AppCompatActivity {
     private WebView webView;
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
-
-    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class AboutUSActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        url = "http://u5413978.viewer.maka.im/k/L3OW3S5E";
+        String url = UrlUtil.ABOUT_US;
 
         webView = (WebView) findViewById(R.id.about_us_webview);
         webView.getSettings().setJavaScriptEnabled(true);

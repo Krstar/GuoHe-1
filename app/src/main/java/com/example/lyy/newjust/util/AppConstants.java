@@ -60,4 +60,7 @@ public class AppConstants {
     //记录成绩的查看方式，默认是按照学科类型查看
     public static final String SHOW_GRADE = "show_grade";
 
+    //记录当前学年
+    public static final String THIS_YEAR = "2017-2018-1";
+
 }

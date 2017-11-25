@@ -19,6 +19,7 @@ import com.example.lyy.newjust.activity.MainActivity;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
@@ -72,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 final ProgressDialog dialog = ProgressDialog.show(LoginActivity.this, null, "正在登录,请稍后……", true, false);
 
-                String url = "http://120.25.88.41/vpnInfo";
+                String url = UrlUtil.USER_INFO;
                 RequestBody requestBody = new FormBody.Builder()
                         .add("username", user)
                         .add("password", pass)

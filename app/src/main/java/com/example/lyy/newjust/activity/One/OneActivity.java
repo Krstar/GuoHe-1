@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -26,8 +27,6 @@ public class OneActivity extends SwipeBackActivity {
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
-    private String url;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +34,7 @@ public class OneActivity extends SwipeBackActivity {
 
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
 
-        url = "http://120.25.88.41/oneDay/one/index.html";
+        String url = UrlUtil.ONE_DAY;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();

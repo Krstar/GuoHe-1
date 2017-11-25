@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -17,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +29,7 @@ import com.example.lyy.newjust.gson.g_Subject;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -56,20 +55,21 @@ import shortbread.Shortcut;
 @Shortcut(id = "grade", icon = R.drawable.ic_menu_grade, shortLabel = "查成绩")
 public class SubjectsActivity extends SwipeBackActivity {
 
-    private static final String TAG = "SubjectsActivity";
-
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
     private LayoutInflater mInflater;
     private List<String> mTitleList = new ArrayList<>();//页卡标题集合
-    private View view1, view2;//页卡视图
+    private View view1, view2, view3;//页卡视图
     private List<View> mViewList = new ArrayList<>();//页卡视图集合
 
     private List<Subject> adapter_list_kaoshi;
     private List<Subject> adapter_list_kaocha;
+    private List<Subject> adapter_list_others;
 
     private TextView tv_all_point;
+
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +93,7 @@ public class SubjectsActivity extends SwipeBackActivity {
     private void init() {
         adapter_list_kaoshi = new ArrayList<>();
         adapter_list_kaocha = new ArrayList<>();
+        adapter_list_others = new ArrayList<>();
 
         tv_all_point = (TextView) findViewById(R.id.tv_all_point);
 
@@ -111,20 +112,23 @@ public class SubjectsActivity extends SwipeBackActivity {
 
         mInflater = LayoutInflater.from(this);
         view1 = mInflater.inflate(R.layout.fragment_layout_left, null);
-        view2 = mInflater.inflate(R.layout.fragment_layout_right, null);
+        view2 = mInflater.inflate(R.layout.fragment_layout_middle, null);
+        view3 = mInflater.inflate(R.layout.fragment_layout_right, null);
 
         //添加页卡视图
         mViewList.add(view1);
         mViewList.add(view2);
+        mViewList.add(view3);
 
         //添加页卡标题
         mTitleList.add("考试课");
         mTitleList.add("考查课");
-
+        mTitleList.add("其他");
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);//设置tab模式，当前为系统默认模式
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(0)));//添加tab选项卡
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(1)));
+        mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(2)));
 
 
         MyPagerAdapter mAdapter = new MyPagerAdapter(mViewList);
@@ -139,6 +143,9 @@ public class SubjectsActivity extends SwipeBackActivity {
                         showLeftScoreResult();
                         break;
                     case 1:
+                        showMiddleScoreResult();
+                        break;
+                    case 2:
                         showRightScoreResult();
                         break;
                     default:
@@ -164,7 +171,7 @@ public class SubjectsActivity extends SwipeBackActivity {
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(true);
 
-        String pointUrl = "http://120.25.88.41/vpnJidian";
+        String pointUrl = UrlUtil.STU_GPA;
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
         RequestBody requestBody = new FormBody.Builder()
@@ -227,8 +234,8 @@ public class SubjectsActivity extends SwipeBackActivity {
 
     //发出分数查询的请求
     private void searchScoreRequest() {
-        final ProgressDialog dialog = ProgressDialog.show(SubjectsActivity.this, null, "成绩导入中,请稍后……", true, false);
-        String url = "http://120.25.88.41/vpnScore";
+        mProgressDialog = ProgressDialog.show(SubjectsActivity.this, null, "成绩导入中,请稍后……", true, false);
+        String url = UrlUtil.STU_SCORE;
 
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
@@ -240,7 +247,7 @@ public class SubjectsActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                dialog.dismiss();
+                mProgressDialog.dismiss();
 
                 Looper.prepare();
                 Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
@@ -256,7 +263,7 @@ public class SubjectsActivity extends SwipeBackActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            dialog.dismiss();
+                            mProgressDialog.dismiss();
                         }
                     });
                 }
@@ -284,6 +291,9 @@ public class SubjectsActivity extends SwipeBackActivity {
             } else if (gSubjectList.get(i).getExamination_method().equals("考查")) {
                 Subject subject = new Subject(gSubjectList.get(i).getCourse_name(), gSubjectList.get(i).getCredit(), gSubjectList.get(i).getScore());
                 adapter_list_kaocha.add(subject);
+            } else {
+                Subject subject = new Subject(gSubjectList.get(i).getCourse_name(), gSubjectList.get(i).getCredit(), gSubjectList.get(i).getScore());
+                adapter_list_others.add(subject);
             }
         }
         runOnUiThread(new Runnable() {
@@ -305,9 +315,18 @@ public class SubjectsActivity extends SwipeBackActivity {
     }
 
     //显示考查课结果
-    private void showRightScoreResult() {
+    private void showMiddleScoreResult() {
         if (adapter_list_kaocha.size() != 0) {
             SubjectAdapter subjectAdapter = new SubjectAdapter(SubjectsActivity.this, R.layout.item_subjects, adapter_list_kaocha);
+            ListView listView = (ListView) findViewById(R.id.middle_subject_list_item);
+            listView.setAdapter(subjectAdapter);
+        }
+    }
+
+    //显示其他类型的考试的结果
+    private void showRightScoreResult() {
+        if (adapter_list_others.size() != 0) {
+            SubjectAdapter subjectAdapter = new SubjectAdapter(SubjectsActivity.this, R.layout.item_subjects, adapter_list_others);
             ListView listView = (ListView) findViewById(R.id.right_subject_list_item);
             listView.setAdapter(subjectAdapter);
         }
@@ -322,6 +341,15 @@ public class SubjectsActivity extends SwipeBackActivity {
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mProgressDialog.isShowing())
+            mProgressDialog.dismiss();
+
     }
 
     @Override

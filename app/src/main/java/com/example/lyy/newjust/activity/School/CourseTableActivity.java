@@ -37,6 +37,7 @@ import com.example.lyy.newjust.model.Course;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.example.lyy.newjust.views.CourseTableView;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
@@ -204,7 +205,7 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     //发送查询校历的请求
     private void requestXiaoLi() {
-        String url = "http://120.25.88.41/xiaoli";
+        String url = UrlUtil.XIAO_LI;
 
         String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
@@ -574,7 +575,7 @@ public class CourseTableActivity extends SwipeBackActivity {
 
         requestXiaoLi();
 
-        String url = "http://120.25.88.41/currentKebiao";
+        String url = UrlUtil.CURRENT_COURSE;
 
         String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
@@ -678,7 +679,7 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     //获取所有周的课表信息
     private void requestCourseInfo(final String year, final int this_week) {
-        String url = "http://120.25.88.41/vpnKebiao";
+        String url = UrlUtil.ALL_COURSE;
         String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
         RequestBody requestBody = new FormBody.Builder()

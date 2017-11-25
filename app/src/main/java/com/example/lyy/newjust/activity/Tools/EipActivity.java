@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
@@ -63,7 +64,7 @@ public class EipActivity extends SwipeBackActivity {
                 startActivity(intent);
             }
         });
-        webView.loadUrl("https://www.jiuwa.net/");
+        webView.loadUrl(UrlUtil.EIP);
 
         pg1 = (ProgressBar) findViewById(R.id.progressBar1);
         webView.setWebChromeClient(new WebChromeClient() {

@@ -81,14 +81,23 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <ListView
-            android:id="@+id/pe_list_view"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/club_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:nestedScrollingEnabled="true"
-            android:scrollbars="none">
+            android:layout_height="match_parent">
 
-        </ListView>
+            <ListView
+                android:id="@+id/pe_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="true"
+                android:scrollbars="none">
+
+            </ListView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+
 
     </LinearLayout>
 

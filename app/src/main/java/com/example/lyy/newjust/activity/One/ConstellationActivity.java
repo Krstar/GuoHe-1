@@ -12,6 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -39,7 +40,7 @@ public class ConstellationActivity extends SwipeBackActivity {
         Intent intent = getIntent();
         String constellation_en = intent.getStringExtra("constellation_en");
 
-        url = "http://120.25.88.41/oneDay/xingzuo/index.html?select=" + constellation_en;
+        url = UrlUtil.CONSTELLATION + constellation_en;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();

@@ -3,22 +3,18 @@ package com.example.lyy.newjust.activity.School;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Looper;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,10 +27,12 @@ import com.example.lyy.newjust.adapter.ClubAdapter;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
+import com.example.lyy.newjust.util.UrlUtil;
+import com.flyco.animation.Attention.Flash;
 import com.flyco.animation.Attention.Swing;
+import com.flyco.animation.BounceEnter.BounceBottomEnter;
 import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.widget.MaterialDialog;
-import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
@@ -53,9 +51,9 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class PEActivity extends SwipeBackActivity implements View.OnClickListener {
+public class ClubActivity extends SwipeBackActivity implements View.OnClickListener {
 
-    private static final String TAG = "PEActivity";
+    private static final String TAG = "ClubActivity";
 
     //定义listView
     private ListView listView;
@@ -68,11 +66,15 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
     private TextView tv_pe_info;
     private TextView tv_pe_year;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    private SwipeRefreshLayout.OnRefreshListener listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         changeStatusBar();
-        setContentView(R.layout.activity_pe);
+        setContentView(R.layout.activity_club);
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
@@ -91,7 +93,7 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
         }
 
         ImageView pe_iv = (ImageView) findViewById(R.id.pe_iv);
-        Glide.with(PEActivity.this).load(R.drawable.bg_sport).into(pe_iv);
+        Glide.with(ClubActivity.this).load(R.drawable.bg_sport).into(pe_iv);
         FloatingActionButton pe_floating_btn = (FloatingActionButton) findViewById(R.id.pe_floating_btn);
         pe_floating_btn.setOnClickListener(this);
 
@@ -100,26 +102,54 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
         listView = (ListView) findViewById(R.id.pe_list_view);
         tv_pe_info = (TextView) findViewById(R.id.tv_pe_info);
         tv_pe_year = (TextView) findViewById(R.id.tv_pe_year);
+
+        initSwipeRefresh();
+    }
+
+    private void initSwipeRefresh() {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.club_refresh);
+
+        // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
+        // 设置下拉进度的背景颜色，默认就是白色的
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(android.R.color.white);
+        // 设置下拉进度的主题颜色
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
+
+        listener = new SwipeRefreshLayout.OnRefreshListener() {
+            public void onRefresh() {
+                //TODO
+                String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+                String pePass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PE_PASS);
+                request(username, pePass);
+            }
+        };
+
+        swipeRefreshLayout.setOnRefreshListener(listener);
     }
 
     private void requestPEInfo() {
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String pePass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PE_PASS);
-        mProgressDialog = ProgressDialog.show(PEActivity.this, null, "俱乐部数据导入中,请稍后……", true, false);
+        mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "俱乐部数据导入中,请稍后……", true, false);
+        mProgressDialog.setCancelable(true);
+        mProgressDialog.setCanceledOnTouchOutside(true);
         if (pePass != null) {
             request(username, pePass);
         } else {
             mProgressDialog.dismiss();
-            final EditText editText = new EditText(PEActivity.this);
+            final EditText editText = new EditText(ClubActivity.this);
             AlertDialog.Builder inputDialog =
-                    new AlertDialog.Builder(PEActivity.this);
+                    new AlertDialog.Builder(ClubActivity.this);
             inputDialog.setTitle("请输入你的体育学院密码").setView(editText);
             inputDialog.setPositiveButton("确定",
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "密码验证中,请稍后……", true, false);
+                            mProgressDialog.setCancelable(true);
+                            mProgressDialog.setCanceledOnTouchOutside(true);
                             final String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-                            String url = "http://120.25.88.41/vpnSport";
+                            String url = UrlUtil.CLUB_SCORE;
                             RequestBody requestBody = new FormBody.Builder()
                                     .add("username", username)
                                     .add("password", editText.getText().toString())
@@ -133,10 +163,13 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
                                 @Override
                                 public void onResponse(Call call, Response response) throws IOException {
                                     if (response.isSuccessful()) {
-                                        SpUtils.putString(getApplicationContext(), AppConstants.STU_PE_PASS, editText.getText().toString());
                                         Looper.prepare();
-                                        Toast.makeText(getApplicationContext(), "体育课数据导入中，请稍后...", Toast.LENGTH_LONG).show();
+                                        mProgressDialog.dismiss();
+                                        mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
+                                        mProgressDialog.setCancelable(true);
+                                        mProgressDialog.setCanceledOnTouchOutside(true);
                                         request(username, editText.getText().toString());
+                                        SpUtils.putString(getApplicationContext(), AppConstants.STU_PE_PASS, editText.getText().toString());
                                         Looper.loop();
                                     }
                                 }
@@ -147,7 +180,8 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
     }
 
     private void request(String username, String pePass) {
-        String url = "http://120.25.88.41/vpnSport";
+        clubList.clear();
+        String url = UrlUtil.CLUB_SCORE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
                 .add("password", pePass)
@@ -187,10 +221,6 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
 
                             Club club = new Club(time, number, date);
                             clubList.add(club);
-
-                            Log.d(TAG, "onResponse: " + number);
-                            Log.d(TAG, "onResponse: " + date);
-                            Log.d(TAG, "onResponse: " + time);
                         }
 
                         Log.d(TAG, "onCreate: " + clubList.size());
@@ -202,12 +232,17 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
                                 String[] s = year.split(" ");
                                 tv_pe_year.setText(s[1]);
 
-                                ClubAdapter clubAdapter = new ClubAdapter(PEActivity.this, R.layout.item_club, clubList);
+                                ClubAdapter clubAdapter = new ClubAdapter(ClubActivity.this, R.layout.item_club, clubList);
                                 listView.setAdapter(clubAdapter);
                                 mProgressDialog.dismiss();
                             }
                         });
-
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -217,10 +252,10 @@ public class PEActivity extends SwipeBackActivity implements View.OnClickListene
     }
 
     private void showMaterialDialogDefault(String msg) {
-        final MaterialDialog dialog = new MaterialDialog(PEActivity.this);
+        final MaterialDialog dialog = new MaterialDialog(ClubActivity.this);
         dialog.content(msg)//
                 .btnText("取消", "确定")//
-                .showAnim(new Swing())//
+                .showAnim(new BounceBottomEnter())//
                 .show();
 
         dialog.setOnBtnClickL(

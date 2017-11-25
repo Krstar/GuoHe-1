@@ -10,7 +10,7 @@ import org.json.JSONObject;
  * Created by lyy on 2017/10/11.
  */
 
-public class Util {
+public class ResponseUtil {
 
     //处理服务器传来的天气的数据
     public static Weather handleWeatherResponse(String response) {

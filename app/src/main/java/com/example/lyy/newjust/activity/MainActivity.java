@@ -20,7 +20,6 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Base64;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,10 +43,10 @@ import com.example.lyy.newjust.activity.One.OneActivity;
 import com.example.lyy.newjust.activity.One.WeiBoActivity;
 import com.example.lyy.newjust.activity.School.AoLanActivity;
 import com.example.lyy.newjust.activity.School.ClassRoomActivity;
+import com.example.lyy.newjust.activity.School.ClubActivity;
 import com.example.lyy.newjust.activity.School.CourseTableActivity;
 import com.example.lyy.newjust.activity.School.LibraryActivity;
 import com.example.lyy.newjust.activity.School.NewSubjectActivity;
-import com.example.lyy.newjust.activity.School.PEActivity;
 import com.example.lyy.newjust.activity.School.SchoolBusActivity;
 import com.example.lyy.newjust.activity.School.SubjectsActivity;
 import com.example.lyy.newjust.activity.School.ToDoActivity;
@@ -62,10 +61,10 @@ import com.example.lyy.newjust.activity.Tools.TranslateActivity;
 import com.example.lyy.newjust.gson.Weather;
 import com.example.lyy.newjust.service.AlarmService;
 import com.example.lyy.newjust.util.AppConstants;
-import com.example.lyy.newjust.util.DonateDialog;
+import com.example.lyy.newjust.base.DonateDialog;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
-import com.example.lyy.newjust.util.Util;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
@@ -73,9 +72,6 @@ import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.umeng.analytics.MobclickAgent;
 import com.yalantis.taurus.PullToRefreshView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -85,8 +81,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
@@ -393,7 +387,7 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseText = response.body().string();
-                    Weather weather = Util.handleWeatherResponse(responseText);
+                    Weather weather = ResponseUtil.handleWeatherResponse(responseText);
                     parseWeatherData(weather);
                 } else {
                     Toast.makeText(getApplicationContext(), "服务器错误", Toast.LENGTH_SHORT).show();
@@ -530,7 +524,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_pe:
-                Intent peIntent = new Intent(MainActivity.this, PEActivity.class);
+                Intent peIntent = new Intent(MainActivity.this, ClubActivity.class);
                 startActivity(peIntent);
                 break;
 

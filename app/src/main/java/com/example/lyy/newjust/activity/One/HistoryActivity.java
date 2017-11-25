@@ -15,6 +15,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -30,8 +31,6 @@ public class HistoryActivity extends SwipeBackActivity {
     private WebView webView;
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
-
-    private String url;
 
     private WebChromeClient wbc = new WebChromeClient() {
 
@@ -65,7 +64,7 @@ public class HistoryActivity extends SwipeBackActivity {
     };
 
     private void initWebview() {
-        url = "http://120.25.88.41/oneDay/history/index.html";
+        String url = UrlUtil.TODAY_IN_HISTORY;
 
         webView = (WebView) findViewById(R.id.history_web_view);
 

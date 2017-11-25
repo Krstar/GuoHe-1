@@ -21,6 +21,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -34,8 +35,6 @@ public class FeedBackActivity extends SwipeBackActivity {
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
-    private String url;
-
     public static final int REQUEST_SELECT_FILE = 100;
     public final static int FILECHOOSER_RESULTCODE = 1;
     public ValueCallback<Uri[]> uploadMessage;
@@ -48,7 +47,7 @@ public class FeedBackActivity extends SwipeBackActivity {
 
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
 
-        url = "http://120.25.88.41/feedback/index.html";
+        String url = UrlUtil.FEEDBACK;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();

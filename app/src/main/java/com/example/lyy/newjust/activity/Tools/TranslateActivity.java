@@ -12,6 +12,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
@@ -46,7 +47,7 @@ public class TranslateActivity extends SwipeBackActivity {
                 super.onPageFinished(view, url);
             }
         });
-        webView.loadUrl("http://m.iciba.com");
+        webView.loadUrl(UrlUtil.TRANSLATE);
 
         pg1 = (ProgressBar) findViewById(R.id.progressBar1);
         webView.setWebChromeClient(new WebChromeClient() {
