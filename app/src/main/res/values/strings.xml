@@ -11,6 +11,7 @@
 
     <string name="action_update_course">更新课表</string>
     <string name="action_change_year">更改学期</string>
+    <string name="action_change_week">更改周次</string>
     <string name="action_change_background">更换背景</string>
 
     <string name="action_add">添加纪念日</string>
@@ -33,7 +34,7 @@
     <string name="item_library">馆藏查询</string>
     <string name="item_classroom">空教室查询</string>
     <string name="item_grade">成绩查询</string>
-    <string name="item_pe">俱乐部</string>
+    <string name="item_club">俱乐部</string>
     <string name="item_exercise">早操查询</string>
     <string name="item_school_bus">校车查询</string>
     <string name="item_myday">我的一天</string>

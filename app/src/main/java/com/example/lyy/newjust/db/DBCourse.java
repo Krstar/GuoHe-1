@@ -14,6 +14,16 @@ public class DBCourse extends DataSupport {
 
     private int jieci;   //课程的节次
 
+    private int zhouci; //课程的周次
+
+    public int getZhouci() {
+        return zhouci;
+    }
+
+    public void setZhouci(int zhouci) {
+        this.zhouci = zhouci;
+    }
+
     public int getDay() {
         return day;
     }

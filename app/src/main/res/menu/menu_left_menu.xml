@@ -5,13 +5,17 @@
 
         <menu android:checkableBehavior="single">
             <item
+                android:id="@+id/nav_club"
+                android:icon="@drawable/ic_menu_club"
+                android:title="@string/item_club" />
+            <item
+                android:id="@+id/nav_exercise"
+                android:icon="@drawable/ic_menu_exercise"
+                android:title="@string/item_exercise" />
+            <item
                 android:id="@+id/nav_todo"
                 android:icon="@drawable/ic_menu_todo"
                 android:title="@string/item_todo" />
-            <item
-                android:id="@+id/nav_pe"
-                android:icon="@drawable/ic_menu_pe"
-                android:title="@string/item_pe" />
             <item
                 android:id="@+id/nav_ao_lan"
                 android:icon="@drawable/ic_menu_ao_lan"

@@ -1,36 +1,23 @@
 package com.example.lyy.newjust.activity.Memory;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
-import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.db.DBMemory;
-import com.example.lyy.newjust.util.AppConstants;
-import com.example.lyy.newjust.util.HttpUtil;
-import com.example.lyy.newjust.util.SpUtils;
-import com.flyco.dialog.listener.OnOperItemClickL;
-import com.flyco.dialog.widget.ActionSheetDialog;
+import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,15 +25,8 @@ import java.util.List;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class MemoryDetailActivity extends SwipeBackActivity {
-
-    private static final String TAG = "MemoryDetailActivity";
-
-    private ImageView bgImg;
 
     private int position;
 
@@ -58,8 +38,8 @@ public class MemoryDetailActivity extends SwipeBackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //去掉Activity上面的状态栏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
+
         setContentView(R.layout.activity_memory_detail);
 
         init();
@@ -72,6 +52,15 @@ public class MemoryDetailActivity extends SwipeBackActivity {
         mSwipeBackLayout.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
         // 滑动退出的效果只能从边界滑动才有效果，如果要扩大touch的范围，可以调用这个方法
         mSwipeBackLayout.setEdgeSize(200);
+
+        //设置和toolbar相关的
+        Toolbar toolbar = (Toolbar) findViewById(R.id.memory_detail_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
 
         Time time = new Time("GMT+8");
         time.setToNow();
@@ -95,49 +84,19 @@ public class MemoryDetailActivity extends SwipeBackActivity {
         tv_memory_content.setText(memory_content);
         tv_between.setText(daysBetween);
 
-        bgImg = (ImageView) findViewById(R.id.bing_pic_img);
-        String bg_memory_64 = SpUtils.getString(getApplicationContext(), AppConstants.BG_MEMORY_64);
-        String bgPic = SpUtils.getString(this, AppConstants.HEAD_PIC_URL);
-        if (bg_memory_64 != null) {
-            byte[] byte64 = Base64.decode(bg_memory_64, 0);
-            ByteArrayInputStream bais = new ByteArrayInputStream(byte64);
-            Bitmap bitmap = BitmapFactory.decodeStream(bais);
-            bgImg.setImageBitmap(bitmap);
-        } else if (bg_memory_64 == null) {
-            if (bgPic != null) {
-                Glide.with(this).load(bgPic).crossFade().into(bgImg);
-            } else {
-                loadBingPic();
-            }
+        CardView card_modify = (CardView) findViewById(R.id.card_modify);
+        CardView card_delete = (CardView) findViewById(R.id.card_delete);
 
-        }
-
-        bgImg.setOnLongClickListener(new View.OnLongClickListener() {
+        card_modify.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                final String[] stringItems = {"分享", "编辑", "删除"};
-                final ActionSheetDialog dialog = new ActionSheetDialog(MemoryDetailActivity.this, stringItems, null);
-                dialog.isTitleShow(false).show();
-                dialog.setOnOperItemClickL(new OnOperItemClickL() {
-                    @Override
-                    public void onOperItemClick(AdapterView<?> parent, View view, int pid, long id) {
-                        switch (pid) {
-                            case 0:
-                                Toast.makeText(getApplicationContext(), "分享", Toast.LENGTH_SHORT).show();
-                                break;
-                            case 1:
-                                modifyItem(position);
-                                break;
-                            case 2:
-                                Toast.makeText(getApplicationContext(), "删除", Toast.LENGTH_SHORT).show();
-                                deleteItem(position);
-                                break;
-                        }
-                        dialog.dismiss();
-                    }
-                });
-
-                return true;
+            public void onClick(View v) {
+                modifyItem(position);
+            }
+        });
+        card_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItem(position);
             }
         });
     }
@@ -162,30 +121,6 @@ public class MemoryDetailActivity extends SwipeBackActivity {
         startActivity(intent);
     }
 
-    //加载每日一图
-    private void loadBingPic() {
-        String requestBingPic = "http://120.25.88.41/just/img";
-        HttpUtil.sendHttpRequest(requestBingPic, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String head_pic = response.body().string();
-                SpUtils.putString(MemoryDetailActivity.this, AppConstants.HEAD_PIC_URL, head_pic);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "run: ");
-                        Glide.with(MemoryDetailActivity.this).load(head_pic).into(bgImg);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     //判断两个时间段内的天数差
     private String daysOfTwo_2(String day1, String day2) {
         try {
@@ -199,7 +134,7 @@ public class MemoryDetailActivity extends SwipeBackActivity {
             if (days < 0) {
                 days = days * (-1);
             } else if (days == 0) {
-                tv_days.setText("DAY");
+                tv_days.setText("天");
             }
             return (days + "");
         } catch (ParseException e) {

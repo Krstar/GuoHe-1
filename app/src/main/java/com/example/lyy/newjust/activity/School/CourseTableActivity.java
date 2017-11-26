@@ -53,6 +53,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 
@@ -67,9 +68,8 @@ import shortbread.Shortcut;
 
 @Shortcut(id = "course", icon = R.drawable.ic_menu_coursetable, shortLabel = "查课表")
 public class CourseTableActivity extends SwipeBackActivity {
-    private static CourseTableActivity courseTableActivity;
 
-    private ProgressDialog dialog;
+    private static CourseTableActivity courseTableActivity;
 
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
@@ -78,14 +78,13 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     private CourseTableView courseTableView;
 
+    private ProgressDialog mProgressDialog;
+
     private Uri imageUri;
 
     private ImageView iv_course_table;
 
     private String bg_course_64;
-
-    private String choose_year;
-    private int week;
 
     private int color[] = {
             R.drawable.course_info_blue,
@@ -110,37 +109,11 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     private List<String> all_year_list;
 
-    Handler current_course_handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    dialog.dismiss();
-                    String weekNum = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK);
-                    if (weekNum != null) {
-                        tv_course_table_toolbar.setText("第" + weekNum + "周");
-                    }
-                    showCurrentCourseTable();
-                    break;
-            }
-        }
-    };
+    private String stu_id;
+    private String stu_pass;
+    private String current_year;
 
-    Handler all_course_handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 2:
-                    dialog.dismiss();
-                    String weekNum = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK);
-                    if (weekNum != null) {
-                        tv_course_table_toolbar.setText("第" + weekNum + "周");
-                    }
-                    showCourseTable();
-                    break;
-            }
-        }
-    };
+    private String server_week;     //服务器当前周
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,14 +142,6 @@ public class CourseTableActivity extends SwipeBackActivity {
 
         tv_course_table_toolbar = (TextView) findViewById(R.id.tv_course_table_toolbar);
 
-        requestXiaoLi();    //发送查询校历的请求
-
-        String weekNum = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK);
-        if (weekNum != null) {
-            tv_course_table_toolbar.setText("第" + weekNum + "周");
-            //判断是否存在本地周数，如果没有，就把服务器上的当前周保存
-        }
-
         //初始化课表的背景
         iv_course_table = (ImageView) findViewById(R.id.iv_course_table);
         bg_course_64 = SpUtils.getString(getApplicationContext(), AppConstants.BG_COURSE_64);
@@ -200,15 +165,43 @@ public class CourseTableActivity extends SwipeBackActivity {
             }
         });
 
-        showCurrentCourseTable();
+        mProgressDialog = new ProgressDialog(CourseTableActivity.this);
+        mProgressDialog.setMessage("课表导入中,请稍后……");
+        mProgressDialog.setCancelable(true);
+        mProgressDialog.setCanceledOnTouchOutside(true);
+
+        stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+        stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+
+        server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_WEEK);
+        if (server_week != null) {
+            tv_course_table_toolbar.setText("第" + server_week + "周");
+        }
+
+        boolean first_open_course = SpUtils.getBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
+        if (first_open_course == false) {
+            requestXiaoLi();
+            SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, true);
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+            if (weekday == 2) {
+                requestXiaoLi();
+            } else {
+                showCourseTable(server_week);
+            }
+        }
     }
 
     //发送查询校历的请求
     private void requestXiaoLi() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog.show();
+            }
+        });
         String url = UrlUtil.XIAO_LI;
-
-        String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
         final RequestBody requestBody = new FormBody.Builder()
                 .add("username", stu_id)
                 .add("password", stu_pass)
@@ -217,228 +210,196 @@ public class CourseTableActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                SpUtils.putBoolean(getApplicationContext(), AppConstants.LOGIN, true);
-                String data = response.body().string();
-                if (response.code() == 200) {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    SpUtils.putString(getApplicationContext(), AppConstants.XIAO_LI, data);
                     try {
                         JSONObject object = new JSONObject(data);
                         //获取当前周数
-                        String weekNum = object.getString("weekNum");
-                        //获取今天是周几
-                        String week = object.getString("week");
+                        server_week = object.getString("weekNum");
                         //获取这个学生所有的学年
                         JSONArray jsonArray = object.getJSONArray("all_year");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             all_year_list.add(jsonArray.get(i).toString());
                         }
+                        current_year = all_year_list.get(0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tv_course_table_toolbar.setText("第" + server_week + "周");
+                    }
+                });
+                SpUtils.putString(getApplicationContext(), AppConstants.SERVER_WEEK, server_week);
+                requestCourseInfo(current_year);
+            }
+        });
+    }
 
-                        if (weekNum != null && week != null) {
-                            SpUtils.putString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK, weekNum);
-                            SpUtils.putString(getApplicationContext(), AppConstants.TODAY, week);
+    //获取所有周的课表信息
+    private void requestCourseInfo(final String year) {
+        String url = UrlUtil.ALL_COURSE;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("username", stu_id)
+                .add("password", stu_pass)
+                .add("semester", year)
+                .build();
 
-                            if (SpUtils.getString(getApplicationContext(), AppConstants.LOCAL_CURRENT_WEEK) == null) {
-                                SpUtils.putString(getApplicationContext(), AppConstants.LOCAL_CURRENT_WEEK, weekNum);
+        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    try {
+                        JSONArray jsonArray = new JSONArray(data);
+                        for (int k = 1; k <= jsonArray.length(); k++) {
+                            JSONObject object = jsonArray.getJSONObject(k - 1);
+                            Log.d(TAG, "onResponse: " + object);
+                            JSONArray innerArray = object.getJSONArray(year + "_" + k);
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject monday = innerArray.getJSONObject(i);
+                                if (!monday.getString("monday").equals("")) {
+                                    DBCourse course = new DBCourse();
+                                    course.setDay(1);
+                                    course.setJieci((i * 2) + 1);
+                                    course.setZhouci(k);
+                                    course.setDes(monday.getString("monday"));
+                                    course.save();
+                                }
+                            }
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject tuesday = innerArray.getJSONObject(i);
+                                if (!tuesday.getString("tuesday").equals("")) {
+                                    DBCourse course = new DBCourse();
+                                    course.setDay(2);
+                                    course.setJieci((i * 2) + 1);
+                                    course.setZhouci(k);
+                                    course.setDes(tuesday.getString("tuesday"));
+                                    course.save();
+                                }
+                            }
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject wednesday = innerArray.getJSONObject(i);
+                                if (!wednesday.getString("wednesday").equals("")) {
+                                    DBCourse course = new DBCourse();
+                                    course.setDay(3);
+                                    course.setZhouci(k);
+                                    course.setJieci((i * 2) + 1);
+                                    course.setDes(wednesday.getString("wednesday"));
+                                    course.save();
+                                }
+                            }
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject thursday = innerArray.getJSONObject(i);
+                                if (!thursday.getString("thursday").equals("")) {
+                                    DBCourse course = new DBCourse();
+                                    course.setDay(4);
+                                    course.setJieci((i * 2) + 1);
+                                    course.setZhouci(k);
+                                    course.setDes(thursday.getString("thursday"));
+                                    course.save();
+                                }
+                            }
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject friday = innerArray.getJSONObject(i);
+                                if (!friday.getString("friday").equals("")) {
+                                    DBCourse course = new DBCourse();
+                                    course.setDay(5);
+                                    course.setJieci((i * 2) + 1);
+                                    course.setZhouci(k);
+                                    course.setDes(friday.getString("friday"));
+                                    course.save();
+                                }
+                            }
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject saturday = innerArray.getJSONObject(i);
+                                if (!saturday.getString("saturday").equals("")) {
+                                    DBCourse course = new DBCourse();
+                                    course.setDay(6);
+                                    course.setJieci((i * 2) + 1);
+                                    course.setZhouci(k);
+                                    course.setDes(saturday.getString("saturday"));
+                                    course.save();
+                                }
+                            }
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject sunday = innerArray.getJSONObject(i);
+                                if (!sunday.getString("sunday").equals("")) {
+                                    DBCourse course = new DBCourse();
+                                    course.setDay(7);
+                                    course.setJieci((i * 2) + 1);
+                                    course.setZhouci(k);
+                                    course.setDes(sunday.getString("sunday"));
+                                    course.save();
+                                }
                             }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing()) {
+                                mProgressDialog.dismiss();
+                            }
+                            showCourseTable(server_week);
+                        }
+                    });
+
                 }
             }
         });
     }
 
-    //显示当前周课表
-    private void showCurrentCourseTable() {
-        List<Course> list = new ArrayList<>();
-
-        List<DBCurrentCourse> courseList = DataSupport.findAll(DBCurrentCourse.class);
-
-        List<String> stringList = new ArrayList<>();
-
-        String local_week = SpUtils.getString(getApplicationContext(), AppConstants.LOCAL_CURRENT_WEEK);
-        String server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK);
-
-        if (courseList.size() != 0) {
-            Log.d(TAG, "showCurrentCourseTable: " + local_week);
-            Log.d(TAG, "showCurrentCourseTable: " + server_week);
-            if (local_week.equals(server_week)) {
-                for (DBCurrentCourse dbCurrentCourse : courseList) {
-                    stringList.add(dbCurrentCourse.getDes());
-                }
-
-                List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(stringList));
-
-                for (DBCurrentCourse dbCurrentCourse : courseList) {
-                    Course course = new Course();
-                    if (dbCurrentCourse.getDes().length() > 3) {
-                        Log.d(TAG, "onCreate: " + dbCurrentCourse.getDes());
-                        course.setDay(dbCurrentCourse.getDay());
-                        course.setJieci(dbCurrentCourse.getJieci());
-                        course.setDes(dbCurrentCourse.getDes());
-                        course.setBg_Color(color[listWithoutDup.indexOf(dbCurrentCourse.getDes())]);
-                        list.add(course);
-                    }
-                }
-                courseTableView.updateCourseViews(list);
-            } else {
-                dialog = new ProgressDialog(CourseTableActivity.this);
-                dialog.setMessage("正在导入课表...");
-                dialog.setCancelable(true);
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
-
-                SpUtils.putString(getApplicationContext(), AppConstants.LOCAL_CURRENT_WEEK, SpUtils.getString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK));
-
-                new RequestCurrentCourseThread().start();
-            }
-        } else {
-            dialog = new ProgressDialog(CourseTableActivity.this);
-            dialog.setMessage("正在导入课表...");
-            dialog.setCancelable(true);
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.show();
-
-            new RequestCurrentCourseThread().start();
-        }
-    }
-
     //显示课表
-    private void showCourseTable() {
+    private void showCourseTable(final String week) {
         List<Course> list = new ArrayList<>();
 
-        List<DBCourse> courseList = DataSupport.findAll(DBCourse.class);
+        List<DBCourse> courseList = DataSupport.where("zhouci = ? ", week).find(DBCourse.class);
 
         List<String> stringList = new ArrayList<>();
 
-        String local_week = SpUtils.getString(getApplicationContext(), AppConstants.LOCAL_CURRENT_WEEK);
-        String server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK);
-
         if (courseList.size() != 0) {
-            if (local_week.equals(server_week)) {
-                for (DBCourse dbCourse : courseList) {
-                    stringList.add(dbCourse.getDes());
-                }
-
-                List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(stringList));
-
-                for (DBCourse dbCourse : courseList) {
-                    Course course = new Course();
-                    if (dbCourse.getDes().length() > 3) {
-                        Log.d(TAG, "onCreate: " + dbCourse.getDes());
-                        course.setDay(dbCourse.getDay());
-                        course.setJieci(dbCourse.getJieci());
-                        course.setDes(dbCourse.getDes());
-                        course.setBg_Color(color[listWithoutDup.indexOf(dbCourse.getDes())]);
-                        list.add(course);
-                    }
-                }
-                courseTableView.updateCourseViews(list);
-            } else {
-                dialog = new ProgressDialog(CourseTableActivity.this);
-                dialog.setMessage("正在导入课表...");
-                dialog.setCancelable(true);
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
-
-                new RequestCurrentCourseThread().start();
+            for (DBCourse dbCourse : courseList) {
+                stringList.add(dbCourse.getDes());
             }
-        } else {
-            dialog = new ProgressDialog(CourseTableActivity.this);
-            dialog.setMessage("正在导入课表...");
-            dialog.setCancelable(true);
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.show();
 
-            new RequestCurrentCourseThread().start();
-        }
-    }
+            List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(stringList));
 
-    class RequestCurrentCourseThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                requestCurrentCourseInfo();
-                try {
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            for (DBCourse dbCourse : courseList) {
+                Course course = new Course();
+                if (dbCourse.getDes().length() > 3) {
+                    course.setDay(dbCourse.getDay());
+                    course.setJieci(dbCourse.getJieci());
+                    course.setDes(dbCourse.getDes());
+                    course.setBg_Color(color[listWithoutDup.indexOf(dbCourse.getDes())]);
+                    list.add(course);
                 }
-                current_course_handler.sendEmptyMessage(1);
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-    }
+            courseTableView.updateCourseViews(list);
 
-    class RequestAllCourseThread extends Thread {
-
-        @Override
-        public void run() {
-            try {
-                requestCourseInfo(choose_year, week);
-                try {
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mProgressDialog.isShowing())
+                        mProgressDialog.dismiss();
                 }
-                all_course_handler.sendEmptyMessage(2);
+            });
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    //显示单选dialog
-    int yourChoice;
-
-    private void showSingleChoiceDialog() {
-        if (all_year_list.size() != 0) {
-            final String[] items = new String[all_year_list.size()];
-            for (int i = 0; i < all_year_list.size(); i++) {
-                items[i] = all_year_list.get(i);
-            }
-            yourChoice = 0;
-            AlertDialog.Builder singleChoiceDialog =
-                    new AlertDialog.Builder(CourseTableActivity.this);
-            singleChoiceDialog.setTitle("选择学年");
-            // 第二个参数是默认选项，此处设置为0
-            singleChoiceDialog.setSingleChoiceItems(items, 0,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            yourChoice = which;
-                        }
-                    });
-            singleChoiceDialog.setPositiveButton("确定",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface radio_dialog, int which) {
-                            if (yourChoice != -1) {
-                                DataSupport.deleteAll(DBCurrentCourse.class);
-                                DataSupport.deleteAll(DBCourse.class);
-                                dialog = new ProgressDialog(CourseTableActivity.this);
-                                dialog.setMessage("正在导入课表...");
-                                dialog.setCancelable(true);
-                                dialog.setCanceledOnTouchOutside(true);
-                                dialog.show();
-                                String this_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_THIS_WEEK);
-                                choose_year = items[yourChoice];
-                                week = Integer.parseInt(this_week);
-                                new RequestAllCourseThread().start();
-                            }
-                        }
-                    });
-            singleChoiceDialog.show();
-        } else {
-            Toast.makeText(getApplicationContext(), "暂未获取到你的所有学年，请退出后重试", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -480,11 +441,22 @@ public class CourseTableActivity extends SwipeBackActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_change_week:
+                showWeekChoiceDialog();
+                break;
             case R.id.action_update_course:
-
+                DataSupport.deleteAll(DBCourse.class);
+                SpUtils.remove(getApplicationContext(), AppConstants.SERVER_WEEK);
+                SpUtils.remove(getApplicationContext(), AppConstants.XIAO_LI);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        requestXiaoLi();
+                    }
+                });
                 break;
             case R.id.action_change_year:
-                showSingleChoiceDialog();
+                showSchoolYearChoiceDialog();
                 break;
             case R.id.action_change_background:
                 final String[] stringItems = {"拍照", "从相册中选择", "重置为默认"};
@@ -570,219 +542,100 @@ public class CourseTableActivity extends SwipeBackActivity {
         MobclickAgent.onPause(this);
     }
 
-    //获取当前周的课表信息
-    private void requestCurrentCourseInfo() {
-
-        requestXiaoLi();
-
-        String url = UrlUtil.CURRENT_COURSE;
-
-        String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
-        final RequestBody requestBody = new FormBody.Builder()
-                .add("username", stu_id)
-                .add("password", stu_pass)
-                .build();
-
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Looper.prepare();
-                Toast.makeText(AndroidApplication.getContext(), "服务器异常，请稍后重试", Toast.LENGTH_LONG).show();
-                Looper.loop();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    try {
-                        JSONArray innerArray = new JSONArray(data);
-
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject monday = innerArray.getJSONObject(i);
-                            if (!monday.getString("monday").equals("")) {
-                                DBCurrentCourse course = new DBCurrentCourse();
-                                course.setDay(1);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(monday.getString("monday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject tuesday = innerArray.getJSONObject(i);
-                            if (!tuesday.getString("tuesday").equals("")) {
-                                DBCurrentCourse course = new DBCurrentCourse();
-                                course.setDay(2);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(tuesday.getString("tuesday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject wednesday = innerArray.getJSONObject(i);
-                            if (!wednesday.getString("wednesday").equals("")) {
-                                DBCurrentCourse course = new DBCurrentCourse();
-                                course.setDay(3);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(wednesday.getString("wednesday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject thursday = innerArray.getJSONObject(i);
-                            if (!thursday.getString("thursday").equals("")) {
-                                DBCurrentCourse course = new DBCurrentCourse();
-                                course.setDay(4);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(thursday.getString("thursday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject friday = innerArray.getJSONObject(i);
-                            if (!friday.getString("friday").equals("")) {
-                                DBCurrentCourse course = new DBCurrentCourse();
-                                course.setDay(5);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(friday.getString("friday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject saturday = innerArray.getJSONObject(i);
-                            if (!saturday.getString("saturday").equals("")) {
-                                DBCurrentCourse course = new DBCurrentCourse();
-                                course.setDay(6);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(saturday.getString("saturday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject sunday = innerArray.getJSONObject(i);
-                            if (!sunday.getString("sunday").equals("")) {
-                                DBCurrentCourse course = new DBCurrentCourse();
-                                course.setDay(7);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(sunday.getString("sunday"));
-                                course.save();
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mProgressDialog.isShowing())
+            mProgressDialog.dismiss();
     }
 
-    //获取所有周的课表信息
-    private void requestCourseInfo(final String year, final int this_week) {
-        String url = UrlUtil.ALL_COURSE;
-        String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("username", stu_id)
-                .add("password", stu_pass)
-                .add("semester", year)
-                .build();
+    //显示单选dialog
+    int yearChoice;
 
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
+    private void showSchoolYearChoiceDialog() {
+        String xiaoli = SpUtils.getString(getApplicationContext(), AppConstants.XIAO_LI);
+        try {
+            JSONObject object = new JSONObject(xiaoli);
+            JSONArray jsonArray = object.getJSONArray("all_year");
+            //获取当前周数
+            server_week = object.getString("weekNum");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                all_year_list.add(jsonArray.get(i).toString());
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Log.d(TAG, "onResponse: " + data);
-                    try {
-                        JSONArray jsonArray = new JSONArray(data);
-                        JSONObject object = jsonArray.getJSONObject(this_week - 1);
-                        JSONArray innerArray = object.getJSONArray(year + "_" + this_week);
+        tv_course_table_toolbar.setText("第" + server_week + "周");
+        List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(all_year_list));
 
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject monday = innerArray.getJSONObject(i);
-                            if (!monday.getString("monday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(1);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(monday.getString("monday"));
-                                course.save();
-                            }
-
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject tuesday = innerArray.getJSONObject(i);
-                            if (!tuesday.getString("tuesday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(2);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(tuesday.getString("tuesday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject wednesday = innerArray.getJSONObject(i);
-                            if (!wednesday.getString("wednesday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(3);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(wednesday.getString("wednesday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject thursday = innerArray.getJSONObject(i);
-                            if (!thursday.getString("thursday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(4);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(thursday.getString("thursday"));
-                                course.save();
-                            }
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject friday = innerArray.getJSONObject(i);
-                            if (!friday.getString("friday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(5);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(friday.getString("friday"));
-                                course.save();
-                            }
-
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject saturday = innerArray.getJSONObject(i);
-                            if (!saturday.getString("saturday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(6);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(saturday.getString("saturday"));
-                                course.save();
-                            }
-
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            JSONObject sunday = innerArray.getJSONObject(i);
-                            if (!sunday.getString("sunday").equals("")) {
-                                DBCourse course = new DBCourse();
-                                course.setDay(7);
-                                course.setJieci((i * 2) + 1);
-                                course.setDes(sunday.getString("sunday"));
-                                course.save();
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
+        if (listWithoutDup.size() != 0) {
+            final String[] items = new String[listWithoutDup.size()];
+            for (int i = 0; i < listWithoutDup.size(); i++) {
+                items[i] = listWithoutDup.get(i);
             }
-        });
+            yearChoice = 0;
+            AlertDialog.Builder singleChoiceDialog =
+                    new AlertDialog.Builder(CourseTableActivity.this);
+            singleChoiceDialog.setTitle("选择学年");
+            // 第二个参数是默认选项，此处设置为0
+            singleChoiceDialog.setSingleChoiceItems(items, 0,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            yearChoice = which;
+                        }
+                    });
+            singleChoiceDialog.setPositiveButton("确定",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface radio_dialog, int which) {
+                            if (yearChoice != -1) {
+                                mProgressDialog.setMessage("正在切换中,请稍后...");
+                                mProgressDialog.show();
+                                Log.d(TAG, "onClick: " + items[yearChoice]);
+                                DataSupport.deleteAll(DBCourse.class);
+                                requestCourseInfo(items[yearChoice]);
+                            }
+                        }
+                    });
+            singleChoiceDialog.show();
+        } else {
+            Toast.makeText(getApplicationContext(), "暂未获取到你的所有学年，请退出后重试", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    int weekChoice;
+
+    private void showWeekChoiceDialog() {
+        final String[] items = {"第一周", "第二周", "第三周", "第四周", "第五周", "第六周", "第七周", "第八周", "第九周", "第十周", "第十一周", "第十二周", "第十三周", "第十四周", "第十五周", "第十六周", "第十七周", "第十八周", "第十九周", "第二十周"};
+        weekChoice = 0;
+        AlertDialog.Builder singleChoiceDialog =
+                new AlertDialog.Builder(CourseTableActivity.this);
+        singleChoiceDialog.setTitle("请选择周次");
+        // 第二个参数是默认选项，此处设置为0
+        singleChoiceDialog.setSingleChoiceItems(items, 0,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        weekChoice = which;
+                    }
+                });
+        singleChoiceDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (weekChoice != -1) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tv_course_table_toolbar.setText("第" + (weekChoice + 1) + "周");
+                                    showCourseTable((weekChoice + 1) + "");
+                                }
+                            });
+                        }
+                    }
+                });
+        singleChoiceDialog.show();
+    }
 }

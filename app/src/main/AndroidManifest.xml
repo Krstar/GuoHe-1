@@ -112,7 +112,8 @@
         <activity android:name=".activity.School.AoLanActivity" />
         <activity android:name=".activity.School.NewSubjectActivity" />
         <activity android:name=".activity.School.BookListActivity" />
-        <activity android:name=".activity.School.BookDetailActivity"></activity>
+        <activity android:name=".activity.School.BookDetailActivity" />
+        <activity android:name=".activity.School.ExerciseActivity"></activity>
     </application>
 
 </manifest>

@@ -4,13 +4,12 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,14 +21,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.adapter.Club;
-import com.example.lyy.newjust.adapter.ClubAdapter;
+import com.example.lyy.newjust.adapter.Exercise;
+import com.example.lyy.newjust.adapter.ExerciseAdapter;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
-import com.flyco.animation.Attention.Flash;
-import com.flyco.animation.Attention.Swing;
 import com.flyco.animation.BounceEnter.BounceBottomEnter;
 import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.widget.MaterialDialog;
@@ -50,23 +47,21 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import shortbread.Shortcut;
 
-@Shortcut(id = "club", icon = R.drawable.ic_menu_club, shortLabel = "俱乐部")
-public class ClubActivity extends SwipeBackActivity implements View.OnClickListener {
+public class ExerciseActivity extends SwipeBackActivity implements View.OnClickListener {
 
-    private static final String TAG = "ClubActivity";
+    private static final String TAG = "exerciseActivity";
 
     //定义listView
     private ListView listView;
 
     //定义list
-    List<Club> clubList = new ArrayList<>();
+    List<Exercise> exerciseList = new ArrayList<>();
 
     private ProgressDialog mProgressDialog;
 
-    private TextView tv_club_info;
-    private TextView tv_club_year;
+    private TextView tv_exercise_info;
+    private TextView tv_exercise_year;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -76,7 +71,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         changeStatusBar();
-        setContentView(R.layout.activity_club);
+        setContentView(R.layout.activity_exercise);
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
@@ -86,7 +81,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         mSwipeBackLayout.setEdgeSize(100);
 
         //设置和toolbar相关的
-        Toolbar toolbar = (Toolbar) findViewById(R.id.club_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.exercise_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -94,22 +89,22 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        ImageView club_iv = (ImageView) findViewById(R.id.club_iv);
-        Glide.with(ClubActivity.this).load(R.drawable.bg_sport).into(club_iv);
-        FloatingActionButton club_floating_btn = (FloatingActionButton) findViewById(R.id.club_floating_btn);
-        club_floating_btn.setOnClickListener(this);
+        ImageView exercise_iv = (ImageView) findViewById(R.id.exercise_iv);
+        Glide.with(ExerciseActivity.this).load(R.drawable.bg_sport).into(exercise_iv);
+        FloatingActionButton exercise_floating_btn = (FloatingActionButton) findViewById(R.id.exercise_floating_btn);
+        exercise_floating_btn.setOnClickListener(this);
 
-        requestClubInfo();
+        requestExerciseInfo();
 
-        listView = (ListView) findViewById(R.id.club_list_view);
-        tv_club_info = (TextView) findViewById(R.id.tv_club_info);
-        tv_club_year = (TextView) findViewById(R.id.tv_club_year);
+        listView = (ListView) findViewById(R.id.exercise_list_view);
+        tv_exercise_info = (TextView) findViewById(R.id.tv_exercise_info);
+        tv_exercise_year = (TextView) findViewById(R.id.tv_exercise_year);
 
         initSwipeRefresh();
     }
 
     private void initSwipeRefresh() {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.club_refresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.exercise_refresh);
 
         // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
         // 设置下拉进度的背景颜色，默认就是白色的
@@ -129,29 +124,29 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         swipeRefreshLayout.setOnRefreshListener(listener);
     }
 
-    private void requestClubInfo() {
+    private void requestExerciseInfo() {
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
         String pePass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PE_PASS);
-        mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "俱乐部数据导入中,请稍后……", true, false);
+        mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "俱乐部数据导入中,请稍后……", true, false);
         mProgressDialog.setCancelable(true);
         mProgressDialog.setCanceledOnTouchOutside(true);
         if (pePass != null) {
             request(username, pePass);
         } else {
             mProgressDialog.dismiss();
-            final EditText editText = new EditText(ClubActivity.this);
+            final EditText editText = new EditText(ExerciseActivity.this);
             AlertDialog.Builder inputDialog =
-                    new AlertDialog.Builder(ClubActivity.this);
+                    new AlertDialog.Builder(ExerciseActivity.this);
             inputDialog.setTitle("请输入你的体育学院密码").setView(editText);
             inputDialog.setPositiveButton("确定",
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "密码验证中,请稍后……", true, false);
+                            mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "密码验证中,请稍后……", true, false);
                             mProgressDialog.setCancelable(true);
                             mProgressDialog.setCanceledOnTouchOutside(true);
                             final String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-                            String url = UrlUtil.CLUB_SCORE;
+                            String url = UrlUtil.EXERCISE_SCORE;
                             RequestBody requestBody = new FormBody.Builder()
                                     .add("username", username)
                                     .add("password", editText.getText().toString())
@@ -170,7 +165,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                     if (response.code() == 200) {
                                         Looper.prepare();
                                         mProgressDialog.dismiss();
-                                        mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
+                                        mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "验证成功,请稍后……", true, false);
                                         mProgressDialog.setCancelable(true);
                                         mProgressDialog.setCanceledOnTouchOutside(true);
                                         request(username, editText.getText().toString());
@@ -190,8 +185,8 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
     }
 
     private void request(String username, String pePass) {
-        clubList.clear();
-        String url = UrlUtil.CLUB_SCORE;
+        exerciseList.clear();
+        String url = UrlUtil.EXERCISE_SCORE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
                 .add("password", pePass)
@@ -212,15 +207,9 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                         JSONObject object = array.getJSONObject(0);
                         final String year = object.getString("year");
                         String name = object.getString("name");
-                        String total = object.getString("total");
-                        final String sum = object.getString("sum");
+                        final String total = object.getString("total");
 
-                        SpUtils.putString(getApplicationContext(), "club_info", total);
-
-                        Log.d(TAG, "onResponse: " + year);
-                        Log.d(TAG, "onResponse: " + name);
-                        Log.d(TAG, "onResponse: " + total);
-                        Log.d(TAG, "onResponse: " + sum);
+                        SpUtils.putString(getApplicationContext(), "exercise_info", name + "\n" + total);
 
                         JSONArray innerArray = array.getJSONArray(1);
                         for (int i = 0; i < innerArray.length(); i++) {
@@ -229,21 +218,21 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                             String date = innerObject.getString("date");
                             String time = innerObject.getString("time");
 
-                            Club club = new Club(time, number, date);
-                            clubList.add(club);
+                            Exercise exercise = new Exercise(time, number, date);
+                            exerciseList.add(exercise);
                         }
 
-                        Log.d(TAG, "onCreate: " + clubList.size());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                String temp = sum.substring(sum.indexOf(" ") + 1, sum.lastIndexOf(" "));
-                                tv_club_info.setText(temp.substring(0, temp.indexOf("(")));
                                 String[] s = year.split(" ");
-                                tv_club_year.setText(s[1]);
+                                tv_exercise_year.setText(s[1]);
 
-                                ClubAdapter clubAdapter = new ClubAdapter(ClubActivity.this, R.layout.item_club, clubList);
-                                listView.setAdapter(clubAdapter);
+                                String[] s1 = total.split(" ");
+                                tv_exercise_info.setText(s1[1] + s1[2]);
+
+                                ExerciseAdapter exerciseAdapter = new ExerciseAdapter(ExerciseActivity.this, R.layout.item_exercise, exerciseList);
+                                listView.setAdapter(exerciseAdapter);
                                 mProgressDialog.dismiss();
                             }
                         });
@@ -262,7 +251,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
     }
 
     private void showMaterialDialogDefault(String msg) {
-        final MaterialDialog dialog = new MaterialDialog(ClubActivity.this);
+        final MaterialDialog dialog = new MaterialDialog(ExerciseActivity.this);
         dialog.content(msg)//
                 .btnText("取消", "确定")//
                 .showAnim(new BounceBottomEnter())//
@@ -328,8 +317,8 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.club_floating_btn:
-                String msg = SpUtils.getString(getApplicationContext(), "club_info");
+            case R.id.exercise_floating_btn:
+                String msg = SpUtils.getString(getApplicationContext(), "exercise_info");
                 showMaterialDialogDefault(msg);
                 break;
         }

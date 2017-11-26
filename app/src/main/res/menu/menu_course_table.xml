@@ -7,6 +7,11 @@
         android:title="@string/action_update_course"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_change_week"
+        android:icon="@drawable/ic_menu_donate"
+        android:title="@string/action_change_week"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_change_year"
         android:icon="@drawable/ic_menu_help"
         android:orderInCategory="100"

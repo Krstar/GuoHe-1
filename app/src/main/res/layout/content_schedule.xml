@@ -32,9 +32,10 @@
                 android:textSize="15sp" />
 
             <TextView
+                android:id="@+id/tv_courses"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="今天有2节课"
+                android:text="查看课程表"
                 android:textSize="14sp" />
 
             <ImageView
@@ -69,8 +70,20 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/now_course_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:padding="5dp"
+                            android:text="没课"
+                            android:textColor="@color/material_black_1000"
+                            android:textSize="20sp" />
 
                     </LinearLayout>
 
@@ -81,8 +94,19 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/now_course_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:padding="5dp"
+                            android:text="没课"
+                            android:textColor="@color/material_black_1000"
+                            android:textSize="20sp" />
 
                     </LinearLayout>
 

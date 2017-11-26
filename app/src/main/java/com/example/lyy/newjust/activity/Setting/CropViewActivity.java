@@ -57,13 +57,13 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
         cropView.setVisibility(View.VISIBLE);
         btnlay.setVisibility(View.VISIBLE);
 
-        if (flag.equals("header")){
+        if (flag.equals("header")) {
             cropView.of(uri).asSquare().initialize(CropViewActivity.this);
-        }else if (flag.equals("course")){
+        } else if (flag.equals("course")) {
             cropView.of(uri)
                     .withAspect(9, 16)
                     .initialize(CropViewActivity.this);
-        }else if (flag.equals("memory")){
+        } else if (flag.equals("memory")) {
             cropView.of(uri)
                     .withAspect(9, 16)
                     .initialize(CropViewActivity.this);
@@ -87,12 +87,10 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
                     croppedBitmap.compress(Bitmap.CompressFormat.PNG, 50, baos);
                     String imageBase64 = new String(Base64.encode(baos.toByteArray(), 0));
 
-                    if (flag.equals("header")){
+                    if (flag.equals("header")) {
                         SpUtils.putString(CropViewActivity.this, AppConstants.IMAGE_BASE_64, imageBase64);
-                    }else if (flag.equals("course")){
+                    } else if (flag.equals("course")) {
                         SpUtils.putString(CropViewActivity.this, AppConstants.BG_COURSE_64, imageBase64);
-                    }else if (flag.equals("memory")){
-                        SpUtils.putString(CropViewActivity.this, AppConstants.BG_MEMORY_64, imageBase64);
                     }
 
                     Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));

@@ -89,41 +89,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="15dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="10dp"
-                android:layout_weight="2"
-                android:text="选择背景图片"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tv_bgPicker"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="4"
-                android:gravity="center"
-                android:maxLines="2"
-                android:text="默认(点击选择)"
-                android:textColor="@color/material_blue_200"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/iv_bg_preview"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop" />
 
     </LinearLayout>
 

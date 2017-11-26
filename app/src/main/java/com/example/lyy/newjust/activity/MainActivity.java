@@ -20,6 +20,7 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ import com.example.lyy.newjust.activity.School.AoLanActivity;
 import com.example.lyy.newjust.activity.School.ClassRoomActivity;
 import com.example.lyy.newjust.activity.School.ClubActivity;
 import com.example.lyy.newjust.activity.School.CourseTableActivity;
+import com.example.lyy.newjust.activity.School.ExerciseActivity;
 import com.example.lyy.newjust.activity.School.LibraryActivity;
 import com.example.lyy.newjust.activity.School.NewSubjectActivity;
 import com.example.lyy.newjust.activity.School.SchoolBusActivity;
@@ -58,6 +60,7 @@ import com.example.lyy.newjust.activity.Tools.EMSActivity;
 import com.example.lyy.newjust.activity.Tools.EipActivity;
 import com.example.lyy.newjust.activity.Tools.OCRActivity;
 import com.example.lyy.newjust.activity.Tools.TranslateActivity;
+import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.gson.Weather;
 import com.example.lyy.newjust.service.AlarmService;
 import com.example.lyy.newjust.util.AppConstants;
@@ -73,8 +76,14 @@ import com.nightonke.boommenu.BoomMenuButton;
 import com.umeng.analytics.MobclickAgent;
 import com.yalantis.taurus.PullToRefreshView;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -161,6 +170,87 @@ public class MainActivity extends AppCompatActivity
             setNotification();
         } else {
             cancelNotification();
+        }
+
+        show_course_number();
+        show_now_course();
+    }
+
+    private void show_now_course() {
+        TextView now_course_1 = (TextView) findViewById(R.id.now_course_1);
+        TextView now_course_2 = (TextView) findViewById(R.id.now_course_2);
+
+        Calendar calendar = Calendar.getInstance();
+        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        int[] a = new int[]{0, 7, 1, 2, 3, 4, 5, 6};
+
+        String server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_WEEK);
+        Log.d(TAG, "show_now_course: " + server_week);
+        if (server_week != null) {
+            List<DBCourse> courseList = DataSupport.where("zhouci = ? ", server_week).find(DBCourse.class);
+            for (int i = 0; i < courseList.size(); i++) {
+                if (courseList.get(i).getDes().length() > 5 && courseList.get(i).getDay() == a[weekday]) {
+                    if (hour < 12 && hour > 0) {
+                        if (courseList.get(i).getJieci() == 1) {
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
+                            now_course_1.setText(courseList.get(i).getDes());
+                        } else if (courseList.get(i).getJieci() == 3) {
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
+                            now_course_2.setText(courseList.get(i).getDes());
+                        }
+                    } else if (hour > 12 && hour < 18) {
+                        if (courseList.get(i).getJieci() == 5) {
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
+                            now_course_1.setText(courseList.get(i).getDes());
+                        } else if (courseList.get(i).getJieci() == 7) {
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
+                            now_course_2.setText(courseList.get(i).getDes());
+                        }
+                    } else if (hour > 19 && hour < 24) {
+                        if (courseList.get(i).getJieci() == 9) {
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
+                            now_course_1.setText(courseList.get(i).getDes());
+                        } else if (courseList.get(i).getJieci() == 11) {
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
+                            now_course_2.setText(courseList.get(i).getDes());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //显示今天有多少节课
+    private void show_course_number() {
+        TextView tv_courses = (TextView) findViewById(R.id.tv_courses);
+
+        Calendar calendar = Calendar.getInstance();
+        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+
+        int[] a = new int[]{0, 7, 1, 2, 3, 4, 5, 6};
+
+        List<String> stringList = new ArrayList<>();
+        List<String> listWithoutDup = new ArrayList<>();
+
+        String server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_WEEK);
+        if (server_week != null) {
+            List<DBCourse> courseList = DataSupport.where("zhouci = ? ", server_week).find(DBCourse.class);
+            for (int i = 0; i < courseList.size(); i++) {
+                if (courseList.get(i).getDes().length() > 5 && courseList.get(i).getDay() == a[weekday]) {
+                    stringList.add(courseList.get(i).getDes());
+                }
+            }
+            listWithoutDup = new ArrayList<String>(new HashSet<String>(stringList));
+            Log.d(TAG, "show_course_number: " + listWithoutDup.size());
+            Log.d(TAG, "show_course_number: " + listWithoutDup);
+        }
+
+        if (listWithoutDup.size() == 0) {
+            tv_courses.setText("今天没有课哦");
+        } else {
+            tv_courses.setText("今天有" + listWithoutDup.size() + "节课");
         }
     }
 
@@ -522,10 +612,13 @@ public class MainActivity extends AppCompatActivity
                 Intent todo_intent = new Intent(MainActivity.this, ToDoActivity.class);
                 startActivity(todo_intent);
                 break;
-
-            case R.id.nav_pe:
-                Intent peIntent = new Intent(MainActivity.this, ClubActivity.class);
-                startActivity(peIntent);
+            case R.id.nav_exercise:
+                Intent exerciseIntent = new Intent(MainActivity.this, ExerciseActivity.class);
+                startActivity(exerciseIntent);
+                break;
+            case R.id.nav_club:
+                Intent clubIntent = new Intent(MainActivity.this, ClubActivity.class);
+                startActivity(clubIntent);
                 break;
 
             case R.id.nav_setting:

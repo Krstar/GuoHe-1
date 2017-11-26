@@ -20,6 +20,8 @@ public class UrlUtil {
 
     public static final String CLUB_SCORE = "http://120.25.88.41/vpnSport";       //查询俱乐部的刷卡时间
 
+    public static final String EXERCISE_SCORE = "http://120.25.88.41/vpnRun";         //查询早操的刷卡时间
+
     public static final String XIAO_LI = "http://120.25.88.41/xiaoli";            //查询校历
 
     public static final String CURRENT_COURSE = "http://120.25.88.41/currentKebiao";  //查询当前周的课表

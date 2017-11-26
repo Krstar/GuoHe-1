@@ -235,6 +235,8 @@ public class SubjectsActivity extends SwipeBackActivity {
     //发出分数查询的请求
     private void searchScoreRequest() {
         mProgressDialog = ProgressDialog.show(SubjectsActivity.this, null, "成绩导入中,请稍后……", true, false);
+        mProgressDialog.setCanceledOnTouchOutside(true);
+        mProgressDialog.setCancelable(true);
         String url = UrlUtil.STU_SCORE;
 
         String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);

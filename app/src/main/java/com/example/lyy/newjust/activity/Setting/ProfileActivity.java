@@ -169,6 +169,10 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_NAME);
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_PASS);
                     SpUtils.remove(getApplicationContext(), AppConstants.STU_PE_PASS);
+                    SpUtils.remove(getApplicationContext(), AppConstants.HEAD_PIC_URL);
+                    SpUtils.remove(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
+                    SpUtils.remove(getApplicationContext(), AppConstants.SERVER_WEEK);
+                    SpUtils.remove(getApplicationContext(), AppConstants.XIAO_LI);
                     DataSupport.deleteAll(DBCourse.class);
                     DataSupport.deleteAll(DBCurrentCourse.class);
 
