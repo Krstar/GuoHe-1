@@ -39,12 +39,6 @@
         <item name="material_purple_100">#E1BEE7</item>
         <item name="material_purple_200">#CE93D8</item>
         <item name="material_purple_300">#BA68C8</item>
-        <item name="material_purple_400">#AB47BC</item>
-        <item name="material_purple_500">#9C27B0</item>
-        <item name="material_purple_600">#8E24AA</item>
-        <item name="material_purple_700">#7B1FA2</item>
-        <item name="material_purple_800">#6A1B9A</item>
-        <item name="material_purple_900">#4A148C</item>
         <item name="material_purple_A100">#EA80FC</item>
         <item name="material_purple_A200">#E040FB</item>
         <item name="material_purple_A400">#D500F9</item>
@@ -54,9 +48,6 @@
         <item name="material_deep_purple_300">#9575CD</item>
         <item name="material_deep_purple_400">#7E57C2</item>
         <item name="material_deep_purple_500">#673AB7</item>
-        <item name="material_deep_purple_600">#5E35B1</item>
-        <item name="material_deep_purple_700">#512DA8</item>
-        <item name="material_deep_purple_800">#4527A0</item>
         <item name="material_deep_purple_900">#311B92</item>
         <item name="material_deep_purple_A100">#B388FF</item>
         <item name="material_deep_purple_A200">#7C4DFF</item>

@@ -93,12 +93,7 @@ public class OneActivity extends SwipeBackActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (webView.canGoBack()){
-                    webView.goBack();
-                }else {
-                    webView.clearCache(true);
-                    this.finish();
-                }
+                this.finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

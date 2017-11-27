@@ -249,8 +249,8 @@ public class SubjectsActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                mProgressDialog.dismiss();
-
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
                 Looper.prepare();
                 Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
                 Looper.loop();
@@ -260,14 +260,25 @@ public class SubjectsActivity extends SwipeBackActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseText = response.body().string();
-                    handleScoreResponse(responseText);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressDialog.dismiss();
-                        }
-                    });
+                    switch (responseText) {
+                        case "\"\\u672a\\u8bc4\\u4ef7\"":
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), "你还没有评教", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                            break;
+                        case "\"\\u6ca1\\u6709\\u6210\\u7ee9\"":
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), "你还没有成绩", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                            break;
+                        default:
+                            handleScoreResponse(responseText);
+                            break;
+                    }
                 }
             }
         });
@@ -304,7 +315,6 @@ public class SubjectsActivity extends SwipeBackActivity {
                 showLeftScoreResult();
             }
         });
-
     }
 
     //显示考试课结果
@@ -374,6 +384,7 @@ public class SubjectsActivity extends SwipeBackActivity {
             case R.id.action_switch:
                 Intent in = new Intent(SubjectsActivity.this, NewSubjectActivity.class);
                 startActivity(in);
+                finish();
                 break;
         }
         return true;

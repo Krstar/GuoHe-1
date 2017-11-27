@@ -82,7 +82,7 @@
                             android:gravity="center"
                             android:padding="5dp"
                             android:text="没课"
-                            android:textColor="@color/material_black_1000"
+                            android:textColor="@color/material_grey_700"
                             android:textSize="20sp" />
 
                     </LinearLayout>
@@ -105,7 +105,7 @@
                             android:gravity="center"
                             android:padding="5dp"
                             android:text="没课"
-                            android:textColor="@color/material_black_1000"
+                            android:textColor="@color/material_grey_700"
                             android:textSize="20sp" />
 
                     </LinearLayout>

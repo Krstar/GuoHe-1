@@ -1,0 +1,48 @@
+{
+    "logs": [
+        {
+            "outputFile": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\library\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values-w600dp-v13\\values-w600dp-v13.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-22.2.0.aar\\6b718b78b83c2bc2b4d194ea078d0c83\\res\\values-w600dp\\values-w600dp.xml",
+                    "from": {
+                        "startLines": "4,5",
+                        "startColumns": "4,4",
+                        "startOffsets": "294,358",
+                        "endColumns": "63,54",
+                        "endOffsets": "353,408"
+                    },
+                    "to": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,119",
+                        "endColumns": "63,54",
+                        "endOffsets": "114,169"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\library\\build\\intermediates\\res\\merged\\androidTest\\debug\\values-w600dp-v13\\values-w600dp-v13.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-22.2.0.aar\\6b718b78b83c2bc2b4d194ea078d0c83\\res\\values-w600dp\\values-w600dp.xml",
+                    "from": {
+                        "startLines": "4,5",
+                        "startColumns": "4,4",
+                        "startOffsets": "294,358",
+                        "endColumns": "63,54",
+                        "endOffsets": "353,408"
+                    },
+                    "to": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,119",
+                        "endColumns": "63,54",
+                        "endOffsets": "114,169"
+                    }
+                }
+            ]
+        }
+    ]
+}

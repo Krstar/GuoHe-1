@@ -22,6 +22,14 @@
             android:textSize="23sp" />
     </android.support.v7.widget.Toolbar>
 
+    <TextView
+        android:id="@+id/tv_may_hidden"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/material_grey_700"
+        android:textSize="20sp" />
+
     <lib.homhomlib.design.SlidingLayout
         android:id="@+id/slideLayout"
         android:layout_width="match_parent"

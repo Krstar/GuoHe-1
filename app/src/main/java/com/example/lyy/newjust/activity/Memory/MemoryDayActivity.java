@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.text.format.Time;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -69,7 +70,7 @@ public class MemoryDayActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory_day);
 
-        StatusBarCompat.setStatusBarColor(this, Color.rgb(255,255,255));
+        StatusBarCompat.setStatusBarColor(this, Color.rgb(255, 255, 255));
 
         colors = this.getResources().getStringArray(R.array.color_arr);
 
@@ -245,6 +246,14 @@ public class MemoryDayActivity extends SwipeBackActivity {
         memoryList.clear();
         String today = year + "年" + (month + 1) + "月" + date + "日";
         dbMemoryList = DataSupport.findAll(DBMemory.class);
+
+        TextView tv_may_hidden = (TextView) findViewById(R.id.tv_may_hidden);
+        if (dbMemoryList.size() == 0) {
+            tv_may_hidden.setText("还没有记录重要的日子\n\n点击右上角添加一个吧");
+        } else {
+            tv_may_hidden.setVisibility(View.GONE);
+        }
+
         for (DBMemory dbMemory : dbMemoryList) {
             int i = (int) (Math.random() * 150);
             String daysBetween = daysOfTwo_2(today, dbMemory.getMemory_day());

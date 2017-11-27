@@ -52,6 +52,7 @@ import org.litepal.crud.DataSupport;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -176,20 +177,42 @@ public class CourseTableActivity extends SwipeBackActivity {
         server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_WEEK);
         if (server_week != null) {
             tv_course_table_toolbar.setText("第" + server_week + "周");
-        }
-
-        boolean first_open_course = SpUtils.getBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
-        if (first_open_course == false) {
-            requestXiaoLi();
-            SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, true);
-        } else {
             Calendar calendar = Calendar.getInstance();
             int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+            //判断今天是不是周一
             if (weekday == 2) {
-                requestXiaoLi();
+                //判断是否第一次导入课表，默认false，没有导入课表
+                boolean first_open_course = SpUtils.getBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
+                if (first_open_course) {
+                    Log.d(TAG, "onCreate: " + first_open_course);
+                    requestXiaoLi();
+                    SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
+                } else {
+                    Log.d(TAG, "onCreate: " + first_open_course);
+                    showCourseTable(server_week);
+                }
             } else {
-                showCourseTable(server_week);
+                //判断是否第一次导入课表，默认false，没有导入课表
+                boolean first_open_course = SpUtils.getBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
+                if (first_open_course) {
+                    Log.d(TAG, "onCreate: " + first_open_course);
+                    requestXiaoLi();
+                    SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
+                } else {
+                    Log.d(TAG, "onCreate: " + first_open_course);
+                    showCourseTable(server_week);
+                }
             }
+
+            List<DBCourse> dbCourses = DataSupport.findAll(DBCourse.class);
+            if (dbCourses.size() == 0) {
+                requestXiaoLi();
+                SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
+            }
+
+        } else {
+            requestXiaoLi();
+            SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
         }
     }
 
@@ -210,7 +233,11 @@ public class CourseTableActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+                Looper.prepare();
+                Toast.makeText(getApplicationContext(), "获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                Looper.loop();
             }
 
             @Override
@@ -239,7 +266,9 @@ public class CourseTableActivity extends SwipeBackActivity {
                     }
                 });
                 SpUtils.putString(getApplicationContext(), AppConstants.SERVER_WEEK, server_week);
-                requestCourseInfo(current_year);
+                if (current_year != null) {
+                    requestCourseInfo(current_year);
+                }
             }
         });
     }
@@ -256,7 +285,11 @@ public class CourseTableActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+                Looper.prepare();
+                Toast.makeText(getApplicationContext(), "获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                Looper.loop();
             }
 
             @Override
@@ -554,55 +587,60 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     private void showSchoolYearChoiceDialog() {
         String xiaoli = SpUtils.getString(getApplicationContext(), AppConstants.XIAO_LI);
-        try {
-            JSONObject object = new JSONObject(xiaoli);
-            JSONArray jsonArray = object.getJSONArray("all_year");
-            //获取当前周数
-            server_week = object.getString("weekNum");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                all_year_list.add(jsonArray.get(i).toString());
+        if (xiaoli != null) {
+            try {
+                JSONObject object = new JSONObject(xiaoli);
+                JSONArray jsonArray = object.getJSONArray("all_year");
+                //获取当前周数
+                server_week = object.getString("weekNum");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    all_year_list.add(jsonArray.get(i).toString());
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        tv_course_table_toolbar.setText("第" + server_week + "周");
-        List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(all_year_list));
+            tv_course_table_toolbar.setText("第" + server_week + "周");
+            List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(all_year_list));
 
-        if (listWithoutDup.size() != 0) {
-            final String[] items = new String[listWithoutDup.size()];
-            for (int i = 0; i < listWithoutDup.size(); i++) {
-                items[i] = listWithoutDup.get(i);
-            }
-            yearChoice = 0;
-            AlertDialog.Builder singleChoiceDialog =
-                    new AlertDialog.Builder(CourseTableActivity.this);
-            singleChoiceDialog.setTitle("选择学年");
-            // 第二个参数是默认选项，此处设置为0
-            singleChoiceDialog.setSingleChoiceItems(items, 0,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            yearChoice = which;
-                        }
-                    });
-            singleChoiceDialog.setPositiveButton("确定",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface radio_dialog, int which) {
-                            if (yearChoice != -1) {
-                                mProgressDialog.setMessage("正在切换中,请稍后...");
-                                mProgressDialog.show();
-                                Log.d(TAG, "onClick: " + items[yearChoice]);
-                                DataSupport.deleteAll(DBCourse.class);
-                                requestCourseInfo(items[yearChoice]);
+            if (listWithoutDup.size() != 0) {
+                final String[] items = new String[listWithoutDup.size()];
+                for (int i = 0; i < listWithoutDup.size(); i++) {
+                    items[i] = listWithoutDup.get(i);
+                }
+                yearChoice = 0;
+                AlertDialog.Builder singleChoiceDialog =
+                        new AlertDialog.Builder(CourseTableActivity.this);
+                singleChoiceDialog.setTitle("选择学年");
+                // 第二个参数是默认选项，此处设置为0
+                singleChoiceDialog.setSingleChoiceItems(items, 0,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                yearChoice = which;
                             }
-                        }
-                    });
-            singleChoiceDialog.show();
+                        });
+                singleChoiceDialog.setPositiveButton("确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface radio_dialog, int which) {
+                                if (yearChoice != -1) {
+                                    mProgressDialog.setMessage("正在切换中,请稍后...");
+                                    mProgressDialog.show();
+                                    Log.d(TAG, "onClick: " + items[yearChoice]);
+                                    DataSupport.deleteAll(DBCourse.class);
+                                    requestCourseInfo(items[yearChoice]);
+                                }
+                            }
+                        });
+                singleChoiceDialog.show();
+            } else {
+                Toast.makeText(getApplicationContext(), "暂未获取到你的所有学年，请退出后重试", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(getApplicationContext(), "暂未获取到你的所有学年，请退出后重试", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "暂未获取你的学年，请点击更新课表后重试", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     int weekChoice;

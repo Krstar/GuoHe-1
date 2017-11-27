@@ -27,13 +27,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.Main.HeadImageActivity"
             android:theme="@style/HeadImageTheme" />
@@ -66,23 +60,12 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".widget.todoWidget.ToDoWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
 
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/todo_widget_info" />
-        </receiver>
         <receiver
             android:name=".util.AlarmReceiver"
             android:process=":remote" />
 
-        <service
-            android:name=".widget.todoWidget.ToDoListViewService"
-            android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <service
             android:name=".service.AlarmService"
             android:enabled="true"
@@ -113,7 +96,48 @@
         <activity android:name=".activity.School.NewSubjectActivity" />
         <activity android:name=".activity.School.BookListActivity" />
         <activity android:name=".activity.School.BookDetailActivity" />
-        <activity android:name=".activity.School.ExerciseActivity"></activity>
+        <activity android:name=".activity.School.ExerciseActivity" />
+        <activity
+            android:name=".activity.Main.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeSplash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".widget.todoWidget.ToDoWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/todo_widget_info" />
+        </receiver>
+
+        <receiver android:name=".widget.memoryWidget.MemoryWidget">
+            <intent-filter>
+                <action android:name="com.example.lyy.CLICK_TO_MEMORY" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/memory_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".widget.memoryWidget.MemoryListService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service
+            android:name=".widget.todoWidget.ToDoListViewService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

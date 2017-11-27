@@ -79,7 +79,7 @@ public class ToDoListViewFactory implements RemoteViewsService.RemoteViewsFactor
         String content = mList.get(position);
         // 创建在当前索引位置要显示的View
         final RemoteViews rv = new RemoteViews(mContext.getPackageName(),
-                R.layout.item_todo_widget);
+                R.layout.item_widget_todo);
 
         // 设置要显示的内容
         rv.setTextViewText(R.id.widget_list_item_tv, content);

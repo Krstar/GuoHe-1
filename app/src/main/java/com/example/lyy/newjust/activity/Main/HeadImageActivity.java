@@ -2,6 +2,7 @@ package com.example.lyy.newjust.activity.Main;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -26,7 +27,6 @@ import es.dmoral.toasty.Toasty;
 
 public class HeadImageActivity extends DraggerActivity {
 
-    private static final String TAG = "HeadImageActivity";
 
     private DraggerView draggerView;
 
@@ -65,6 +65,10 @@ public class HeadImageActivity extends DraggerActivity {
                     public void onOperItemClick(AdapterView<?> parent, View view, int position, long id) {
                         switch (position) {
                             case 0:
+                                bg_imageview.setDrawingCacheEnabled(true);
+                                Bitmap bitmap = bg_imageview.getDrawingCache();//获取imageview中的图像
+                                Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "这是title", "这是description"));
+                                shareImg("果核 - 每日一图", "我的主题", "我的分享内容",uri);
                                 break;
                             case 1:
                                 saveImage(bg_imageview);
@@ -84,6 +88,29 @@ public class HeadImageActivity extends DraggerActivity {
         });
 
         Glide.with(this).load(headPicUrl).diskCacheStrategy(DiskCacheStrategy.ALL).into(bg_imageview);
+    }
+
+    private void shareImg(String dlgTitle, String subject, String content,
+                          Uri uri) {
+        if (uri == null) {
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        if (subject != null && !"".equals(subject)) {
+            intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        }
+        if (content != null && !"".equals(content)) {
+            intent.putExtra(Intent.EXTRA_TEXT, content);
+        }
+
+        // 设置弹出框标题
+        if (dlgTitle != null && !"".equals(dlgTitle)) { // 自定义标题
+            startActivity(Intent.createChooser(intent, dlgTitle));
+        } else { // 系统默认标题
+            startActivity(intent);
+        }
     }
 
     private void saveImage(ImageView imageView) {

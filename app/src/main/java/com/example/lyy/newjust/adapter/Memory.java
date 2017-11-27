@@ -29,7 +29,6 @@ public class Memory {
 //    public Memory(String content, String day) {
 //        this.memory_content = content;
 //        this.memory_day = day;
-//
 //    }
 
     public String getMemory_content() {

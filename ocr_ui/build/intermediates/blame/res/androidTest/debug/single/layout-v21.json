@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_template_icon_group.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\layout-v21\\notification_template_icon_group.xml"
+    },
+    {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_template_custom_big.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\layout-v21\\notification_template_custom_big.xml"
+    },
+    {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_action_tombstone.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\layout-v21\\notification_action_tombstone.xml"
+    },
+    {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_action.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\layout-v21\\notification_action.xml"
+    }
+]

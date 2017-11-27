@@ -570,7 +570,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent1 = new Intent(Intent.ACTION_SEND);
         intent1.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + "http://u5413978.viewer.maka.im/k/L3OW3S5E");
         intent1.setType("text/plain");
-        startActivity(Intent.createChooser(intent1, "i Just"));
+        startActivity(Intent.createChooser(intent1, "果核"));
     }
 
     @Override
@@ -723,7 +723,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(libraryIntent);
                 break;
             case R.id.nav_grade:
-                String show_grade = SpUtils.getString(getApplicationContext(), AppConstants.SHOW_GRADE, "学科");
+                String show_grade = SpUtils.getString(getApplicationContext(), AppConstants.SHOW_GRADE, "学年");
                 if (show_grade.equals("学科")) {
                     Intent gradeIntent = new Intent(MainActivity.this, SubjectsActivity.class);
                     startActivity(gradeIntent);
@@ -754,6 +754,9 @@ public class MainActivity extends AppCompatActivity
             Bitmap bitmap = BitmapFactory.decodeStream(bais);
             civ_header.setImageBitmap(bitmap);
         }
+
+        show_course_number();
+        show_now_course();
     }
 
     public void onPause() {
