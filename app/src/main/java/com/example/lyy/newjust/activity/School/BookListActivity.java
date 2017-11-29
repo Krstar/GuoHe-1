@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.activity.School;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -43,6 +44,8 @@ public class BookListActivity extends SwipeBackActivity {
 
     private static final String TAG = "BookListActivity";
 
+    private Context mContext;
+
     private ListView lv_book_list;
 
     private List<Book> bookList = new ArrayList<>();
@@ -56,6 +59,8 @@ public class BookListActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
         setContentView(R.layout.activity_book_list);
+
+        mContext = this;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
@@ -133,13 +138,22 @@ public class BookListActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Looper.prepare();
-                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试...", Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     try {
@@ -175,6 +189,19 @@ public class BookListActivity extends SwipeBackActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

@@ -1,6 +1,7 @@
 package com.example.lyy.newjust.activity.School;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -49,6 +50,8 @@ public class NewSubjectActivity extends AppCompatActivity {
 
     private static final String TAG = "NewSubjectActivity";
 
+    private Context mContext;
+
     private ListView listView;
     private NiceSpinner spinner_year;
     private ProgressDialog mProgressDialog;
@@ -68,6 +71,8 @@ public class NewSubjectActivity extends AppCompatActivity {
         StatusBarCompat.setStatusBarColor(this, Color.rgb(255, 255, 255));
         setContentView(R.layout.activity_new_subject);
 
+        mContext = this;
+
         //设置和toolbar相关的
         Toolbar toolbar = (Toolbar) findViewById(R.id.new_subject_toolbar);
         setSupportActionBar(toolbar);
@@ -86,8 +91,8 @@ public class NewSubjectActivity extends AppCompatActivity {
         subjectList = new ArrayList<>();
         all_year_list = new ArrayList<>();
 
-        stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        stu_id = SpUtils.getString(mContext, AppConstants.STU_ID);
+        stu_pass = SpUtils.getString(mContext, AppConstants.STU_PASS);
 
         requestXiaoLi();
     }
@@ -110,14 +115,21 @@ public class NewSubjectActivity extends AppCompatActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    SpUtils.putString(getApplicationContext(), AppConstants.XIAO_LI, data);
+                    SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
                     try {
                         JSONObject object = new JSONObject(data);
                         //获取当前周数
@@ -137,6 +149,15 @@ public class NewSubjectActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -191,16 +212,18 @@ public class NewSubjectActivity extends AppCompatActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
-                if (mProgressDialog.isShowing())
-                    mProgressDialog.dismiss();
-                Looper.prepare();
-                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseText = response.body().string();
                     Log.d(TAG, "onResponse: " + responseText);
@@ -209,20 +232,29 @@ public class NewSubjectActivity extends AppCompatActivity {
                             if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
                             Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "你还没有评教", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "你还没有评教", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                             break;
                         case "\"\\u6ca1\\u6709\\u6210\\u7ee9\"":
                             if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
                             Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "你还没有成绩", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "你还没有成绩", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                             break;
                         default:
                             handleScoreResponse(responseText);
                             break;
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -236,7 +268,7 @@ public class NewSubjectActivity extends AppCompatActivity {
             }.getType());
             showAllResult(gSubjectList);
         } else {
-            Toast.makeText(getApplicationContext(), "服务器没有响应", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "服务器没有响应", Toast.LENGTH_SHORT).show();
         }
     }
 

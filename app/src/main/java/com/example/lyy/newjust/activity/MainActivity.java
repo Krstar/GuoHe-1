@@ -177,8 +177,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void show_now_course() {
-        TextView now_course_1 = (TextView) findViewById(R.id.now_course_1);
-        TextView now_course_2 = (TextView) findViewById(R.id.now_course_2);
+        TextView now_course_1_1 = (TextView) findViewById(R.id.now_course_1_1);
+        TextView now_course_1_2 = (TextView) findViewById(R.id.now_course_1_2);
+        TextView now_course_2_1 = (TextView) findViewById(R.id.now_course_2_1);
+        TextView now_course_2_2 = (TextView) findViewById(R.id.now_course_2_2);
+        TextView now_course_jieci_1 = (TextView) findViewById(R.id.now_course_jieci_1);
+        TextView now_course_jieci_2 = (TextView) findViewById(R.id.now_course_jieci_2);
 
         Calendar calendar = Calendar.getInstance();
         int weekday = calendar.get(Calendar.DAY_OF_WEEK);
@@ -194,27 +198,105 @@ public class MainActivity extends AppCompatActivity
                 if (courseList.get(i).getDes().length() > 5 && courseList.get(i).getDay() == a[weekday]) {
                     if (hour < 12 && hour > 0) {
                         if (courseList.get(i).getJieci() == 1) {
+                            now_course_jieci_1.setText("1-2");
                             Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
-                            now_course_1.setText(courseList.get(i).getDes());
+                            String courseInfo[] = courseList.get(i).getDes().split("@");
+                            String courseName = "";
+                            String courseClassRoom = "";
+                            if (courseInfo.length == 1) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 2) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 3) {
+                                courseName = courseInfo[0];
+                                courseClassRoom = courseInfo[2];
+                            }
+                            now_course_1_1.setText(courseName);
+                            now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 3) {
+                            now_course_jieci_2.setText("3-4");
                             Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
-                            now_course_2.setText(courseList.get(i).getDes());
+                            String courseInfo[] = courseList.get(i).getDes().split("@");
+                            String courseName = "";
+                            String courseClassRoom = "";
+                            if (courseInfo.length == 1) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 2) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 3) {
+                                courseName = courseInfo[0];
+                                courseClassRoom = courseInfo[2];
+                            }
+                            now_course_2_1.setText(courseName);
+                            now_course_2_2.setText(courseClassRoom);
                         }
                     } else if (hour > 12 && hour < 18) {
                         if (courseList.get(i).getJieci() == 5) {
+                            now_course_jieci_1.setText("5-6");
                             Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
-                            now_course_1.setText(courseList.get(i).getDes());
+                            String courseInfo[] = courseList.get(i).getDes().split("@");
+                            String courseName = "";
+                            String courseClassRoom = "";
+                            if (courseInfo.length == 1) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 2) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 3) {
+                                courseName = courseInfo[0];
+                                courseClassRoom = courseInfo[2];
+                            }
+                            now_course_1_1.setText(courseName);
+                            now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 7) {
+                            now_course_jieci_2.setText("7-8");
                             Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
-                            now_course_2.setText(courseList.get(i).getDes());
+                            String courseInfo[] = courseList.get(i).getDes().split("@");
+                            String courseName = "";
+                            String courseClassRoom = "";
+                            if (courseInfo.length == 1) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 2) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 3) {
+                                courseName = courseInfo[0];
+                                courseClassRoom = courseInfo[2];
+                            }
+                            now_course_2_1.setText(courseName);
+                            now_course_2_2.setText(courseClassRoom);
                         }
                     } else if (hour > 19 && hour < 24) {
                         if (courseList.get(i).getJieci() == 9) {
+                            now_course_jieci_1.setText("9-10");
                             Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
-                            now_course_1.setText(courseList.get(i).getDes());
+                            String courseInfo[] = courseList.get(i).getDes().split("@");
+                            String courseName = "";
+                            String courseClassRoom = "";
+                            if (courseInfo.length == 1) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 2) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 3) {
+                                courseName = courseInfo[0];
+                                courseClassRoom = courseInfo[2];
+                            }
+                            now_course_1_1.setText(courseName);
+                            now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 11) {
+                            now_course_jieci_2.setText("11-12");
                             Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
-                            now_course_2.setText(courseList.get(i).getDes());
+                            String courseInfo[] = courseList.get(i).getDes().split("@");
+                            String courseName = "";
+                            String courseClassRoom = "";
+                            if (courseInfo.length == 1) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 2) {
+                                courseName = courseInfo[0];
+                            } else if (courseInfo.length == 3) {
+                                courseName = courseInfo[0];
+                                courseClassRoom = courseInfo[2];
+                            }
+                            now_course_2_1.setText(courseName);
+                            now_course_2_2.setText(courseClassRoom);
                         }
                     }
                 }
@@ -331,7 +413,9 @@ public class MainActivity extends AppCompatActivity
         Glide.with(this).load(R.drawable.bg_weibo).into(iv_weibo);
         Glide.with(this).load(R.drawable.bg_every_day).into(iv_one);
         Glide.with(this).load(R.drawable.bg_memory).into(iv_memory);
-        Glide.with(this).load(R.drawable.bg_schedule).bitmapTransform(new BlurTransformation(this, 10)).into(iv_schedule);
+//        Glide.with(this).load(R.drawable.bg_schedule).into(iv_schedule);
+        iv_schedule.setBackgroundColor(getResources().getColor(R.color.material_white_1000));
+//        Glide.with(this).load(R.drawable.bg_schedule).bitmapTransform(new BlurTransformation(this, 10)).into(iv_schedule);
         Glide.with(this).load(R.drawable.bg_history).into(iv_history);
 
         iv_constellation.setOnClickListener(this);
@@ -515,12 +599,14 @@ public class MainActivity extends AppCompatActivity
                 final String headPic = response.body().string();
                 SpUtils.putString(MainActivity.this, AppConstants.HEAD_PIC_URL, headPic);
                 headPicUrl = headPic;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Glide.with(MainActivity.this).load(headPicUrl).crossFade().into(head_image_view);
-                    }
-                });
+                if (headPic!=null){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Glide.with(MainActivity.this).load(headPicUrl).crossFade().into(head_image_view);
+                        }
+                    });
+                }
             }
         });
     }

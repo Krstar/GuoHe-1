@@ -34,6 +34,8 @@ public class UrlUtil {
 
     public static final String STU_SCORE = "http://120.25.88.41/vpnScore";          //查询学生成绩
 
+    public static final String BOOK_TOP="http://120.25.88.41/vpnBookTop100";        //查询前100的热门图书
+
 
     //    -----------------------------------------------------设置部分----------------------------------------------------        //
     public static final String ABOUT_US = "http://u5413978.viewer.maka.im/k/L3OW3S5E";    //关于我们

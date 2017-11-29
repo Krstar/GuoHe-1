@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.activity.School;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.adapter.ClassRoom;
@@ -44,6 +46,8 @@ import okhttp3.Response;
 public class ClassRoomActivity extends SwipeBackActivity implements View.OnClickListener {
 
     private static final String TAG = "ClassRoomActivity";
+
+    private Context mContext;
 
     private Button btn_classroom_search;
 
@@ -84,6 +88,8 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
         setContentView(R.layout.activity_class_room);
+
+        mContext = this;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
@@ -334,8 +340,8 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
 
     private void searchClassroom() {
         classRoomList.clear();
-        String user = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        String user = SpUtils.getString(mContext, AppConstants.STU_ID);
+        String pass = SpUtils.getString(mContext, AppConstants.STU_PASS);
         String url = UrlUtil.CLASSROOM;
         final RequestBody requestBody = new FormBody.Builder()
                 .add("username", user)
@@ -349,11 +355,22 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Log.d(TAG, "onResponse: " + area_id + " " + building_id + " " + zc1);
@@ -389,6 +406,19 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

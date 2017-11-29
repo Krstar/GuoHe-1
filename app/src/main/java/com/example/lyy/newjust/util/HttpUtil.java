@@ -14,16 +14,14 @@ import okhttp3.RequestBody;
 
 public class HttpUtil {
 
-    public final static int CONNECT_TIMEOUT = 60;
-    public final static int READ_TIMEOUT = 100;
-    public final static int WRITE_TIMEOUT = 60;
-
     public static void sendHttpRequest(String address, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)//设置读取超时时间
-                .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)//设置写的超时时间
-                .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)//设置连接超时时间
-                .build();
+                .connectTimeout(60, TimeUnit.SECONDS)       //设置连接超时
+                .readTimeout(60, TimeUnit.SECONDS)          //设置读超时
+                .writeTimeout(60, TimeUnit.SECONDS)          //设置写超时
+                .retryOnConnectionFailure(true)             //是否自动重连
+                .build();                                   //构建OkHttpClient对象
+
         Request request = new Request.Builder()
 
                 .url(address)
@@ -34,10 +32,11 @@ public class HttpUtil {
     //异步发送post请求
     public static void sendPostHttpRequest(String address, RequestBody requestBody, Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)//设置读取超时时间
-                .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)//设置写的超时时间
-                .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)//设置连接超时时间
-                .build();
+                .connectTimeout(60, TimeUnit.SECONDS)       //设置连接超时
+                .readTimeout(60, TimeUnit.SECONDS)          //设置读超时
+                .writeTimeout(60, TimeUnit.SECONDS)          //设置写超时
+                .retryOnConnectionFailure(true)             //是否自动重连
+                .build();                                   //构建OkHttpClient对象
         Request request = new Request.Builder().url(address).post(requestBody).build();
         client.newCall(request).enqueue(callback);
     }

@@ -1,6 +1,7 @@
 package com.example.lyy.newjust.activity.School;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +57,10 @@ import shortbread.Shortcut;
 @Shortcut(id = "grade", icon = R.drawable.ic_menu_grade, shortLabel = "查成绩")
 public class SubjectsActivity extends SwipeBackActivity {
 
+    private static final String TAG = "SubjectsActivity";
+
+    private Context mContext;
+
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
@@ -77,6 +83,8 @@ public class SubjectsActivity extends SwipeBackActivity {
         StatusBarCompat.setStatusBarColor(this, Color.rgb(255, 255, 255));
         setContentView(R.layout.activity_subjects);
 
+        mContext = this;
+
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
         // 设置滑动方向，可设置EDGE_LEFT, EDGE_RIGHT, EDGE_ALL, EDGE_BOTTOM
@@ -85,7 +93,6 @@ public class SubjectsActivity extends SwipeBackActivity {
         mSwipeBackLayout.setEdgeSize(100);
 
         searchPointRequest();
-        searchScoreRequest();
 
         init();
     }
@@ -167,13 +174,20 @@ public class SubjectsActivity extends SwipeBackActivity {
     }
 
     private void searchPointRequest() {
-        final ProgressDialog dialog = ProgressDialog.show(SubjectsActivity.this, null, "绩点导入中,请稍后……", true, false);
-        dialog.setCancelable(true);
-        dialog.setCanceledOnTouchOutside(true);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog = new ProgressDialog(SubjectsActivity.this);
+                mProgressDialog.setCanceledOnTouchOutside(true);
+                mProgressDialog.setCancelable(true);
+                mProgressDialog.setMessage("绩点导入中,请稍后……");
+                mProgressDialog.show();
+            }
+        });
 
         String pointUrl = UrlUtil.STU_GPA;
-        String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        String username = SpUtils.getString(mContext, AppConstants.STU_ID);
+        String password = SpUtils.getString(mContext, AppConstants.STU_PASS);
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
                 .add("password", password)
@@ -181,23 +195,50 @@ public class SubjectsActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(pointUrl, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                dialog.dismiss();
-
-                Looper.prepare();
-                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseText = response.body().string();
-                    showPointResult(responseText);
-
+                    switch (responseText) {
+                        case "\"\\u672a\\u8bc4\\u4ef7\"":
+                            Looper.prepare();
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "你还没有评教", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                            break;
+                        case "\"\\u6ca1\\u6709\\u6210\\u7ee9\"":
+                            Looper.prepare();
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "你还没有成绩", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                            break;
+                        default:
+                            Log.d(TAG, "onResponse: " + mProgressDialog.isShowing());
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            searchScoreRequest();
+                            showPointResult(responseText);
+                            break;
+                    }
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            dialog.dismiss();
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -234,13 +275,19 @@ public class SubjectsActivity extends SwipeBackActivity {
 
     //发出分数查询的请求
     private void searchScoreRequest() {
-        mProgressDialog = ProgressDialog.show(SubjectsActivity.this, null, "成绩导入中,请稍后……", true, false);
-        mProgressDialog.setCanceledOnTouchOutside(true);
-        mProgressDialog.setCancelable(true);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog.setCanceledOnTouchOutside(true);
+                mProgressDialog.setCancelable(true);
+                mProgressDialog.setMessage("成绩导入中,请稍后……");
+                mProgressDialog.show();
+            }
+        });
         String url = UrlUtil.STU_SCORE;
 
-        String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String password = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        String username = SpUtils.getString(mContext, AppConstants.STU_ID);
+        String password = SpUtils.getString(mContext, AppConstants.STU_PASS);
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
@@ -249,36 +296,54 @@ public class SubjectsActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                if (mProgressDialog.isShowing())
-                    mProgressDialog.dismiss();
-                Looper.prepare();
-                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseText = response.body().string();
+                    Log.d(TAG, "onResponse: " + responseText);
                     switch (responseText) {
                         case "\"\\u672a\\u8bc4\\u4ef7\"":
+                            Looper.prepare();
                             if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
-                            Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "你还没有评教", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "你还没有评教", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                             break;
                         case "\"\\u6ca1\\u6709\\u6210\\u7ee9\"":
+                            Looper.prepare();
                             if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
-                            Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "你还没有成绩", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "你还没有成绩", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                             break;
                         default:
+                            Looper.prepare();
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
                             handleScoreResponse(responseText);
+                            Looper.loop();
+
                             break;
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -292,7 +357,7 @@ public class SubjectsActivity extends SwipeBackActivity {
             }.getType());
             chooseResult(gSubjectList);
         } else {
-            Toast.makeText(getApplicationContext(), "服务器没有响应", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "服务器没有响应", Toast.LENGTH_SHORT).show();
         }
     }
 

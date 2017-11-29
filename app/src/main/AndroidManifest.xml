@@ -60,11 +60,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-
         <receiver
             android:name=".util.AlarmReceiver"
             android:process=":remote" />
-
 
         <service
             android:name=".service.AlarmService"
@@ -108,34 +106,42 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".widget.todoWidget.ToDoWidget">
+        <receiver android:name=".widget.todoWidget.ToDoListWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/todo_widget_info" />
+                android:resource="@xml/widget_info_todo" />
+        </receiver>
+        <receiver android:name=".widget.memoryWidget.MemoryListWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_memory" />
         </receiver>
 
-        <receiver android:name=".widget.memoryWidget.MemoryWidget">
+        <receiver android:name=".widget.coursetableWidget.CourseListWidget">
             <intent-filter>
-                <action android:name="com.example.lyy.CLICK_TO_MEMORY" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/memory_widget_info" />
+                android:resource="@xml/widget_info_course_table" />
         </receiver>
 
         <service
             android:name=".widget.memoryWidget.MemoryListService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-
         <service
             android:name=".widget.todoWidget.ToDoListViewService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service
+            android:name=".widget.coursetableWidget.CourseListViewService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>

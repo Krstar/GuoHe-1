@@ -2,6 +2,7 @@ package com.example.lyy.newjust.activity.School;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,6 +53,8 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
 
     private static final String TAG = "exerciseActivity";
 
+    private Context mContext;
+
     //定义listView
     private ListView listView;
 
@@ -72,6 +75,8 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         changeStatusBar();
         setContentView(R.layout.activity_exercise);
+
+        mContext = this;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
@@ -115,8 +120,8 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         listener = new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
                 //TODO
-                String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-                String pePass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PE_PASS);
+                String username = SpUtils.getString(mContext, AppConstants.STU_ID);
+                String pePass = SpUtils.getString(mContext, AppConstants.STU_PE_PASS);
                 request(username, pePass);
             }
         };
@@ -125,9 +130,9 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
     }
 
     private void requestExerciseInfo() {
-        String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String pePass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PE_PASS);
-        mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "俱乐部数据导入中,请稍后……", true, false);
+        String username = SpUtils.getString(mContext, AppConstants.STU_ID);
+        String pePass = SpUtils.getString(mContext, AppConstants.STU_PE_PASS);
+        mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "早操数据导入中,请稍后……", true, false);
         mProgressDialog.setCancelable(true);
         mProgressDialog.setCanceledOnTouchOutside(true);
         if (pePass != null) {
@@ -145,7 +150,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                             mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "密码验证中,请稍后……", true, false);
                             mProgressDialog.setCancelable(true);
                             mProgressDialog.setCanceledOnTouchOutside(true);
-                            final String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+                            final String username = SpUtils.getString(mContext, AppConstants.STU_ID);
                             String url = UrlUtil.EXERCISE_SCORE;
                             RequestBody requestBody = new FormBody.Builder()
                                     .add("username", username)
@@ -156,7 +161,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                                 public void onFailure(Call call, IOException e) {
                                     Looper.prepare();
                                     mProgressDialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                 }
 
@@ -169,12 +174,12 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                                         mProgressDialog.setCancelable(true);
                                         mProgressDialog.setCanceledOnTouchOutside(true);
                                         request(username, editText.getText().toString());
-                                        SpUtils.putString(getApplicationContext(), AppConstants.STU_PE_PASS, editText.getText().toString());
+                                        SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
                                         Looper.loop();
                                     } else if (response.code() == 500) {
                                         Looper.prepare();
                                         mProgressDialog.dismiss();
-                                        Toast.makeText(getApplicationContext(), "密码错误，请重试", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(mContext, "密码错误，请重试", Toast.LENGTH_SHORT).show();
                                         Looper.loop();
                                     }
                                 }
@@ -195,11 +200,18 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     try {
@@ -209,7 +221,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                         String name = object.getString("name");
                         final String total = object.getString("total");
 
-                        SpUtils.putString(getApplicationContext(), "exercise_info", name + "\n" + total);
+                        SpUtils.putString(mContext, "exercise_info", name + "\n" + total);
 
                         JSONArray innerArray = array.getJSONArray(1);
                         for (int i = 0; i < innerArray.length(); i++) {
@@ -245,6 +257,15 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -318,7 +339,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.exercise_floating_btn:
-                String msg = SpUtils.getString(getApplicationContext(), "exercise_info");
+                String msg = SpUtils.getString(mContext, "exercise_info");
                 showMaterialDialogDefault(msg);
                 break;
         }

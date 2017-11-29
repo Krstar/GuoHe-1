@@ -2,6 +2,7 @@ package com.example.lyy.newjust.activity.School;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -39,8 +41,11 @@ import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.example.lyy.newjust.views.CourseTableView;
+import com.flyco.animation.BounceEnter.BounceBottomEnter;
+import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
+import com.flyco.dialog.widget.MaterialDialog;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -69,6 +74,8 @@ import shortbread.Shortcut;
 
 @Shortcut(id = "course", icon = R.drawable.ic_menu_coursetable, shortLabel = "查课表")
 public class CourseTableActivity extends SwipeBackActivity {
+
+    private Context mContext;
 
     private static CourseTableActivity courseTableActivity;
 
@@ -121,6 +128,8 @@ public class CourseTableActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_table);
 
+        mContext = this;
+
         courseTableActivity = this;
         all_year_list = new ArrayList<>();
 
@@ -145,14 +154,14 @@ public class CourseTableActivity extends SwipeBackActivity {
 
         //初始化课表的背景
         iv_course_table = (ImageView) findViewById(R.id.iv_course_table);
-        bg_course_64 = SpUtils.getString(getApplicationContext(), AppConstants.BG_COURSE_64);
+        bg_course_64 = SpUtils.getString(mContext, AppConstants.BG_COURSE_64);
         if (bg_course_64 != null) {
             byte[] byte64 = Base64.decode(bg_course_64, 0);
             ByteArrayInputStream bais = new ByteArrayInputStream(byte64);
             Bitmap bitmap = BitmapFactory.decodeStream(bais);
             iv_course_table.setImageBitmap(bitmap);
         } else {
-            Glide.with(getApplicationContext()).load(R.drawable.bg_course_default).into(iv_course_table);
+            Glide.with(mContext).load(R.drawable.bg_course_default).into(iv_course_table);
         }
 
         //构造课表界面
@@ -162,7 +171,15 @@ public class CourseTableActivity extends SwipeBackActivity {
             @Override
             public void onCourseItemClick(TextView tv, int jieci, int day, String des) {
                 String string = tv.getText().toString();
-                Toast.makeText(getApplicationContext(), string, Toast.LENGTH_SHORT).show();
+                showCourseDialog(string);
+            }
+        });
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_course);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showWeekChoiceDialog();
             }
         });
 
@@ -171,10 +188,10 @@ public class CourseTableActivity extends SwipeBackActivity {
         mProgressDialog.setCancelable(true);
         mProgressDialog.setCanceledOnTouchOutside(true);
 
-        stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        stu_pass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PASS);
+        stu_id = SpUtils.getString(mContext, AppConstants.STU_ID);
+        stu_pass = SpUtils.getString(mContext, AppConstants.STU_PASS);
 
-        server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_WEEK);
+        server_week = SpUtils.getString(mContext, AppConstants.SERVER_WEEK);
         if (server_week != null) {
             tv_course_table_toolbar.setText("第" + server_week + "周");
             Calendar calendar = Calendar.getInstance();
@@ -182,22 +199,22 @@ public class CourseTableActivity extends SwipeBackActivity {
             //判断今天是不是周一
             if (weekday == 2) {
                 //判断是否第一次导入课表，默认false，没有导入课表
-                boolean first_open_course = SpUtils.getBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
+                boolean first_open_course = SpUtils.getBoolean(mContext, AppConstants.FIRST_OPEN_COURSE);
                 if (first_open_course) {
                     Log.d(TAG, "onCreate: " + first_open_course);
                     requestXiaoLi();
-                    SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
+                    SpUtils.putBoolean(mContext, AppConstants.FIRST_OPEN_COURSE, false);
                 } else {
                     Log.d(TAG, "onCreate: " + first_open_course);
                     showCourseTable(server_week);
                 }
             } else {
                 //判断是否第一次导入课表，默认false，没有导入课表
-                boolean first_open_course = SpUtils.getBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
+                boolean first_open_course = SpUtils.getBoolean(mContext, AppConstants.FIRST_OPEN_COURSE);
                 if (first_open_course) {
                     Log.d(TAG, "onCreate: " + first_open_course);
                     requestXiaoLi();
-                    SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
+                    SpUtils.putBoolean(mContext, AppConstants.FIRST_OPEN_COURSE, false);
                 } else {
                     Log.d(TAG, "onCreate: " + first_open_course);
                     showCourseTable(server_week);
@@ -207,13 +224,51 @@ public class CourseTableActivity extends SwipeBackActivity {
             List<DBCourse> dbCourses = DataSupport.findAll(DBCourse.class);
             if (dbCourses.size() == 0) {
                 requestXiaoLi();
-                SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
+                SpUtils.putBoolean(mContext, AppConstants.FIRST_OPEN_COURSE, false);
             }
 
         } else {
             requestXiaoLi();
-            SpUtils.putBoolean(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE, false);
+            SpUtils.putBoolean(mContext, AppConstants.FIRST_OPEN_COURSE, false);
         }
+    }
+
+    private void showCourseDialog(String courseMesg) {
+        String[] courseInfo = courseMesg.split("@");
+        String courseClassroom = "";
+        String courseName = "";
+        String courseTeacher = "";
+        if (courseInfo.length == 1) {
+            courseName = courseInfo[0];
+        }
+        if (courseInfo.length == 2) {
+            courseName = courseInfo[0];
+            courseTeacher = courseInfo[1];
+        }
+        if (courseInfo.length == 3) {
+            courseName = courseInfo[0];
+            courseTeacher = courseInfo[1];
+            courseClassroom = courseInfo[2];
+        }
+
+        final MaterialDialog dialog = new MaterialDialog(mContext);
+
+        dialog.isTitleShow(false)//
+                .btnNum(1)
+                .content("课程信息为：\n" + "课程名：\t" + courseName + "\n课程教师：\t" + courseTeacher + "\n教室：\t" + courseClassroom)
+                .btnText("确定")//
+                .showAnim(new BounceBottomEnter())
+                .show();
+
+        dialog.setOnBtnClickL(
+                new OnBtnClickL() {//left btn click listener
+                    @Override
+                    public void onBtnClick() {
+                        dialog.dismiss();
+                    }
+                }
+        );
+
     }
 
     //发送查询校历的请求
@@ -233,18 +288,21 @@ public class CourseTableActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                if (mProgressDialog.isShowing())
-                    mProgressDialog.dismiss();
-                Looper.prepare();
-                Toast.makeText(getApplicationContext(), "获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    SpUtils.putString(getApplicationContext(), AppConstants.XIAO_LI, data);
+                    SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
                     try {
                         JSONObject object = new JSONObject(data);
                         //获取当前周数
@@ -258,17 +316,27 @@ public class CourseTableActivity extends SwipeBackActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tv_course_table_toolbar.setText("第" + server_week + "周");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_course_table_toolbar.setText("第" + server_week + "周");
+                        }
+                    });
+                    SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
+                    if (current_year != null) {
+                        requestCourseInfo(current_year);
                     }
-                });
-                SpUtils.putString(getApplicationContext(), AppConstants.SERVER_WEEK, server_week);
-                if (current_year != null) {
-                    requestCourseInfo(current_year);
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
+
             }
         });
     }
@@ -285,17 +353,22 @@ public class CourseTableActivity extends SwipeBackActivity {
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                if (mProgressDialog.isShowing())
-                    mProgressDialog.dismiss();
-                Looper.prepare();
-                Toast.makeText(getApplicationContext(), "获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: " + response.code());
                     String data = response.body().string();
+                    Log.d(TAG, "onResponse: " + data);
                     try {
                         JSONArray jsonArray = new JSONArray(data);
                         for (int k = 1; k <= jsonArray.length(); k++) {
@@ -392,7 +465,15 @@ public class CourseTableActivity extends SwipeBackActivity {
                             showCourseTable(server_week);
                         }
                     });
-
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -450,7 +531,7 @@ public class CourseTableActivity extends SwipeBackActivity {
         if (Build.VERSION.SDK_INT < 24) {
             imageUri = Uri.fromFile(outputImage);
         } else {
-            imageUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.lyy.newjust.fileprovider", outputImage);
+            imageUri = FileProvider.getUriForFile(mContext, "com.example.lyy.newjust.fileprovider", outputImage);
         }
         // 启动相机程序
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
@@ -479,8 +560,8 @@ public class CourseTableActivity extends SwipeBackActivity {
                 break;
             case R.id.action_update_course:
                 DataSupport.deleteAll(DBCourse.class);
-                SpUtils.remove(getApplicationContext(), AppConstants.SERVER_WEEK);
-                SpUtils.remove(getApplicationContext(), AppConstants.XIAO_LI);
+                SpUtils.remove(mContext, AppConstants.SERVER_WEEK);
+                SpUtils.remove(mContext, AppConstants.XIAO_LI);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -507,8 +588,8 @@ public class CourseTableActivity extends SwipeBackActivity {
                                 choosePhotoFromGallery();
                                 break;
                             case 2:
-                                Glide.with(getApplicationContext()).load(R.drawable.bg_course_default).into(iv_course_table);
-                                SpUtils.remove(getApplicationContext(), AppConstants.BG_COURSE_64);
+                                Glide.with(mContext).load(R.drawable.bg_course_default).into(iv_course_table);
+                                SpUtils.remove(mContext, AppConstants.BG_COURSE_64);
                                 break;
                         }
                         dialog.dismiss();
@@ -586,7 +667,7 @@ public class CourseTableActivity extends SwipeBackActivity {
     int yearChoice;
 
     private void showSchoolYearChoiceDialog() {
-        String xiaoli = SpUtils.getString(getApplicationContext(), AppConstants.XIAO_LI);
+        String xiaoli = SpUtils.getString(mContext, AppConstants.XIAO_LI);
         if (xiaoli != null) {
             try {
                 JSONObject object = new JSONObject(xiaoli);
@@ -635,10 +716,10 @@ public class CourseTableActivity extends SwipeBackActivity {
                         });
                 singleChoiceDialog.show();
             } else {
-                Toast.makeText(getApplicationContext(), "暂未获取到你的所有学年，请退出后重试", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "暂未获取到你的所有学年，请退出后重试", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(getApplicationContext(), "暂未获取你的学年，请点击更新课表后重试", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "暂未获取你的学年，请点击更新课表后重试", Toast.LENGTH_SHORT).show();
         }
 
     }

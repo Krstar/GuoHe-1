@@ -2,6 +2,7 @@ package com.example.lyy.newjust.activity.School;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Looper;
@@ -57,6 +58,8 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
 
     private static final String TAG = "ClubActivity";
 
+    private Context mContext;
+
     //定义listView
     private ListView listView;
 
@@ -77,6 +80,8 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         changeStatusBar();
         setContentView(R.layout.activity_club);
+
+        mContext = this;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
@@ -120,8 +125,8 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         listener = new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
                 //TODO
-                String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-                String pePass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PE_PASS);
+                String username = SpUtils.getString(mContext, AppConstants.STU_ID);
+                String pePass = SpUtils.getString(mContext, AppConstants.STU_PE_PASS);
                 request(username, pePass);
             }
         };
@@ -130,8 +135,8 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
     }
 
     private void requestClubInfo() {
-        String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
-        String pePass = SpUtils.getString(getApplicationContext(), AppConstants.STU_PE_PASS);
+        String username = SpUtils.getString(mContext, AppConstants.STU_ID);
+        String pePass = SpUtils.getString(mContext, AppConstants.STU_PE_PASS);
         mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "俱乐部数据导入中,请稍后……", true, false);
         mProgressDialog.setCancelable(true);
         mProgressDialog.setCanceledOnTouchOutside(true);
@@ -150,7 +155,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                             mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "密码验证中,请稍后……", true, false);
                             mProgressDialog.setCancelable(true);
                             mProgressDialog.setCanceledOnTouchOutside(true);
-                            final String username = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+                            final String username = SpUtils.getString(mContext, AppConstants.STU_ID);
                             String url = UrlUtil.CLUB_SCORE;
                             RequestBody requestBody = new FormBody.Builder()
                                     .add("username", username)
@@ -159,28 +164,41 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                             HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
-                                    Looper.prepare();
-                                    mProgressDialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                                    Looper.loop();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (mProgressDialog.isShowing())
+                                                mProgressDialog.dismiss();
+                                            Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
 
                                 @Override
-                                public void onResponse(Call call, Response response) throws IOException {
-                                    if (response.code() == 200) {
+                                public void onResponse(Call call, final Response response) throws IOException {
+                                    if (response.isSuccessful()) {
                                         Looper.prepare();
                                         mProgressDialog.dismiss();
                                         mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
                                         mProgressDialog.setCancelable(true);
                                         mProgressDialog.setCanceledOnTouchOutside(true);
                                         request(username, editText.getText().toString());
-                                        SpUtils.putString(getApplicationContext(), AppConstants.STU_PE_PASS, editText.getText().toString());
+                                        SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
                                         Looper.loop();
                                     } else if (response.code() == 500) {
                                         Looper.prepare();
                                         mProgressDialog.dismiss();
-                                        Toast.makeText(getApplicationContext(), "密码错误，请重试", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(mContext, "密码错误，请重试", Toast.LENGTH_SHORT).show();
                                         Looper.loop();
+                                    } else {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (mProgressDialog.isShowing())
+                                                    mProgressDialog.dismiss();
+                                                Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
                                     }
                                 }
                             });
@@ -215,7 +233,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                         String total = object.getString("total");
                         final String sum = object.getString("sum");
 
-                        SpUtils.putString(getApplicationContext(), "club_info", total);
+                        SpUtils.putString(mContext, "club_info", total);
 
                         Log.d(TAG, "onResponse: " + year);
                         Log.d(TAG, "onResponse: " + name);
@@ -329,7 +347,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.club_floating_btn:
-                String msg = SpUtils.getString(getApplicationContext(), "club_info");
+                String msg = SpUtils.getString(mContext, "club_info");
                 showMaterialDialogDefault(msg);
                 break;
         }
