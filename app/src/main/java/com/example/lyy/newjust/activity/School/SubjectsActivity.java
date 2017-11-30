@@ -225,11 +225,17 @@ public class SubjectsActivity extends SwipeBackActivity {
                             Looper.loop();
                             break;
                         default:
-                            Log.d(TAG, "onResponse: " + mProgressDialog.isShowing());
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            searchScoreRequest();
-                            showPointResult(responseText);
+                            if (HttpUtil.isGoodJson(responseText)) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mProgressDialog.isShowing())
+                                            mProgressDialog.dismiss();
+                                    }
+                                });
+                                searchScoreRequest();
+                                showPointResult(responseText);
+                            }
                             break;
                     }
                 } else {
@@ -309,7 +315,7 @@ public class SubjectsActivity extends SwipeBackActivity {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String responseText = response.body().string();
+                    final String responseText = response.body().string();
                     Log.d(TAG, "onResponse: " + responseText);
                     switch (responseText) {
                         case "\"\\u672a\\u8bc4\\u4ef7\"":
@@ -327,12 +333,16 @@ public class SubjectsActivity extends SwipeBackActivity {
                             Looper.loop();
                             break;
                         default:
-                            Looper.prepare();
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            handleScoreResponse(responseText);
-                            Looper.loop();
-
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (HttpUtil.isGoodJson(responseText)) {
+                                        if (mProgressDialog.isShowing())
+                                            mProgressDialog.dismiss();
+                                        handleScoreResponse(responseText);
+                                    }
+                                }
+                            });
                             break;
                     }
                 } else {

@@ -36,8 +36,6 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class LibraryActivity extends SwipeBackActivity implements Toolbar.OnMenuItemClickListener, IOnSearchClickListener {
@@ -147,24 +145,41 @@ public class LibraryActivity extends SwipeBackActivity implements Toolbar.OnMenu
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    try {
-                        JSONArray array = new JSONArray(data);
-                        JSONArray innerArray = array.getJSONArray(0);
-                        for (int i = 0; i < innerArray.length(); i++) {
-                            if (innerArray.get(i) != null && !innerArray.get(i).toString().equals("")) {
-                                Log.d(TAG, "onResponse: " + innerArray.get(i).toString());
-                                mVals[i] = innerArray.get(i).toString().split(" ")[1];
+                    if (HttpUtil.isGoodJson(data)) {
+                        try {
+                            JSONArray array = new JSONArray(data);
+                            JSONArray innerArray = array.getJSONArray(0);
+                            for (int i = 0; i < 10; i++) {
+                                if (innerArray.get(i) != null && !innerArray.get(i).toString().equals("") && !innerArray.get(i).toString().equals("\"vpn\\u8d26\\u53f7\\u9519\\u8bef\"")) {
+                                    Log.d(TAG, "onResponse: " + innerArray.get(i).toString());
+                                    mVals[i] = innerArray.get(i).toString().split(" ")[1];
+                                } else {
+                                    break;
+                                }
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(false);
+                                    }
+                                });
+                                Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                    swipeRefreshLayout.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -228,9 +243,24 @@ public class LibraryActivity extends SwipeBackActivity implements Toolbar.OnMenu
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
+                    Log.d(TAG, "onResponse: " + data);
                     searchHotBook();
-                    handleResponse(data);
-                    Log.d(TAG, "onResponse: "+data);
+                    if (HttpUtil.isGoodJson(data))
+                        handleResponse(data);
+                    else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(false);
+                                    }
+                                });
+                                Toast.makeText(mContext, "服务器错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override

@@ -3,6 +3,7 @@ package com.example.lyy.newjust.activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -68,6 +69,7 @@ import com.example.lyy.newjust.base.DonateDialog;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.ResponseUtil;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
@@ -76,6 +78,9 @@ import com.nightonke.boommenu.BoomMenuButton;
 import com.umeng.analytics.MobclickAgent;
 import com.yalantis.taurus.PullToRefreshView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.io.ByteArrayInputStream;
@@ -90,12 +95,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final String TAG = "MainActivity";
+
+    private Context mContext;
 
     public static AppCompatActivity mainActivity;
 
@@ -140,6 +149,8 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
+        mContext = this;
+
         //判断是否已经登录
         boolean isLogIn = SpUtils.getBoolean(this, AppConstants.LOGIN);
         // 如果没有登陆，则先进入登陆页
@@ -150,8 +161,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             TextView tv_stu_name = (TextView) findViewById(R.id.tv_stu_name);
             TextView tv_stu_id = (TextView) findViewById(R.id.tv_stu_id);
-            String stu_name = SpUtils.getString(getApplicationContext(), AppConstants.STU_NAME);
-            String stu_id = SpUtils.getString(getApplicationContext(), AppConstants.STU_ID);
+            String stu_name = SpUtils.getString(mContext, AppConstants.STU_NAME);
+            String stu_id = SpUtils.getString(mContext, AppConstants.STU_ID);
             tv_stu_id.setText(stu_id);
             tv_stu_name.setText(stu_name);
         }
@@ -174,6 +185,7 @@ public class MainActivity extends AppCompatActivity
 
         show_course_number();
         show_now_course();
+        requestXiaoLi();
     }
 
     private void show_now_course() {
@@ -190,7 +202,7 @@ public class MainActivity extends AppCompatActivity
 
         int[] a = new int[]{0, 7, 1, 2, 3, 4, 5, 6};
 
-        String server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_WEEK);
+        String server_week = SpUtils.getString(mContext, AppConstants.SERVER_WEEK);
         Log.d(TAG, "show_now_course: " + server_week);
         if (server_week != null) {
             List<DBCourse> courseList = DataSupport.where("zhouci = ? ", server_week).find(DBCourse.class);
@@ -316,7 +328,7 @@ public class MainActivity extends AppCompatActivity
         List<String> stringList = new ArrayList<>();
         List<String> listWithoutDup = new ArrayList<>();
 
-        String server_week = SpUtils.getString(getApplicationContext(), AppConstants.SERVER_WEEK);
+        String server_week = SpUtils.getString(mContext, AppConstants.SERVER_WEEK);
         if (server_week != null) {
             List<DBCourse> courseList = DataSupport.where("zhouci = ? ", server_week).find(DBCourse.class);
             for (int i = 0; i < courseList.size(); i++) {
@@ -546,6 +558,50 @@ public class MainActivity extends AppCompatActivity
     };
     //设置底部弹窗按钮--------------------------结束----------------------------
 
+    //发送查询校历的请求
+    private void requestXiaoLi() {
+        String url = UrlUtil.XIAO_LI;
+        String stu_id = SpUtils.getString(mContext, AppConstants.STU_ID);
+        String stu_pass = SpUtils.getString(mContext, AppConstants.STU_PASS);
+        final String local_week = SpUtils.getString(mContext, AppConstants.SERVER_WEEK, "0");
+
+        final RequestBody requestBody = new FormBody.Builder()
+                .add("username", stu_id)
+                .add("password", stu_pass)
+                .build();
+
+        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: " + "服务器异常");
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    if (HttpUtil.isGoodJson(data)) {
+                        SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
+                        try {
+                            JSONObject object = new JSONObject(data);
+                            //获取当前周数
+                            String server_week = object.getString("weekNum");
+                            if (Integer.parseInt(local_week) < Integer.parseInt(server_week))
+                                SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "onResponse: " + "服务器错误");
+                    }
+                } else {
+                    Log.d(TAG, "onResponse: " + "错误" + response.code());
+                }
+
+            }
+        });
+    }
+
     //发送查询天气的请求
     private void requestWeather() {
         String weatherUrl = "https://free-api.heweather.com/v5/weather?city=CN101190301&key=38c845e8310644ee83a8a7bba9b9be64";
@@ -553,7 +609,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onFailure(Call call, IOException e) {
                 Looper.prepare();
-                Toast.makeText(getApplicationContext(), "天气请求失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "天气请求失败", Toast.LENGTH_SHORT).show();
                 Looper.loop();
             }
 
@@ -564,7 +620,7 @@ public class MainActivity extends AppCompatActivity
                     Weather weather = ResponseUtil.handleWeatherResponse(responseText);
                     parseWeatherData(weather);
                 } else {
-                    Toast.makeText(getApplicationContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "服务器错误", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -590,7 +646,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onFailure(Call call, IOException e) {
                 Looper.prepare();
-                Toast.makeText(getApplicationContext(), "服务器异常，请稍后重试", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
 
@@ -599,7 +655,7 @@ public class MainActivity extends AppCompatActivity
                 final String headPic = response.body().string();
                 SpUtils.putString(MainActivity.this, AppConstants.HEAD_PIC_URL, headPic);
                 headPicUrl = headPic;
-                if (headPic!=null){
+                if (headPic != null) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -809,7 +865,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(libraryIntent);
                 break;
             case R.id.nav_grade:
-                String show_grade = SpUtils.getString(getApplicationContext(), AppConstants.SHOW_GRADE, "学年");
+                String show_grade = SpUtils.getString(mContext, AppConstants.SHOW_GRADE, "学年");
                 if (show_grade.equals("学科")) {
                     Intent gradeIntent = new Intent(MainActivity.this, SubjectsActivity.class);
                     startActivity(gradeIntent);

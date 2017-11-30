@@ -49,6 +49,7 @@
                 android:layout_margin="16dp"
                 android:backgroundTint="@color/material_white_1000"
                 android:src="@drawable/ic_menu_week_change"
+                app:borderWidth="0dp"
                 app:elevation="8dp"
                 tools:ignore="VectorDrawableCompat" />
 

@@ -177,19 +177,17 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                 @Override
                                 public void onResponse(Call call, final Response response) throws IOException {
                                     if (response.isSuccessful()) {
-                                        Looper.prepare();
-                                        mProgressDialog.dismiss();
-                                        mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
-                                        mProgressDialog.setCancelable(true);
-                                        mProgressDialog.setCanceledOnTouchOutside(true);
-                                        request(username, editText.getText().toString());
-                                        SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
-                                        Looper.loop();
-                                    } else if (response.code() == 500) {
-                                        Looper.prepare();
-                                        mProgressDialog.dismiss();
-                                        Toast.makeText(mContext, "密码错误，请重试", Toast.LENGTH_SHORT).show();
-                                        Looper.loop();
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mProgressDialog.dismiss();
+                                                mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
+                                                mProgressDialog.setCancelable(true);
+                                                mProgressDialog.setCanceledOnTouchOutside(true);
+                                                request(username, editText.getText().toString());
+                                                SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
+                                            }
+                                        });
                                     } else {
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -218,11 +216,18 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     try {
@@ -274,6 +279,15 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

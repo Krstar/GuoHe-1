@@ -129,25 +129,27 @@ public class NewSubjectActivity extends AppCompatActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
-                    try {
-                        JSONObject object = new JSONObject(data);
-                        //获取当前周数
-                        //获取这个学生所有的学年
-                        JSONArray jsonArray = object.getJSONArray("all_year");
-                        all_year_list.add("请选择学年");
-                        for (int i = 1; i < jsonArray.length(); i++) {
-                            all_year_list.add(jsonArray.get(i).toString());
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                spinner_year.attachDataSource(all_year_list);
+                    if (HttpUtil.isGoodJson(data)) {
+                        SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
+                        try {
+                            JSONObject object = new JSONObject(data);
+                            //获取当前周数
+                            //获取这个学生所有的学年
+                            JSONArray jsonArray = object.getJSONArray("all_year");
+                            all_year_list.add("请选择学年");
+                            for (int i = 1; i < jsonArray.length(); i++) {
+                                all_year_list.add(jsonArray.get(i).toString());
                             }
-                        });
-                        searchScoreRequest();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    spinner_year.attachDataSource(all_year_list);
+                                }
+                            });
+                            searchScoreRequest();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -243,7 +245,8 @@ public class NewSubjectActivity extends AppCompatActivity {
                             Looper.loop();
                             break;
                         default:
-                            handleScoreResponse(responseText);
+                            if (HttpUtil.isGoodJson(responseText))
+                                handleScoreResponse(responseText);
                             break;
                     }
                 } else {

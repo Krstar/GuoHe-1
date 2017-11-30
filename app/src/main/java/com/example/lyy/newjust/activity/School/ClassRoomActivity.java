@@ -373,38 +373,38 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    Log.d(TAG, "onResponse: " + area_id + " " + building_id + " " + zc1);
-                    Log.d(TAG, "onResponse: " + data);
-                    try {
-                        JSONArray array = new JSONArray(data);
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            String weekday = object.getString("weekday");
-                            String time = object.getString("time");
-                            String place = object.getString("place");
+                    if (HttpUtil.isGoodJson(data)){
+                        try {
+                            JSONArray array = new JSONArray(data);
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                String weekday = object.getString("weekday");
+                                String time = object.getString("time");
+                                String place = object.getString("place");
 
-                            ClassRoom classRoom = new ClassRoom(weekday, time, place);
-                            if (Weekday.equals(weekday)) {
-                                Log.d(TAG, "onResponse: " + weekday);
-                                Log.d(TAG, "onResponse: " + Weekday);
-                                classRoomList.add(classRoom);
+                                ClassRoom classRoom = new ClassRoom(weekday, time, place);
+                                if (Weekday.equals(weekday)) {
+                                    Log.d(TAG, "onResponse: " + weekday);
+                                    Log.d(TAG, "onResponse: " + Weekday);
+                                    classRoomList.add(classRoom);
+                                }
                             }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ClassRoomAdapter classRoomAdapter = new ClassRoomAdapter(ClassRoomActivity.this, R.layout.item_classroom, classRoomList);
+                                    lv_classroom.setAdapter(classRoomAdapter);
+                                }
+                            });
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ClassRoomAdapter classRoomAdapter = new ClassRoomAdapter(ClassRoomActivity.this, R.layout.item_classroom, classRoomList);
-                                lv_classroom.setAdapter(classRoomAdapter);
-                            }
-                        });
-                        swipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
                 }else {
                     runOnUiThread(new Runnable() {

@@ -366,105 +366,105 @@ public class CourseTableActivity extends SwipeBackActivity {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: " + response.code());
                     String data = response.body().string();
-                    Log.d(TAG, "onResponse: " + data);
-                    try {
-                        JSONArray jsonArray = new JSONArray(data);
-                        for (int k = 1; k <= jsonArray.length(); k++) {
-                            JSONObject object = jsonArray.getJSONObject(k - 1);
-                            Log.d(TAG, "onResponse: " + object);
-                            JSONArray innerArray = object.getJSONArray(year + "_" + k);
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject monday = innerArray.getJSONObject(i);
-                                if (!monday.getString("monday").equals("")) {
-                                    DBCourse course = new DBCourse();
-                                    course.setDay(1);
-                                    course.setJieci((i * 2) + 1);
-                                    course.setZhouci(k);
-                                    course.setDes(monday.getString("monday"));
-                                    course.save();
+                    if (HttpUtil.isGoodJson(data)){
+                        try {
+                            JSONArray jsonArray = new JSONArray(data);
+                            for (int k = 1; k <= jsonArray.length(); k++) {
+                                JSONObject object = jsonArray.getJSONObject(k - 1);
+                                Log.d(TAG, "onResponse: " + object);
+                                JSONArray innerArray = object.getJSONArray(year + "_" + k);
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject monday = innerArray.getJSONObject(i);
+                                    if (!monday.getString("monday").equals("")) {
+                                        DBCourse course = new DBCourse();
+                                        course.setDay(1);
+                                        course.setJieci((i * 2) + 1);
+                                        course.setZhouci(k);
+                                        course.setDes(monday.getString("monday"));
+                                        course.save();
+                                    }
+                                }
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject tuesday = innerArray.getJSONObject(i);
+                                    if (!tuesday.getString("tuesday").equals("")) {
+                                        DBCourse course = new DBCourse();
+                                        course.setDay(2);
+                                        course.setJieci((i * 2) + 1);
+                                        course.setZhouci(k);
+                                        course.setDes(tuesday.getString("tuesday"));
+                                        course.save();
+                                    }
+                                }
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject wednesday = innerArray.getJSONObject(i);
+                                    if (!wednesday.getString("wednesday").equals("")) {
+                                        DBCourse course = new DBCourse();
+                                        course.setDay(3);
+                                        course.setZhouci(k);
+                                        course.setJieci((i * 2) + 1);
+                                        course.setDes(wednesday.getString("wednesday"));
+                                        course.save();
+                                    }
+                                }
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject thursday = innerArray.getJSONObject(i);
+                                    if (!thursday.getString("thursday").equals("")) {
+                                        DBCourse course = new DBCourse();
+                                        course.setDay(4);
+                                        course.setJieci((i * 2) + 1);
+                                        course.setZhouci(k);
+                                        course.setDes(thursday.getString("thursday"));
+                                        course.save();
+                                    }
+                                }
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject friday = innerArray.getJSONObject(i);
+                                    if (!friday.getString("friday").equals("")) {
+                                        DBCourse course = new DBCourse();
+                                        course.setDay(5);
+                                        course.setJieci((i * 2) + 1);
+                                        course.setZhouci(k);
+                                        course.setDes(friday.getString("friday"));
+                                        course.save();
+                                    }
+                                }
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject saturday = innerArray.getJSONObject(i);
+                                    if (!saturday.getString("saturday").equals("")) {
+                                        DBCourse course = new DBCourse();
+                                        course.setDay(6);
+                                        course.setJieci((i * 2) + 1);
+                                        course.setZhouci(k);
+                                        course.setDes(saturday.getString("saturday"));
+                                        course.save();
+                                    }
+                                }
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject sunday = innerArray.getJSONObject(i);
+                                    if (!sunday.getString("sunday").equals("")) {
+                                        DBCourse course = new DBCourse();
+                                        course.setDay(7);
+                                        course.setJieci((i * 2) + 1);
+                                        course.setZhouci(k);
+                                        course.setDes(sunday.getString("sunday"));
+                                        course.save();
+                                    }
                                 }
                             }
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject tuesday = innerArray.getJSONObject(i);
-                                if (!tuesday.getString("tuesday").equals("")) {
-                                    DBCourse course = new DBCourse();
-                                    course.setDay(2);
-                                    course.setJieci((i * 2) + 1);
-                                    course.setZhouci(k);
-                                    course.setDes(tuesday.getString("tuesday"));
-                                    course.save();
-                                }
-                            }
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject wednesday = innerArray.getJSONObject(i);
-                                if (!wednesday.getString("wednesday").equals("")) {
-                                    DBCourse course = new DBCourse();
-                                    course.setDay(3);
-                                    course.setZhouci(k);
-                                    course.setJieci((i * 2) + 1);
-                                    course.setDes(wednesday.getString("wednesday"));
-                                    course.save();
-                                }
-                            }
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject thursday = innerArray.getJSONObject(i);
-                                if (!thursday.getString("thursday").equals("")) {
-                                    DBCourse course = new DBCourse();
-                                    course.setDay(4);
-                                    course.setJieci((i * 2) + 1);
-                                    course.setZhouci(k);
-                                    course.setDes(thursday.getString("thursday"));
-                                    course.save();
-                                }
-                            }
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject friday = innerArray.getJSONObject(i);
-                                if (!friday.getString("friday").equals("")) {
-                                    DBCourse course = new DBCourse();
-                                    course.setDay(5);
-                                    course.setJieci((i * 2) + 1);
-                                    course.setZhouci(k);
-                                    course.setDes(friday.getString("friday"));
-                                    course.save();
-                                }
-                            }
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject saturday = innerArray.getJSONObject(i);
-                                if (!saturday.getString("saturday").equals("")) {
-                                    DBCourse course = new DBCourse();
-                                    course.setDay(6);
-                                    course.setJieci((i * 2) + 1);
-                                    course.setZhouci(k);
-                                    course.setDes(saturday.getString("saturday"));
-                                    course.save();
-                                }
-                            }
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject sunday = innerArray.getJSONObject(i);
-                                if (!sunday.getString("sunday").equals("")) {
-                                    DBCourse course = new DBCourse();
-                                    course.setDay(7);
-                                    course.setJieci((i * 2) + 1);
-                                    course.setZhouci(k);
-                                    course.setDes(sunday.getString("sunday"));
-                                    course.save();
-                                }
-                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mProgressDialog.isShowing()) {
+                                    mProgressDialog.dismiss();
+                                }
+                                showCourseTable(server_week);
+                            }
+                        });
                     }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mProgressDialog.isShowing()) {
-                                mProgressDialog.dismiss();
-                            }
-                            showCourseTable(server_week);
-                        }
-                    });
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override

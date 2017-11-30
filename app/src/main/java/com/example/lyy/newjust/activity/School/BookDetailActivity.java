@@ -167,56 +167,58 @@ public class BookDetailActivity extends SwipeBackActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    Log.d(TAG, "onResponse: " + data);
-                    try {
-                        JSONArray array = new JSONArray(data);
-                        for (int i = 0; i < array.length() - 1; i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            String place = object.getString("place");
-                            String call_number = object.getString("call_number");
-                            String barcode = object.getString("barcode");
+                    if (HttpUtil.isGoodJson(data)) {
+                        Log.d(TAG, "onResponse: " + data);
+                        try {
+                            JSONArray array = new JSONArray(data);
+                            for (int i = 0; i < array.length() - 1; i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                String place = object.getString("place");
+                                String call_number = object.getString("call_number");
+                                String barcode = object.getString("barcode");
 
-                            String finalPlace = place.split(" ")[place.split(" ").length - 1];
+                                String finalPlace = place.split(" ")[place.split(" ").length - 1];
 
-                            BookDetail bookDetail = new BookDetail(call_number, barcode, finalPlace);
-                            bookDetailList.add(bookDetail);
+                                BookDetail bookDetail = new BookDetail(call_number, barcode, finalPlace);
+                                bookDetailList.add(bookDetail);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BookDetailAdapter bookDetailAdapter = new BookDetailAdapter(BookDetailActivity.this, R.layout.item_book_detail, bookDetailList);
+                                        lv_book_detail.setAdapter(bookDetailAdapter);
+                                    }
+                                });
+                            }
+                            JSONObject object = array.getJSONObject(array.length() - 1);
+                            final String book_isbn = object.getString("book_isbn");
+                            final String book_press = object.getString("book_press");
+                            final String book_outline = object.getString("book_outline");
+                            final String book_name = object.getString("book_name");
+                            final String book_type = object.getString("book_type");
+                            final String book_author = object.getString("book_author");
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    BookDetailAdapter bookDetailAdapter = new BookDetailAdapter(BookDetailActivity.this, R.layout.item_book_detail, bookDetailList);
-                                    lv_book_detail.setAdapter(bookDetailAdapter);
+                                    tv_book_name.setText(book_name);
+                                    tv_book_author.setText(book_author);
+                                    tv_book_type.setText(book_type);
+                                    tv_book_press.setText(book_press);
+                                    tv_book_isbn.setText(book_isbn);
+                                    tv_book_outline.setText(book_outline);
                                 }
                             });
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        JSONObject object = array.getJSONObject(array.length() - 1);
-                        final String book_isbn = object.getString("book_isbn");
-                        final String book_press = object.getString("book_press");
-                        final String book_outline = object.getString("book_outline");
-                        final String book_name = object.getString("book_name");
-                        final String book_type = object.getString("book_type");
-                        final String book_author = object.getString("book_author");
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tv_book_name.setText(book_name);
-                                tv_book_author.setText(book_author);
-                                tv_book_type.setText(book_type);
-                                tv_book_press.setText(book_press);
-                                tv_book_isbn.setText(book_isbn);
-                                tv_book_outline.setText(book_outline);
-                            }
-                        });
-                        swipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
                 } else {
                     runOnUiThread(new Runnable() {

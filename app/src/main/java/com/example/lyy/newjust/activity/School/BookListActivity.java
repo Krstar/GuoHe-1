@@ -156,38 +156,40 @@ public class BookListActivity extends SwipeBackActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    try {
-                        JSONArray array = new JSONArray(data);
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            String book_author_press = object.getString("book_author_press");
-                            String book_can_borrow = object.getString("book_can_borrow");
-                            String book_url = object.getString("book_url");
-                            String book_title = object.getString("book_title");
-                            Log.d(TAG, "onResponse: " + book_author_press);
-                            Log.d(TAG, "onResponse: " + book_can_borrow);
-                            Log.d(TAG, "onResponse: " + book_url);
-                            Log.d(TAG, "onResponse: " + book_title);
+                    if (HttpUtil.isGoodJson(data)) {
+                        try {
+                            JSONArray array = new JSONArray(data);
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                String book_author_press = object.getString("book_author_press");
+                                String book_can_borrow = object.getString("book_can_borrow");
+                                String book_url = object.getString("book_url");
+                                String book_title = object.getString("book_title");
+                                Log.d(TAG, "onResponse: " + book_author_press);
+                                Log.d(TAG, "onResponse: " + book_can_borrow);
+                                Log.d(TAG, "onResponse: " + book_url);
+                                Log.d(TAG, "onResponse: " + book_title);
 
-                            Book book = new Book(book_title, book_author_press, book_can_borrow, book_url);
-                            bookList.add(book);
+                                Book book = new Book(book_title, book_author_press, book_can_borrow, book_url);
+                                bookList.add(book);
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BookAdapter bookAdapter = new BookAdapter(BookListActivity.this, R.layout.item_book_list, bookList);
+                                    lv_book_list.setAdapter(bookAdapter);
+                                }
+                            });
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                BookAdapter bookAdapter = new BookAdapter(BookListActivity.this, R.layout.item_book_list, bookList);
-                                lv_book_list.setAdapter(bookAdapter);
-                            }
-                        });
-                        swipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
                 } else {
                     runOnUiThread(new Runnable() {

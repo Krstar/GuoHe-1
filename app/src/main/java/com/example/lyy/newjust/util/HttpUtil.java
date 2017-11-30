@@ -1,5 +1,8 @@
 package com.example.lyy.newjust.util;
 
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -39,5 +42,16 @@ public class HttpUtil {
                 .build();                                   //构建OkHttpClient对象
         Request request = new Request.Builder().url(address).post(requestBody).build();
         client.newCall(request).enqueue(callback);
+    }
+
+    //判断data是否是json格式的字符串
+    public static boolean isGoodJson(String json) {
+        try {
+            new JsonParser().parse(json);
+            return true;
+        } catch (JsonParseException e) {
+            System.out.println("bad json: " + json);
+            return false;
+        }
     }
 }
