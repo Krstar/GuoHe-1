@@ -23,7 +23,7 @@ public class ToDoListViewFactory implements RemoteViewsService.RemoteViewsFactor
     private static final String TAG = "ToDoListViewFactory";
 
     private final Context mContext;
-    public static List<String> mList = new ArrayList<String>();
+    public static List<String> mList = new ArrayList<>();
 
     /*
      * 构造函数

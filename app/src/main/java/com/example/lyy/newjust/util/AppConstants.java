@@ -71,5 +71,4 @@ public class AppConstants {
 
     //记录当前学年
     public static final String THIS_YEAR = "2017-2018-1";
-
 }

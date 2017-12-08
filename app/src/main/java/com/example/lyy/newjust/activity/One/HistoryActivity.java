@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.activity.One;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,10 +10,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.UrlUtil;
@@ -24,7 +27,6 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class HistoryActivity extends SwipeBackActivity {
-    private static final String TAG = "HistoryActivity";
 
     private WaveSwipeRefreshLayout history_activity;
 
@@ -32,8 +34,11 @@ public class HistoryActivity extends SwipeBackActivity {
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
+    private ProgressBar progressBar;
+
     private WebChromeClient wbc = new WebChromeClient() {
 
+        @SuppressLint("SetJavaScriptEnabled")
         @Override
         public boolean onCreateWindow(WebView view, boolean isDialog,
                                       boolean isUserGesture, Message resultMsg) {
@@ -61,12 +66,26 @@ public class HistoryActivity extends SwipeBackActivity {
             resultMsg.sendToTarget();
             return true;
         }
+
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            // TODO 自动生成的方法存根
+
+            if (newProgress == 100) {
+                progressBar.setVisibility(View.GONE);//加载完网页进度条消失
+            } else {
+                progressBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                progressBar.setProgress(newProgress);//设置进度值
+            }
+        }
     };
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void initWebview() {
         String url = UrlUtil.TODAY_IN_HISTORY;
 
         webView = (WebView) findViewById(R.id.history_web_view);
+        progressBar = (ProgressBar) findViewById(R.id.history_progress);
 
         WebSettings webSettings = webView.getSettings();
         //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript

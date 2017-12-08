@@ -32,9 +32,9 @@ public class MemoryAdapter extends ArrayAdapter<Memory> {
 
         View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);//实例化一个对象
 
-        TextView memory_day = view.findViewById(R.id.memory_day);
-        TextView memory_content = view.findViewById(R.id.memory_content);
-        ImageView iv_bg_item_memory = view.findViewById(R.id.iv_bg_item_memory);
+        TextView memory_day = (TextView) view.findViewById(R.id.memory_day);
+        TextView memory_content = (TextView) view.findViewById(R.id.memory_content);
+        ImageView iv_bg_item_memory = (ImageView) view.findViewById(R.id.iv_bg_item_memory);
 
         memory_day.setText(memory.getMemory_day());
         memory_content.setText(memory.getMemory_content());

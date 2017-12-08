@@ -17,9 +17,9 @@
                 android:icon="@drawable/ic_menu_todo"
                 android:title="@string/item_todo" />
             <item
-                android:id="@+id/nav_ao_lan"
-                android:icon="@drawable/ic_menu_ao_lan"
-                android:title="@string/item_ao_lan" />
+                android:id="@+id/nav_job"
+                android:icon="@drawable/ic_menu_job"
+                android:title="@string/item_job" />
         </menu>
 
     </item>

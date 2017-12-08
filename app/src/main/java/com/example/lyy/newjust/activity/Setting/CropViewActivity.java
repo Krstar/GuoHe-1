@@ -1,9 +1,7 @@
 package com.example.lyy.newjust.activity.Setting;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -57,16 +55,20 @@ public class CropViewActivity extends AppCompatActivity implements View.OnClickL
         cropView.setVisibility(View.VISIBLE);
         btnlay.setVisibility(View.VISIBLE);
 
-        if (flag.equals("header")) {
-            cropView.of(uri).asSquare().initialize(CropViewActivity.this);
-        } else if (flag.equals("course")) {
-            cropView.of(uri)
-                    .withAspect(9, 16)
-                    .initialize(CropViewActivity.this);
-        } else if (flag.equals("memory")) {
-            cropView.of(uri)
-                    .withAspect(9, 16)
-                    .initialize(CropViewActivity.this);
+        switch (flag) {
+            case "header":
+                cropView.of(uri).asSquare().initialize(CropViewActivity.this);
+                break;
+            case "course":
+                cropView.of(uri)
+                        .withAspect(9, 16)
+                        .initialize(CropViewActivity.this);
+                break;
+            case "memory":
+                cropView.of(uri)
+                        .withAspect(9, 16)
+                        .initialize(CropViewActivity.this);
+                break;
         }
     }
 

@@ -32,6 +32,7 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical">
 
         <com.shinelw.library.ColorArcProgressBar
@@ -55,99 +56,22 @@
             app:string_unit="分贝"
             app:total_engle="270" />
 
-        <ScrollView
+        <TextView
+            android:id="@+id/tv_audio_degree"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2">
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:textSize="20sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <!--<TextView-->
-                    <!--android:id="@+id/volume"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:gravity="center"-->
-                    <!--android:text="hello_world"-->
-                    <!--android:textSize="18sp" />-->
-
-                <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="分贝等级"
-                android:textSize="20sp" />
-
-                <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="0-20 几乎感觉不到"
-                android:textSize="20sp" />
-
-                <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="20-40 犹如轻声絮语"
-                android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="40-60 分贝一般"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="60-70 吵闹、有损神经"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="70-90 很吵、神经细胞受到破坏"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="90-100 吵闹加剧、听力受损"
-                    android:textSize="20sp" />
-
-                <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="100-120 难以忍受、呆一分钟暂时致聋"
-                android:textSize="20sp" />
-
-            </LinearLayout>
-
-        </ScrollView>
+        <Button
+            android:id="@+id/btn_audio_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_btn_border_line_while"
+            android:text="分贝说明" />
 
     </LinearLayout>
 

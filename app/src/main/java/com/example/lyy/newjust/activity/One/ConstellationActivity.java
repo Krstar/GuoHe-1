@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.activity.One;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,9 +8,12 @@ import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.UrlUtil;
@@ -22,14 +26,13 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class ConstellationActivity extends SwipeBackActivity {
 
-    private static final String TAG = "ConstellationActivity";
-
     private WebView webView;
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
-    private String url;
+    private ProgressBar progressBar;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +43,7 @@ public class ConstellationActivity extends SwipeBackActivity {
         Intent intent = getIntent();
         String constellation_en = intent.getStringExtra("constellation_en");
 
-        url = UrlUtil.CONSTELLATION + constellation_en;
+        String url = UrlUtil.CONSTELLATION + constellation_en;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();
@@ -58,11 +61,25 @@ public class ConstellationActivity extends SwipeBackActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
+        progressBar = (ProgressBar) findViewById(R.id.collapsing_progress);
+
         webView = (WebView) findViewById(R.id.constellation_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                // TODO 自动生成的方法存根
+
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);//加载完网页进度条消失
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                    progressBar.setProgress(newProgress);//设置进度值
+                }
+            }
+        });
 
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) findViewById(R.id.constellation_swipe);
         //设置转的圈的颜色

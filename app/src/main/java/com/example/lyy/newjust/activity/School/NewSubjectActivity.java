@@ -22,8 +22,10 @@ import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.adapter.Subject;
 import com.example.lyy.newjust.adapter.SubjectAdapter;
 import com.example.lyy.newjust.gson.g_Subject;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
@@ -129,10 +131,11 @@ public class NewSubjectActivity extends AppCompatActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    if (HttpUtil.isGoodJson(data)) {
-                        SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
                         try {
-                            JSONObject object = new JSONObject(data);
+                            JSONObject object = new JSONObject(res.getInfo());
                             //获取当前周数
                             //获取这个学生所有的学年
                             JSONArray jsonArray = object.getJSONArray("all_year");
@@ -186,7 +189,6 @@ public class NewSubjectActivity extends AppCompatActivity {
     }
 
     private void showChooseResult(String text) {
-        Log.d(TAG, "showChooseResult: " + text);
         subjectList.clear();
         for (int i = 0; i < gSubjectList.size(); i++) {
             if (gSubjectList.get(i).getStart_semester().equals(text)) {
@@ -227,27 +229,16 @@ public class NewSubjectActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String responseText = response.body().string();
-                    Log.d(TAG, "onResponse: " + responseText);
-                    switch (responseText) {
-                        case "\"\\u672a\\u8bc4\\u4ef7\"":
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            Looper.prepare();
-                            Toast.makeText(mContext, "你还没有评教", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                            break;
-                        case "\"\\u6ca1\\u6709\\u6210\\u7ee9\"":
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            Looper.prepare();
-                            Toast.makeText(mContext, "你还没有成绩", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                            break;
-                        default:
-                            if (HttpUtil.isGoodJson(responseText))
-                                handleScoreResponse(responseText);
-                            break;
+                    String data = response.body().string();
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        handleScoreResponse(res.getInfo());
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {

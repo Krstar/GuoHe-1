@@ -1,8 +1,13 @@
 package com.example.lyy.newjust.activity.Tools;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,6 +26,7 @@ import com.baidu.ocr.sdk.model.WordSimple;
 import com.baidu.ocr.ui.camera.CameraActivity;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.FileUtil;
+import com.githang.statusbar.StatusBarCompat;
 import com.roger.catloadinglibrary.CatLoadingView;
 import com.umeng.analytics.MobclickAgent;
 
@@ -39,8 +45,7 @@ public class OCRActivity extends SwipeBackActivity {
     private static final int REQUEST_CODE_CAMERA = 1000;
     private static final int REQUEST_CODE_PICK_IMAGE = 2000;
 
-    private String path = new String();
-    private TextView txtResult;//返回的数据
+    private String path = "";
     private List<String> resultList = new ArrayList<>();
 
     CatLoadingView mView;
@@ -49,6 +54,7 @@ public class OCRActivity extends SwipeBackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarCompat.setStatusBarColor(this, Color.rgb(255, 255, 255));
         setContentView(R.layout.activity_ocr);
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
@@ -62,8 +68,6 @@ public class OCRActivity extends SwipeBackActivity {
     }
 
     private void initView() {
-        txtResult = (TextView) findViewById(R.id.tv_ocr_result);
-        txtResult.setTextIsSelectable(true);
 
         mView = new CatLoadingView();
 
@@ -83,6 +87,39 @@ public class OCRActivity extends SwipeBackActivity {
         });
     }
 
+    private void showNormalDialog(final String result) {
+        /* @setIcon 设置对话框图标
+         * @setTitle 设置对话框标题
+         * @setMessage 设置对话框消息提示
+         * setXXX方法返回Dialog对象，因此可以链式设置属性
+         */
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(OCRActivity.this);
+        normalDialog.setTitle("识别结果");
+        normalDialog.setMessage(result);
+        normalDialog.setPositiveButton("复制到剪贴板",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //...To-do
+                        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        // 将文本内容放到系统剪贴板里。
+                        cm.setText(result);
+                        Toast.makeText(OCRActivity.this, "文本已复制，快去粘贴吧", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+        normalDialog.setNegativeButton("关闭弹窗",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //...To-do
+                        dialog.dismiss();
+                    }
+                });
+        // 显示
+        normalDialog.show();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -138,12 +175,12 @@ public class OCRActivity extends SwipeBackActivity {
                     sb.append("\n");
                 }
                 mView.dismiss();
-                txtResult.setText(sb);
+                showNormalDialog(sb.toString());
             }
 
             @Override
             public void onError(OCRError ocrError) {
-                txtResult.setText(ocrError.getErrorCode() + "  " + ocrError.getMessage());
+                Toast.makeText(OCRActivity.this, "错误：" + ocrError.getErrorCode() + "  " + ocrError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

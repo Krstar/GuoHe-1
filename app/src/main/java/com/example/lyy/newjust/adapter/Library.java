@@ -25,13 +25,24 @@ public class Library {
     private String borrow_rate;
     private String name;
     private String author;
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     private int color;
 
     //需要用到的字段 bookcode name press author
-    public Library(String bookcode, String name, String press, String author, int color) {
+    public Library(String bookcode, String name, String press, String url, String author, int color) {
         super();
 
         this.bookcode = bookcode;
+        this.url = url;
         this.name = name;
         this.press = press;
         this.author = author;

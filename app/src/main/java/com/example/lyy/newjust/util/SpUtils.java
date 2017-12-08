@@ -3,8 +3,6 @@ package com.example.lyy.newjust.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.HashSet;
-
 /**
  * Created by lyy on 2017/10/24.
  */

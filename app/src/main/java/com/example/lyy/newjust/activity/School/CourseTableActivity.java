@@ -11,13 +11,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
@@ -30,14 +29,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.lyy.newjust.AndroidApplication;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.Setting.CropViewActivity;
 import com.example.lyy.newjust.db.DBCourse;
-import com.example.lyy.newjust.db.DBCurrentCourse;
 import com.example.lyy.newjust.model.Course;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.example.lyy.newjust.views.CourseTableView;
@@ -57,7 +56,6 @@ import org.litepal.crud.DataSupport;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -76,8 +74,6 @@ import shortbread.Shortcut;
 public class CourseTableActivity extends SwipeBackActivity {
 
     private Context mContext;
-
-    private static CourseTableActivity courseTableActivity;
 
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
@@ -127,10 +123,10 @@ public class CourseTableActivity extends SwipeBackActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_table);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         mContext = this;
 
-        courseTableActivity = this;
         all_year_list = new ArrayList<>();
 
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
@@ -302,29 +298,38 @@ public class CourseTableActivity extends SwipeBackActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
-                    try {
-                        JSONObject object = new JSONObject(data);
-                        //获取当前周数
-                        server_week = object.getString("weekNum");
-                        //获取这个学生所有的学年
-                        JSONArray jsonArray = object.getJSONArray("all_year");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            all_year_list.add(jsonArray.get(i).toString());
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
+                        try {
+                            JSONObject object = new JSONObject(res.getInfo());
+                            //获取当前周数
+                            server_week = object.getString("weekNum");
+                            //获取这个学生所有的学年
+                            JSONArray jsonArray = object.getJSONArray("all_year");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                all_year_list.add(jsonArray.get(i).toString());
+                            }
+                            current_year = all_year_list.get(0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        current_year = all_year_list.get(0);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            tv_course_table_toolbar.setText("第" + server_week + "周");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tv_course_table_toolbar.setText("第" + server_week + "周");
+                            }
+                        });
+                        SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
+                        if (current_year != null) {
+                            requestCourseInfo(current_year);
                         }
-                    });
-                    SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
-                    if (current_year != null) {
-                        requestCourseInfo(current_year);
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -367,9 +372,10 @@ public class CourseTableActivity extends SwipeBackActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    if (HttpUtil.isGoodJson(data)){
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
                         try {
-                            JSONArray jsonArray = new JSONArray(data);
+                            JSONArray jsonArray = new JSONArray(res.getInfo());
                             for (int k = 1; k <= jsonArray.length(); k++) {
                                 JSONObject object = jsonArray.getJSONObject(k - 1);
                                 Log.d(TAG, "onResponse: " + object);
@@ -464,6 +470,12 @@ public class CourseTableActivity extends SwipeBackActivity {
                                 showCourseTable(server_week);
                             }
                         });
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -484,37 +496,36 @@ public class CourseTableActivity extends SwipeBackActivity {
         List<Course> list = new ArrayList<>();
 
         List<DBCourse> courseList = DataSupport.where("zhouci = ? ", week).find(DBCourse.class);
-
+        Log.d(TAG, "showCourseTable: " + courseList);
         List<String> stringList = new ArrayList<>();
 
-        if (courseList.size() != 0) {
-            for (DBCourse dbCourse : courseList) {
-                stringList.add(dbCourse.getDes());
-            }
-
-            List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(stringList));
-
-            for (DBCourse dbCourse : courseList) {
-                Course course = new Course();
-                if (dbCourse.getDes().length() > 3) {
-                    course.setDay(dbCourse.getDay());
-                    course.setJieci(dbCourse.getJieci());
-                    course.setDes(dbCourse.getDes());
-                    course.setBg_Color(color[listWithoutDup.indexOf(dbCourse.getDes())]);
-                    list.add(course);
-                }
-            }
-            courseTableView.updateCourseViews(list);
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mProgressDialog.isShowing())
-                        mProgressDialog.dismiss();
-                }
-            });
-
+        for (DBCourse dbCourse : courseList) {
+            stringList.add(dbCourse.getDes());
         }
+
+        List<String> listWithoutDup = new ArrayList<>(new HashSet<>(stringList));
+
+        for (DBCourse dbCourse : courseList) {
+            Course course = new Course();
+            if (dbCourse.getDes().length() > 3) {
+                course.setDay(dbCourse.getDay());
+                course.setJieci(dbCourse.getJieci());
+                course.setDes(dbCourse.getDes());
+                course.setBg_Color(color[listWithoutDup.indexOf(dbCourse.getDes())]);
+                list.add(course);
+            }
+        }
+        courseTableView.updateCourseViews(list);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+            }
+        });
+
+
     }
 
     private void take_photos() {
@@ -682,7 +693,7 @@ public class CourseTableActivity extends SwipeBackActivity {
             }
 
             tv_course_table_toolbar.setText("第" + server_week + "周");
-            List<String> listWithoutDup = new ArrayList<String>(new HashSet<String>(all_year_list));
+            List<String> listWithoutDup = new ArrayList<>(new HashSet<>(all_year_list));
 
             if (listWithoutDup.size() != 0) {
                 final String[] items = new String[listWithoutDup.size()];

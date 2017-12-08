@@ -32,9 +32,9 @@ public class ClubAdapter extends ArrayAdapter<Club> {
 
         Club club = getItem(position);
         View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
-        TextView tv_number = view.findViewById(R.id.tv_number);
-        TextView tv_time = view.findViewById(R.id.tv_time);
-        TextView tv_date = view.findViewById(R.id.tv_date);
+        TextView tv_number = (TextView) view.findViewById(R.id.tv_number);
+        TextView tv_time = (TextView) view.findViewById(R.id.tv_time);
+        TextView tv_date = (TextView) view.findViewById(R.id.tv_date);
 
         tv_time.setText(club.getTime());
         tv_number.setText(club.getNumber());

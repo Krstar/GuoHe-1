@@ -16,8 +16,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.MainActivity;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.umeng.analytics.MobclickAgent;
@@ -90,44 +92,53 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         SpUtils.putBoolean(getApplicationContext(), AppConstants.LOGIN, true);
-                        String result = response.body().string();
-                        if (response.code() == 200) {
-                            Log.d(TAG, "onResponseSuccess: " + result);
-                            try {
-                                JSONObject object = new JSONObject(result);
-                                String academy = object.getString("academy");
-                                String name = object.getString("name");
-                                String major = object.getString("major");
-                                String stu_id = object.getString("class_num");
+                        String data = response.body().string();
+                        if (response.isSuccessful()) {
+                            Res res = ResponseUtil.handleResponse(data);
+                            if (res.getCode() == 200) {
+                                try {
+                                    JSONObject object = new JSONObject(res.getInfo());
+                                    String academy = object.getString("academy");
+                                    String name = object.getString("name");
+                                    String major = object.getString("major");
+                                    String stu_id = object.getString("class_num");
 
-                                SpUtils.putString(getApplicationContext(), AppConstants.STU_ID, user);
-                                SpUtils.putString(getApplicationContext(), AppConstants.STU_PASS, pass);
-                                SpUtils.putString(getApplicationContext(), AppConstants.STU_ACADEMY, academy);
-                                SpUtils.putString(getApplicationContext(), AppConstants.STU_NAME, name);
-                                SpUtils.putString(getApplicationContext(), AppConstants.STU_MAJOR, major);
+                                    SpUtils.putString(getApplicationContext(), AppConstants.STU_ID, user);
+                                    SpUtils.putString(getApplicationContext(), AppConstants.STU_PASS, pass);
+                                    SpUtils.putString(getApplicationContext(), AppConstants.STU_ACADEMY, academy);
+                                    SpUtils.putString(getApplicationContext(), AppConstants.STU_NAME, name);
+                                    SpUtils.putString(getApplicationContext(), AppConstants.STU_MAJOR, major);
 
-                                SpUtils.putBoolean(getApplicationContext(), AppConstants.LOGIN, true);
+                                    SpUtils.putBoolean(getApplicationContext(), AppConstants.LOGIN, true);
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "登录成功!", Toast.LENGTH_SHORT).show();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dialog.isShowing())
+                                                dialog.dismiss();
+                                            Toast.makeText(getApplicationContext(), "登录成功!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            });
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            } else {
+                                Looper.prepare();
+                                if (dialog.isShowing())
+                                    dialog.dismiss();
+                                Toast.makeText(LoginActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
                         } else {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "账号或密码有误，请重新输入", Toast.LENGTH_SHORT).show();
+                                    if (dialog.isShowing())
+                                        dialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), "服务器异常，请稍后", Toast.LENGTH_SHORT).show();
                                 }
                             });
                             return;

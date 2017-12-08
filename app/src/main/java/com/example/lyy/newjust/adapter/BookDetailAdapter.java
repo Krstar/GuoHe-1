@@ -33,9 +33,9 @@ public class BookDetailAdapter extends ArrayAdapter<BookDetail> {
         BookDetail bookDetail = getItem(position);
         View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
 
-        TextView tv_book_call_number = view.findViewById(R.id.tv_book_call_number);
-        TextView tv_book_barcode = view.findViewById(R.id.tv_book_barcode);
-        TextView tv_book_place = view.findViewById(R.id.tv_book_place);
+        TextView tv_book_call_number = (TextView) view.findViewById(R.id.tv_book_call_number);
+        TextView tv_book_barcode = (TextView) view.findViewById(R.id.tv_book_barcode);
+        TextView tv_book_place = (TextView) view.findViewById(R.id.tv_book_place);
 
         tv_book_call_number.setText(bookDetail.getCall_number());
         tv_book_barcode.setText(bookDetail.getBarcode());

@@ -30,8 +30,8 @@ public class PointAdapter extends ArrayAdapter<Point> {
 
         View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);//实例化一个对象
 
-        TextView every_year = view.findViewById(R.id.year);       //获取该布局内的学年
-        TextView year_point = view.findViewById(R.id.point);   //获取该布局内的学年绩点
+        TextView every_year = (TextView) view.findViewById(R.id.year);       //获取该布局内的学年
+        TextView year_point = (TextView) view.findViewById(R.id.point);   //获取该布局内的学年绩点
 
         every_year.setText(point.getYear());                    //设置学年
         year_point.setText(point.getPoint());                //设置学年绩点

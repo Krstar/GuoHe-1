@@ -3,9 +3,9 @@ package com.example.lyy.newjust.activity.School;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,11 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
-import com.example.lyy.newjust.adapter.Book;
-import com.example.lyy.newjust.adapter.BookAdapter;
 import com.example.lyy.newjust.adapter.BookDetail;
 import com.example.lyy.newjust.adapter.BookDetailAdapter;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
@@ -44,8 +44,6 @@ import okhttp3.Response;
 
 public class BookDetailActivity extends SwipeBackActivity {
 
-    private static final String TAG = "BookDetailActivity";
-
     private Context mContext;
 
     private ListView lv_book_detail;
@@ -59,6 +57,143 @@ public class BookDetailActivity extends SwipeBackActivity {
     private SwipeRefreshLayout.OnRefreshListener listener;
 
     private ScrollView scrollView;
+
+    private void initSwipeRefresh(final String keyword) {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.book_detail_refresh);
+
+        // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
+        // 设置下拉进度的背景颜色，默认就是白色的
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(android.R.color.white);
+        // 设置下拉进度的主题颜色
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
+
+        listener = new SwipeRefreshLayout.OnRefreshListener() {
+            public void onRefresh() {
+                //TODO
+                requestBookDetail(keyword);
+            }
+        };
+
+        swipeRefreshLayout.setOnRefreshListener(listener);
+    }
+
+    private void requestBookDetail(String book_url) {
+        bookDetailList.clear();
+        String url = UrlUtil.BOOK_DETAIL;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("bookUrl", book_url)
+                .build();
+        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        try {
+                            JSONArray array = new JSONArray(res.getInfo());
+                            for (int i = 0; i < array.length() - 1; i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                String place = object.getString("place");
+                                String call_number = object.getString("call_number");
+                                String barcode = object.getString("barcode");
+
+                                String finalPlace = place.split(" ")[place.split(" ").length - 1];
+
+                                BookDetail bookDetail = new BookDetail(call_number, barcode, finalPlace);
+                                bookDetailList.add(bookDetail);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BookDetailAdapter bookDetailAdapter = new BookDetailAdapter(BookDetailActivity.this, R.layout.item_book_detail, bookDetailList);
+                                        lv_book_detail.setAdapter(bookDetailAdapter);
+                                    }
+                                });
+                            }
+                            JSONObject object = array.getJSONObject(array.length() - 1);
+                            final String book_isbn = object.getString("book_isbn");
+                            final String book_press = object.getString("book_press");
+                            final String book_outline = object.getString("book_outline");
+                            final String book_name = object.getString("book_name");
+                            final String book_type = object.getString("book_type");
+                            final String book_author = object.getString("book_author");
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tv_book_name.setText(book_name);
+                                    tv_book_author.setText(book_author);
+                                    tv_book_type.setText(book_type);
+                                    tv_book_press.setText(book_press);
+                                    tv_book_isbn.setText(book_isbn);
+                                    tv_book_outline.setText(book_outline);
+                                }
+                            });
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Looper.prepare();
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,133 +254,6 @@ public class BookDetailActivity extends SwipeBackActivity {
         });
         listener.onRefresh();
 
-    }
-
-    private void initSwipeRefresh(final String keyword) {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.book_detail_refresh);
-
-        // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
-        // 设置下拉进度的背景颜色，默认就是白色的
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(android.R.color.white);
-        // 设置下拉进度的主题颜色
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
-
-        listener = new SwipeRefreshLayout.OnRefreshListener() {
-            public void onRefresh() {
-                //TODO
-                searchBookDetail(keyword);
-            }
-        };
-
-        swipeRefreshLayout.setOnRefreshListener(listener);
-    }
-
-    private void searchBookDetail(String book_url) {
-        bookDetailList.clear();
-        String url = UrlUtil.BOOK_DETAIL;
-        RequestBody requestBody = new FormBody.Builder()
-                .add("bookUrl", book_url)
-                .build();
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    if (HttpUtil.isGoodJson(data)) {
-                        Log.d(TAG, "onResponse: " + data);
-                        try {
-                            JSONArray array = new JSONArray(data);
-                            for (int i = 0; i < array.length() - 1; i++) {
-                                JSONObject object = array.getJSONObject(i);
-                                String place = object.getString("place");
-                                String call_number = object.getString("call_number");
-                                String barcode = object.getString("barcode");
-
-                                String finalPlace = place.split(" ")[place.split(" ").length - 1];
-
-                                BookDetail bookDetail = new BookDetail(call_number, barcode, finalPlace);
-                                bookDetailList.add(bookDetail);
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        BookDetailAdapter bookDetailAdapter = new BookDetailAdapter(BookDetailActivity.this, R.layout.item_book_detail, bookDetailList);
-                                        lv_book_detail.setAdapter(bookDetailAdapter);
-                                    }
-                                });
-                            }
-                            JSONObject object = array.getJSONObject(array.length() - 1);
-                            final String book_isbn = object.getString("book_isbn");
-                            final String book_press = object.getString("book_press");
-                            final String book_outline = object.getString("book_outline");
-                            final String book_name = object.getString("book_name");
-                            final String book_type = object.getString("book_type");
-                            final String book_author = object.getString("book_author");
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    tv_book_name.setText(book_name);
-                                    tv_book_author.setText(book_author);
-                                    tv_book_type.setText(book_type);
-                                    tv_book_press.setText(book_press);
-                                    tv_book_isbn.setText(book_isbn);
-                                    tv_book_outline.setText(book_outline);
-                                }
-                            });
-                            swipeRefreshLayout.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeRefreshLayout.setRefreshing(false);
-                                }
-                            });
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            swipeRefreshLayout.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeRefreshLayout.setRefreshing(false);
-                                }
-                            });
-                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

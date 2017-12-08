@@ -33,9 +33,9 @@ public class BookAdapter extends ArrayAdapter<Book> {
         Book book = getItem(position);
         View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
 
-        TextView tv_book_name = view.findViewById(R.id.tv_book_name);
-        TextView tv_book_author = view.findViewById(R.id.tv_book_author);
-        TextView tv_book_borrow = view.findViewById(R.id.tv_book_borrow);
+        TextView tv_book_name = (TextView) view.findViewById(R.id.tv_book_name);
+        TextView tv_book_author = (TextView) view.findViewById(R.id.tv_book_author);
+        TextView tv_book_borrow = (TextView) view.findViewById(R.id.tv_book_borrow);
 
         tv_book_name.setText(book.getBook_title());
         tv_book_author.setText(book.getBook_author_press());

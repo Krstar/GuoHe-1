@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.activity.School.BookDetailActivity;
 import com.example.lyy.newjust.activity.School.BookListActivity;
 
 import java.util.List;
@@ -22,8 +23,6 @@ import java.util.List;
 
 public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHolder> {
 
-    private static final String TAG = "LibraryAdapter";
-
     private Context mContext;
 
     private List<Library> mLibraryList;
@@ -31,7 +30,6 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView tv_name;
-        TextView tv_bookcode;
         TextView tv_author;
         TextView tv_press;
         ImageView iv_bg_library;
@@ -41,7 +39,6 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
             cardView = (CardView) view;
 
             tv_name = (TextView) view.findViewById(R.id.tv_name);
-//            tv_bookcode = (TextView) view.findViewById(R.id.tv_bookcode);
             tv_author = (TextView) view.findViewById(R.id.tv_author);
             tv_press = (TextView) view.findViewById(R.id.tv_press);
             iv_bg_library = (ImageView) view.findViewById(R.id.iv_bg_library);
@@ -65,8 +62,8 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
                 Library library = mLibraryList.get(position);
-                Intent intent = new Intent(mContext, BookListActivity.class);
-                intent.putExtra("keyword", library.getName());
+                Intent intent = new Intent(mContext, BookDetailActivity.class);
+                intent.putExtra("book_url", library.getUrl());
                 mContext.startActivity(intent);
             }
         });
@@ -79,10 +76,8 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
         Library library = mLibraryList.get(position);
         holder.tv_name.setText(library.getName());
         holder.tv_author.setText(library.getAuthor());
-//        holder.tv_bookcode.setText(library.getBookcode());
         holder.tv_press.setText(library.getPress());
-        holder.iv_bg_library.setBackgroundColor(library.getColor());
-        Log.d(TAG, "onBindViewHolder: " + library.getColor());
+        holder.iv_bg_library.setBackgroundColor(mContext.getResources().getColor(library.getColor()));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.lyy.newjust.activity.Tools;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +10,14 @@ import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.activity.One.PopupActivity;
 import com.example.lyy.newjust.util.Audio;
 import com.githang.statusbar.StatusBarCompat;
 import com.shinelw.library.ColorArcProgressBar;
@@ -27,7 +31,7 @@ import java.util.List;
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
-public class AudioActivity extends SwipeBackActivity {
+public class AudioActivity extends SwipeBackActivity implements View.OnClickListener {
 
     //    private TextView volume;//显示音量的文本框
     Audio MyAudio;//自己写的用于获取音量的类
@@ -43,11 +47,17 @@ public class AudioActivity extends SwipeBackActivity {
             Color.rgb(255, 228, 181),
             Color.rgb(255, 165, 0)
     };
+    private TextView mTvAudioDegree;
+    /**
+     * 分贝说明
+     */
+    private Button mBtnAudioInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio);
+        initView();
 
         obtain_permission();
 
@@ -119,6 +129,26 @@ public class AudioActivity extends SwipeBackActivity {
         }
     };
 
+    private void initView() {
+        mTvAudioDegree = (TextView) findViewById(R.id.tv_audio_degree);
+        mBtnAudioInfo = (Button) findViewById(R.id.btn_audio_info);
+        mBtnAudioInfo.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            default:
+                break;
+            case R.id.btn_audio_info:
+                String audioUrl = "https://wapbaike.baidu.com/item/%E5%88%86%E8%B4%9D/553473?fr=aladdin";
+                Intent intent = new Intent(AudioActivity.this, PopupActivity.class);
+                intent.putExtra("URL", audioUrl);
+                startActivity(intent);
+                break;
+        }
+    }
+
     class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -132,8 +162,17 @@ public class AudioActivity extends SwipeBackActivity {
             Double sound = b.getDouble("sound");
             //AudioActivity.this.volume.setText(sound + "" + " 分贝");
             progressbar.setCurrentValues(new Double(sound).intValue());
+            if (sound < 20) {
+                mTvAudioDegree.setText("安静");
+            } else if (sound >= 20 && sound <= 60) {
+                mTvAudioDegree.setText("一般");
+            } else if (sound > 60 && sound < 80) {
+                mTvAudioDegree.setText("较吵");
+            } else if (sound >= 80) {
+                mTvAudioDegree.setText("非常吵闹");
+            }
 //            newCreditSesameView.setSesameValues(new Double(sound*10).intValue());
-            startColorChangeAnim();
+//            startColorChangeAnim();
         }
     }
 

@@ -28,8 +28,10 @@ import com.example.lyy.newjust.adapter.PointAdapter;
 import com.example.lyy.newjust.adapter.Subject;
 import com.example.lyy.newjust.adapter.SubjectAdapter;
 import com.example.lyy.newjust.gson.g_Subject;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
@@ -208,35 +210,18 @@ public class SubjectsActivity extends SwipeBackActivity {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String responseText = response.body().string();
-                    switch (responseText) {
-                        case "\"\\u672a\\u8bc4\\u4ef7\"":
-                            Looper.prepare();
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            Toast.makeText(mContext, "你还没有评教", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                            break;
-                        case "\"\\u6ca1\\u6709\\u6210\\u7ee9\"":
-                            Looper.prepare();
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            Toast.makeText(mContext, "你还没有成绩", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                            break;
-                        default:
-                            if (HttpUtil.isGoodJson(responseText)) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (mProgressDialog.isShowing())
-                                            mProgressDialog.dismiss();
-                                    }
-                                });
-                                searchScoreRequest();
-                                showPointResult(responseText);
+                    String data = response.body().string();
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
                             }
-                            break;
+                        });
+                        searchScoreRequest();
+                        showPointResult(res.getInfo());
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -315,35 +300,25 @@ public class SubjectsActivity extends SwipeBackActivity {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    final String responseText = response.body().string();
-                    Log.d(TAG, "onResponse: " + responseText);
-                    switch (responseText) {
-                        case "\"\\u672a\\u8bc4\\u4ef7\"":
-                            Looper.prepare();
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            Toast.makeText(mContext, "你还没有评教", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                            break;
-                        case "\"\\u6ca1\\u6709\\u6210\\u7ee9\"":
-                            Looper.prepare();
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            Toast.makeText(mContext, "你还没有成绩", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                            break;
-                        default:
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (HttpUtil.isGoodJson(responseText)) {
-                                        if (mProgressDialog.isShowing())
-                                            mProgressDialog.dismiss();
-                                        handleScoreResponse(responseText);
-                                    }
+                    final String data = response.body().string();
+                    final Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (HttpUtil.isGoodJson(res.getInfo())) {
+                                    if (mProgressDialog.isShowing())
+                                        mProgressDialog.dismiss();
+                                    handleScoreResponse(res.getInfo());
                                 }
-                            });
-                            break;
+                            }
+                        });
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {

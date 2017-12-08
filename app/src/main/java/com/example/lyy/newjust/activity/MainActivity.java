@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,7 +18,9 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.util.Base64;
@@ -43,7 +46,7 @@ import com.example.lyy.newjust.activity.One.ConstellationActivity;
 import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.One.OneActivity;
 import com.example.lyy.newjust.activity.One.WeiBoActivity;
-import com.example.lyy.newjust.activity.School.AoLanActivity;
+import com.example.lyy.newjust.activity.School.JobActivity;
 import com.example.lyy.newjust.activity.School.ClassRoomActivity;
 import com.example.lyy.newjust.activity.School.ClubActivity;
 import com.example.lyy.newjust.activity.School.CourseTableActivity;
@@ -63,6 +66,7 @@ import com.example.lyy.newjust.activity.Tools.OCRActivity;
 import com.example.lyy.newjust.activity.Tools.TranslateActivity;
 import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.gson.Weather;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.service.AlarmService;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.base.DonateDialog;
@@ -78,13 +82,13 @@ import com.nightonke.boommenu.BoomMenuButton;
 import com.umeng.analytics.MobclickAgent;
 import com.yalantis.taurus.PullToRefreshView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -92,7 +96,6 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -129,65 +132,6 @@ public class MainActivity extends AppCompatActivity
 
     private NotificationManager notificationManager;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mainActivity = this;
-
-        // 判断是否是第一次开启应用
-        boolean isFirstOpen = SpUtils.getBoolean(this, AppConstants.FIRST_OPEN);
-        // 如果是第一次启动，则先进入功能引导页
-        if (!isFirstOpen) {
-            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
-        changeStatusBar();  //将背景图和状态栏融合到一起的方法
-
-        setContentView(R.layout.activity_main);
-
-        mContext = this;
-
-        //判断是否已经登录
-        boolean isLogIn = SpUtils.getBoolean(this, AppConstants.LOGIN);
-        // 如果没有登陆，则先进入登陆页
-        if (!isLogIn) {
-            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(loginIntent);
-            finish();
-        } else {
-            TextView tv_stu_name = (TextView) findViewById(R.id.tv_stu_name);
-            TextView tv_stu_id = (TextView) findViewById(R.id.tv_stu_id);
-            String stu_name = SpUtils.getString(mContext, AppConstants.STU_NAME);
-            String stu_id = SpUtils.getString(mContext, AppConstants.STU_ID);
-            tv_stu_id.setText(stu_id);
-            tv_stu_name.setText(stu_name);
-        }
-
-        Intent alarmService = new Intent(this, AlarmService.class);
-        startService(alarmService);
-
-        init();             //初始化相关控件
-
-        loadHeadPic();      //添加每日一图
-
-        requestWeather();   //发送查询天气的请求
-
-        boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
-        if (isNotification) {
-            setNotification();
-        } else {
-            cancelNotification();
-        }
-
-        show_course_number();
-        show_now_course();
-        requestXiaoLi();
-    }
-
     private void show_now_course() {
         TextView now_course_1_1 = (TextView) findViewById(R.id.now_course_1_1);
         TextView now_course_1_2 = (TextView) findViewById(R.id.now_course_1_2);
@@ -203,7 +147,6 @@ public class MainActivity extends AppCompatActivity
         int[] a = new int[]{0, 7, 1, 2, 3, 4, 5, 6};
 
         String server_week = SpUtils.getString(mContext, AppConstants.SERVER_WEEK);
-        Log.d(TAG, "show_now_course: " + server_week);
         if (server_week != null) {
             List<DBCourse> courseList = DataSupport.where("zhouci = ? ", server_week).find(DBCourse.class);
             for (int i = 0; i < courseList.size(); i++) {
@@ -211,7 +154,6 @@ public class MainActivity extends AppCompatActivity
                     if (hour < 12 && hour > 0) {
                         if (courseList.get(i).getJieci() == 1) {
                             now_course_jieci_1.setText("1-2");
-                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
@@ -227,7 +169,6 @@ public class MainActivity extends AppCompatActivity
                             now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 3) {
                             now_course_jieci_2.setText("3-4");
-                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
@@ -245,7 +186,6 @@ public class MainActivity extends AppCompatActivity
                     } else if (hour > 12 && hour < 18) {
                         if (courseList.get(i).getJieci() == 5) {
                             now_course_jieci_1.setText("5-6");
-                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
@@ -261,7 +201,6 @@ public class MainActivity extends AppCompatActivity
                             now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 7) {
                             now_course_jieci_2.setText("7-8");
-                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
@@ -279,7 +218,6 @@ public class MainActivity extends AppCompatActivity
                     } else if (hour > 19 && hour < 24) {
                         if (courseList.get(i).getJieci() == 9) {
                             now_course_jieci_1.setText("9-10");
-                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
@@ -295,7 +233,6 @@ public class MainActivity extends AppCompatActivity
                             now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 11) {
                             now_course_jieci_2.setText("11-12");
-                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
@@ -336,9 +273,7 @@ public class MainActivity extends AppCompatActivity
                     stringList.add(courseList.get(i).getDes());
                 }
             }
-            listWithoutDup = new ArrayList<String>(new HashSet<String>(stringList));
-            Log.d(TAG, "show_course_number: " + listWithoutDup.size());
-            Log.d(TAG, "show_course_number: " + listWithoutDup);
+            listWithoutDup = new ArrayList<>(new HashSet<>(stringList));
         }
 
         if (listWithoutDup.size() == 0) {
@@ -565,41 +500,53 @@ public class MainActivity extends AppCompatActivity
         String stu_pass = SpUtils.getString(mContext, AppConstants.STU_PASS);
         final String local_week = SpUtils.getString(mContext, AppConstants.SERVER_WEEK, "0");
 
-        final RequestBody requestBody = new FormBody.Builder()
-                .add("username", stu_id)
-                .add("password", stu_pass)
-                .build();
+        if (stu_id != null && stu_pass != null) {
+            final RequestBody requestBody = new FormBody.Builder()
+                    .add("username", stu_id)
+                    .add("password", stu_pass)
+                    .build();
 
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure: " + "服务器异常");
-            }
-
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    if (HttpUtil.isGoodJson(data)) {
-                        SpUtils.putString(mContext, AppConstants.XIAO_LI, data);
-                        try {
-                            JSONObject object = new JSONObject(data);
-                            //获取当前周数
-                            String server_week = object.getString("weekNum");
-                            if (Integer.parseInt(local_week) < Integer.parseInt(server_week))
-                                SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Log.d(TAG, "onResponse: " + "服务器错误");
-                    }
-                } else {
-                    Log.d(TAG, "onResponse: " + "错误" + response.code());
+            HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "onFailure: " + "服务器异常");
                 }
 
-            }
-        });
+                @Override
+                public void onResponse(Call call, final Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String data = response.body().string();
+                        Res res = ResponseUtil.handleResponse(data);
+                        if (res.getCode() == 200) {
+                            SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
+                            try {
+                                JSONObject object = new JSONObject(res.getInfo());
+                                //获取当前周数
+                                String server_week = object.getString("weekNum");
+                                if (Integer.parseInt(local_week) < Integer.parseInt(server_week))
+                                    SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(mContext, "服务器异常，请稍后", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mContext, "错误" + response.code(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
+        }
     }
 
     //发送查询天气的请求
@@ -622,7 +569,6 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     Toast.makeText(mContext, "服务器错误", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }
@@ -769,16 +715,18 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_theme:
-                Toast.makeText(MainActivity.this, "换肤功能正在集成中，敬请期待！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "该功能正在集成中，敬请期待！", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_share:
                 shareApp();
                 break;
 
-            case R.id.nav_ao_lan:
-                Intent aolanIntent = new Intent(MainActivity.this, AoLanActivity.class);
-                startActivity(aolanIntent);
+            case R.id.nav_job:
+                Toast.makeText(MainActivity.this, "该功能正在集成中，敬请期待！", Toast.LENGTH_SHORT).show();
+                break;
+//                Intent jobIntent = new Intent(MainActivity.this, JobActivity.class);
+//                startActivity(jobIntent);
         }
 
         return true;
@@ -885,6 +833,89 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * 通过反射，设置menu显示icon
+     *
+     * @param view
+     * @param menu
+     * @return
+     */
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+        if (menu != null) {
+            if (menu.getClass() == MenuBuilder.class) {
+                try {
+                    Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    m.setAccessible(true);
+                    m.invoke(menu, true);
+                } catch (Exception e) {
+                }
+            }
+        }
+        return super.onPrepareOptionsPanel(view, menu);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mainActivity = this;
+
+        // 判断是否是第一次开启应用
+        boolean isFirstOpen = SpUtils.getBoolean(this, AppConstants.FIRST_OPEN);
+        // 如果是第一次启动，则先进入功能引导页
+        if (!isFirstOpen) {
+            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        changeStatusBar();  //将背景图和状态栏融合到一起的方法
+
+        setContentView(R.layout.activity_main);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+        mContext = this;
+
+        //判断是否已经登录
+        boolean isLogIn = SpUtils.getBoolean(this, AppConstants.LOGIN);
+        // 如果没有登陆，则先进入登陆页
+        if (!isLogIn) {
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
+        } else {
+            TextView tv_stu_name = (TextView) findViewById(R.id.tv_stu_name);
+            TextView tv_stu_id = (TextView) findViewById(R.id.tv_stu_id);
+            String stu_name = SpUtils.getString(mContext, AppConstants.STU_NAME);
+            String stu_id = SpUtils.getString(mContext, AppConstants.STU_ID);
+            tv_stu_id.setText(stu_id);
+            tv_stu_name.setText(stu_name);
+        }
+
+        Intent alarmService = new Intent(this, AlarmService.class);
+        startService(alarmService);
+
+        init();             //初始化相关控件
+
+        loadHeadPic();      //添加每日一图
+
+        requestWeather();   //发送查询天气的请求
+
+        boolean isNotification = SpUtils.getBoolean(this, AppConstants.IS_NOTIFICATION);
+        if (isNotification) {
+            setNotification();
+        } else {
+            cancelNotification();
+        }
+
+        show_course_number();
+        show_now_course();
+        requestXiaoLi();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -905,5 +936,4 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         MobclickAgent.onPause(this);
     }
-
 }

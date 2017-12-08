@@ -3,6 +3,7 @@ package com.example.lyy.newjust.activity.School;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +18,10 @@ import android.widget.Toast;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.adapter.ClassRoom;
 import com.example.lyy.newjust.adapter.ClassRoomAdapter;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
@@ -338,7 +341,7 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
         });
     }
 
-    private void searchClassroom() {
+    private void requestClassroom() {
         classRoomList.clear();
         String user = SpUtils.getString(mContext, AppConstants.STU_ID);
         String pass = SpUtils.getString(mContext, AppConstants.STU_PASS);
@@ -373,9 +376,10 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    if (HttpUtil.isGoodJson(data)){
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode()==200){
                         try {
-                            JSONArray array = new JSONArray(data);
+                            JSONArray array = new JSONArray(res.getInfo());
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject object = array.getJSONObject(i);
                                 String weekday = object.getString("weekday");
@@ -384,8 +388,6 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
 
                                 ClassRoom classRoom = new ClassRoom(weekday, time, place);
                                 if (Weekday.equals(weekday)) {
-                                    Log.d(TAG, "onResponse: " + weekday);
-                                    Log.d(TAG, "onResponse: " + Weekday);
                                     classRoomList.add(classRoom);
                                 }
                             }
@@ -405,8 +407,18 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    }else {
+                        Looper.prepare();
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
-                }else {
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -436,7 +448,7 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
         listener = new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
                 //TODO
-                searchClassroom();
+                requestClassroom();
             }
         };
 

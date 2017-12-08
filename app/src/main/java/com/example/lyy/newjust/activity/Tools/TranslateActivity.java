@@ -1,7 +1,6 @@
 package com.example.lyy.newjust.activity.Tools;
 
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;

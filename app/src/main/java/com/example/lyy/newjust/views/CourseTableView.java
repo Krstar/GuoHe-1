@@ -28,13 +28,6 @@ import java.util.List;
 
 public class CourseTableView extends RelativeLayout {
 
-    private static final String TAG = "CourseTableView";
-
-    // 课程格子的背景图
-    private static final int[] COURSE_BG = {R.drawable.course_info_light_blue, R.drawable.course_info_green,
-            R.drawable.course_info_red, R.drawable.course_info_blue, R.drawable.course_info_yellow,
-            R.drawable.course_info_orange, R.drawable.course_info_purple};
-
     private static final int FIRST_TV = 555;
 
     private static final int FIRST_ROW_TV_QZ = 3;
@@ -53,7 +46,7 @@ public class CourseTableView extends RelativeLayout {
     /**
      * 保存View 方便Remove
      */
-    private List<View> myCacheViews = new ArrayList<View>();
+    private List<View> myCacheViews = new ArrayList<>();
 
     /**
      * 第一行的高度

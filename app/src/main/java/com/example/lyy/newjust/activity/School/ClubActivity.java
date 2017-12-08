@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -25,12 +26,12 @@ import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.adapter.Club;
 import com.example.lyy.newjust.adapter.ClubAdapter;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
-import com.flyco.animation.Attention.Flash;
-import com.flyco.animation.Attention.Swing;
 import com.flyco.animation.BounceEnter.BounceBottomEnter;
 import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.widget.MaterialDialog;
@@ -104,11 +105,11 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         FloatingActionButton club_floating_btn = (FloatingActionButton) findViewById(R.id.club_floating_btn);
         club_floating_btn.setOnClickListener(this);
 
-        requestClubInfo();
-
         listView = (ListView) findViewById(R.id.club_list_view);
         tv_club_info = (TextView) findViewById(R.id.tv_club_info);
         tv_club_year = (TextView) findViewById(R.id.tv_club_year);
+
+        requestClubInfo();
 
         initSwipeRefresh();
     }
@@ -127,7 +128,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                 //TODO
                 String username = SpUtils.getString(mContext, AppConstants.STU_ID);
                 String pePass = SpUtils.getString(mContext, AppConstants.STU_PE_PASS);
-                request(username, pePass);
+                requestClubScore(username, pePass);
             }
         };
 
@@ -140,8 +141,9 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "俱乐部数据导入中,请稍后……", true, false);
         mProgressDialog.setCancelable(true);
         mProgressDialog.setCanceledOnTouchOutside(true);
+
         if (pePass != null) {
-            request(username, pePass);
+            requestClubScore(username, pePass);
         } else {
             mProgressDialog.dismiss();
             final EditText editText = new EditText(ClubActivity.this);
@@ -177,17 +179,27 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                 @Override
                                 public void onResponse(Call call, final Response response) throws IOException {
                                     if (response.isSuccessful()) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
+                                        String data = response.body().string();
+                                        Res res = ResponseUtil.handleResponse(data);
+                                        if (res.getCode() == 200) {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mProgressDialog.dismiss();
+                                                    mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
+                                                    mProgressDialog.setCancelable(true);
+                                                    mProgressDialog.setCanceledOnTouchOutside(true);
+                                                    requestClubScore(username, editText.getText().toString());
+                                                    SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
+                                                }
+                                            });
+                                        } else {
+                                            Looper.prepare();
+                                            if (mProgressDialog.isShowing())
                                                 mProgressDialog.dismiss();
-                                                mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
-                                                mProgressDialog.setCancelable(true);
-                                                mProgressDialog.setCanceledOnTouchOutside(true);
-                                                request(username, editText.getText().toString());
-                                                SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
-                                            }
-                                        });
+                                            Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                                            Looper.loop();
+                                        }
                                     } else {
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -205,8 +217,9 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
         }
     }
 
-    private void request(String username, String pePass) {
+    private void requestClubScore(String username, String pePass) {
         clubList.clear();
+        listView.setVisibility(View.GONE);
         String url = UrlUtil.CLUB_SCORE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
@@ -215,7 +228,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
 
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -227,57 +240,68 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    try {
-                        JSONArray array = new JSONArray(data);
-                        JSONObject object = array.getJSONObject(0);
-                        final String year = object.getString("year");
-                        String name = object.getString("name");
-                        String total = object.getString("total");
-                        final String sum = object.getString("sum");
+                    Res res = ResponseUtil.handleResponse(data);
+                    assert res != null;
+                    if (res.getCode() == 200) {
+                        try {
+                            JSONArray array = new JSONArray(res.getInfo());
+                            JSONObject object = array.getJSONObject(0);
+                            final String year = object.getString("year");
+                            String name = object.getString("name");
+                            String total = object.getString("total");
+                            final String sum = object.getString("sum");
 
-                        SpUtils.putString(mContext, "club_info", total);
+                            SpUtils.putString(mContext, "club_info", total);
 
-                        Log.d(TAG, "onResponse: " + year);
-                        Log.d(TAG, "onResponse: " + name);
-                        Log.d(TAG, "onResponse: " + total);
-                        Log.d(TAG, "onResponse: " + sum);
+                            JSONArray innerArray = array.getJSONArray(1);
+                            for (int i = 0; i < innerArray.length(); i++) {
+                                JSONObject innerObject = innerArray.getJSONObject(i);
+                                String number = innerObject.getString("number");
+                                String date = innerObject.getString("date");
+                                String time = innerObject.getString("time");
 
-                        JSONArray innerArray = array.getJSONArray(1);
-                        for (int i = 0; i < innerArray.length(); i++) {
-                            JSONObject innerObject = innerArray.getJSONObject(i);
-                            String number = innerObject.getString("number");
-                            String date = innerObject.getString("date");
-                            String time = innerObject.getString("time");
-
-                            Club club = new Club(time, number, date);
-                            clubList.add(club);
-                        }
-
-                        Log.d(TAG, "onCreate: " + clubList.size());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                String temp = sum.substring(sum.indexOf(" ") + 1, sum.lastIndexOf(" "));
-                                tv_club_info.setText(temp.substring(0, temp.indexOf("(")));
-                                String[] s = year.split(" ");
-                                tv_club_year.setText(s[1]);
-
-                                ClubAdapter clubAdapter = new ClubAdapter(ClubActivity.this, R.layout.item_club, clubList);
-                                listView.setAdapter(clubAdapter);
-                                mProgressDialog.dismiss();
+                                Club club = new Club(time, number, date);
+                                clubList.add(club);
                             }
-                        });
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String temp = sum.substring(sum.indexOf(" ") + 1, sum.lastIndexOf(" "));
+                                    tv_club_info.setText(temp.substring(0, temp.indexOf("(")));
+                                    String[] s = year.split(" ");
+                                    tv_club_year.setText(s[1]);
+
+                                    ClubAdapter clubAdapter = new ClubAdapter(ClubActivity.this, R.layout.item_club, clubList);
+                                    listView.setAdapter(clubAdapter);
+                                    listView.setVisibility(View.VISIBLE);
+                                    mProgressDialog.dismiss();
+                                    swipeRefreshLayout.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            swipeRefreshLayout.setRefreshing(false);
+                                        }
+                                    });
+                                }
+                            });
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
                         swipeRefreshLayout.post(new Runnable() {
                             @Override
                             public void run() {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {

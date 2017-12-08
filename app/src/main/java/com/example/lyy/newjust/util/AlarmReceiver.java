@@ -40,11 +40,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent pi = PendingIntent.getActivity(context, 0, intent, 0);
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(context)
-                .setContentTitle("标题")
+                .setContentTitle("果核")
                 .setContentText("快去查看一下要做的事情吧")
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.mipmap.ic_guohe)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_guohe))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_SOUND)

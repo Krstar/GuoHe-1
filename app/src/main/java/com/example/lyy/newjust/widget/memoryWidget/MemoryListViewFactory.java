@@ -23,7 +23,7 @@ public class MemoryListViewFactory implements RemoteViewsService.RemoteViewsFact
     private static final String TAG = "MemoryListViewFactory";
 
     private final Context mContext;
-    public static List<String> mList = new ArrayList<String>();
+    public static List<String> mList = new ArrayList<>();
 
     /*
      * 构造函数

@@ -4,30 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.lyy.newjust.activity.Tools.OCRActivity">
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
-        android:padding="25dp">
-
-        <TextView
-            android:id="@+id/tv_ocr_result"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20sp" />
-
-    </ScrollView>
+    android:background="@color/material_white_1000"
+    android:gravity="center"
+    android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/photo_btn"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_menu_camera"
-        android:text="点击识别" />
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_menu_ocr_camera"
+        android:text="点击识别"
+        tools:ignore="VectorDrawableCompat" />
 
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.example.lyy.newjust;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;

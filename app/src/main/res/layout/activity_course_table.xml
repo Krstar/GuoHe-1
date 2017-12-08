@@ -47,11 +47,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
-                android:backgroundTint="@color/material_white_1000"
-                android:src="@drawable/ic_menu_week_change"
+                app:srcCompat="@drawable/ic_menu_week_change"
+                app:backgroundTint="@color/material_white_1000"
                 app:borderWidth="0dp"
-                app:elevation="8dp"
-                tools:ignore="VectorDrawableCompat" />
+                app:elevation="8dp" />
 
         </FrameLayout>
 

@@ -18,9 +18,9 @@
     <application
         android:name=".AndroidApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_ijust"
+        android:icon="@mipmap/ic_guohe"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_ijust_round"
+        android:roundIcon="@mipmap/ic_guohe_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
@@ -87,10 +87,14 @@
             android:name="UMENG_CHANNEL"
             android:value="Wandoujia" />
 
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
+
         <activity android:name=".activity.School.LibraryActivity" />
         <activity android:name=".activity.School.ClassRoomActivity" />
         <activity android:name=".activity.School.ClubActivity" />
-        <activity android:name=".activity.School.AoLanActivity" />
+        <activity android:name=".activity.School.JobActivity" />
         <activity android:name=".activity.School.NewSubjectActivity" />
         <activity android:name=".activity.School.BookListActivity" />
         <activity android:name=".activity.School.BookDetailActivity" />

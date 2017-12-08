@@ -30,9 +30,9 @@ public class SubjectAdapter extends ArrayAdapter<Subject> {
 
         View view= LayoutInflater.from(getContext()).inflate(resourceId, parent,false);//实例化一个对象
 
-        TextView subject_name = view.findViewById(R.id.subject_name);       //获取该布局内的学科名
-        TextView subject_credit = view.findViewById(R.id.subject_credit);   //获取该布局内的学科学分
-        TextView subject_score = view.findViewById(R.id.subject_score);       //获取当前布局内的学科成绩
+        TextView subject_name = (TextView) view.findViewById(R.id.subject_name);       //获取该布局内的学科名
+        TextView subject_credit = (TextView) view.findViewById(R.id.subject_credit);   //获取该布局内的学科学分
+        TextView subject_score = (TextView) view.findViewById(R.id.subject_score);       //获取当前布局内的学科成绩
 
         subject_name.setText(subject.getSubject_name());                    //设置学科名
         subject_credit.setText(subject.getSubject_credit());                //设置学科学分

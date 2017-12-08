@@ -1,12 +1,11 @@
 package com.example.lyy.newjust.activity.School;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -35,12 +34,11 @@ public class SchoolBusActivity extends SwipeBackActivity {
 
     private Context mContext;
 
-    private static final String TAG = "SchoolBusActivity";
-
     private ProgressBar progressBar;
 
     private String checi;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

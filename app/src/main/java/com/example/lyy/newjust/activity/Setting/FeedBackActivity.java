@@ -2,7 +2,6 @@ package com.example.lyy.newjust.activity.Setting;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,15 +9,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.UrlUtil;
@@ -33,6 +33,8 @@ public class FeedBackActivity extends SwipeBackActivity {
 
     private WebView webView;
 
+    private ProgressBar progressBar;
+
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
     public static final int REQUEST_SELECT_FILE = 100;
@@ -40,6 +42,7 @@ public class FeedBackActivity extends SwipeBackActivity {
     public ValueCallback<Uri[]> uploadMessage;
     public ValueCallback<Uri> mUploadMessage;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +67,8 @@ public class FeedBackActivity extends SwipeBackActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
         }
+
+        progressBar = (ProgressBar) findViewById(R.id.feedback_progress);
 
         webView = (WebView) findViewById(R.id.feedback_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -170,6 +175,18 @@ public class FeedBackActivity extends SwipeBackActivity {
                 return false;
             }
             return true;
+        }
+
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            // TODO 自动生成的方法存根
+
+            if (newProgress == 100) {
+                progressBar.setVisibility(View.GONE);//加载完网页进度条消失
+            } else {
+                progressBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                progressBar.setProgress(newProgress);//设置进度值
+            }
         }
     }
 

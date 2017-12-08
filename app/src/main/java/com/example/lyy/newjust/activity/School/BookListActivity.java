@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -19,7 +18,9 @@ import android.widget.Toast;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.adapter.Book;
 import com.example.lyy.newjust.adapter.BookAdapter;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
@@ -41,8 +42,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class BookListActivity extends SwipeBackActivity {
-
-    private static final String TAG = "BookListActivity";
 
     private Context mContext;
 
@@ -118,16 +117,15 @@ public class BookListActivity extends SwipeBackActivity {
         listener = new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
                 //TODO
-                searchBookList(keyword);
+                requestBookList(keyword);
             }
         };
 
         swipeRefreshLayout.setOnRefreshListener(listener);
     }
 
-
     //查询图书列表
-    private void searchBookList(String bookName) {
+    private void requestBookList(String bookName) {
         bookList.clear();
         String url = UrlUtil.BOOK_LIST;
 
@@ -156,19 +154,16 @@ public class BookListActivity extends SwipeBackActivity {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    if (HttpUtil.isGoodJson(data)) {
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
                         try {
-                            JSONArray array = new JSONArray(data);
+                            JSONArray array = new JSONArray(res.getInfo());
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject object = array.getJSONObject(i);
                                 String book_author_press = object.getString("book_author_press");
                                 String book_can_borrow = object.getString("book_can_borrow");
                                 String book_url = object.getString("book_url");
                                 String book_title = object.getString("book_title");
-                                Log.d(TAG, "onResponse: " + book_author_press);
-                                Log.d(TAG, "onResponse: " + book_can_borrow);
-                                Log.d(TAG, "onResponse: " + book_url);
-                                Log.d(TAG, "onResponse: " + book_title);
 
                                 Book book = new Book(book_title, book_author_press, book_can_borrow, book_url);
                                 bookList.add(book);
@@ -190,6 +185,16 @@ public class BookListActivity extends SwipeBackActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    }else {
+                        Looper.prepare();
+                        swipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {

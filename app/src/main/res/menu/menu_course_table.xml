@@ -19,7 +19,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_change_background"
-        android:icon="@drawable/ic_menu_close"
+        android:icon="@drawable/ic_menu_exit"
         android:orderInCategory="100"
         android:title="@string/action_change_background"
         app:showAsAction="never" />

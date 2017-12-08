@@ -7,9 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.UrlUtil;
@@ -23,6 +26,8 @@ public class AboutUSActivity extends AppCompatActivity {
     private WebView webView;
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
+
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,21 @@ public class AboutUSActivity extends AppCompatActivity {
         webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
+
+        progressBar = (ProgressBar) findViewById(R.id.about_us_progress);
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                // TODO 自动生成的方法存根
+
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);//加载完网页进度条消失
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                    progressBar.setProgress(newProgress);//设置进度值
+                }
+            }
+        });
 
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) findViewById(R.id.about_us_swipe);
         //设置转的圈的颜色

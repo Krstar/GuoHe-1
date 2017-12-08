@@ -40,9 +40,9 @@ public class DonateDialog extends MaterialDialog {
         //填充弹窗布局
         View inflate = View.inflate(context, R.layout.donate_dialog, null);
 
-        tv_content = inflate.findViewById(R.id.tv_content);
-        tv_cancel = inflate.findViewById(R.id.tv_cancel);
-        btn_alipay = inflate.findViewById(R.id.btn_alipay);
+        tv_content = (TextView) inflate.findViewById(R.id.tv_content);
+        tv_cancel = (TextView) inflate.findViewById(R.id.tv_cancel);
+        btn_alipay = (Button) inflate.findViewById(R.id.btn_alipay);
 
         tv_content.setText("假如此App为您带来了便利与舒适，假如您愿意支持我们。我们希望能得到小小的赞赏，这是一种莫大的肯定与鼓励。\n" +
                 "金钱是保持自由的一种工具，我们诚挚祈望未来与你同在。\n");

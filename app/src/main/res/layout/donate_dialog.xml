@@ -56,14 +56,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/btn_selector"
+                android:background="@drawable/bg_btn_alipay"
                 android:text="支付宝"
                 android:textColor="@color/material_white_1000" />
 
             <!--<Button-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
-            <!--android:background="@drawable/btn_selector"-->
+            <!--android:background="@drawabg_btn_alipayctor"-->
             <!--android:text="微信捐赠"-->
             <!--android:textColor="@color/material_white_1000" />-->
 

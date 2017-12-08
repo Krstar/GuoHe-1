@@ -1,16 +1,19 @@
 package com.example.lyy.newjust.activity.One;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.UrlUtil;
@@ -27,6 +30,9 @@ public class WeiBoActivity extends SwipeBackActivity {
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
+    private ProgressBar progressBar;
+
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,11 +58,33 @@ public class WeiBoActivity extends SwipeBackActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
+        progressBar = (ProgressBar) findViewById(R.id.weibo_progress);
+
         webView = (WebView) findViewById(R.id.weibo_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
+        webView.setWebViewClient(new WebViewClient() {
+            //复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器， 而是在本WebView中显示
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                // TODO 自动生成的方法存根
+
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);//加载完网页进度条消失
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                    progressBar.setProgress(newProgress);//设置进度值
+                }
+            }
+        });
 
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) findViewById(R.id.weibo_swipe);
         //设置转的圈的颜色

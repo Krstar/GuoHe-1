@@ -1,10 +1,8 @@
 package com.example.lyy.newjust.activity.School;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -13,6 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
@@ -20,22 +19,20 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
-public class AoLanActivity extends SwipeBackActivity {
+public class JobActivity extends SwipeBackActivity {
 
     private WebView webView;
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
-    private String url;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ao_lan);
+        setContentView(R.layout.activity_job);
 
         StatusBarCompat.setStatusBarColor(this, Color.rgb(0, 172, 193));
 
-        url = "https://vpn.just.edu.cn/dana/home/index.cgi";
+        String url = UrlUtil.JOB_URL;
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
         SwipeBackLayout mSwipeBackLayout = getSwipeBackLayout();

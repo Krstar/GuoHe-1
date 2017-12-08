@@ -34,13 +34,17 @@ public class UrlUtil {
 
     public static final String STU_SCORE = "http://120.25.88.41/vpnScore";          //查询学生成绩
 
-    public static final String BOOK_TOP="http://120.25.88.41/vpnBookTop100";        //查询前100的热门图书
+    public static final String BOOK_TOP = "http://120.25.88.41/vpnBookTop100";        //查询前100的热门图书
+
+    public static final String JOB_URL = "";                    //查询就业信息的url
 
 
     //    -----------------------------------------------------设置部分----------------------------------------------------        //
     public static final String ABOUT_US = "http://u5413978.viewer.maka.im/k/L3OW3S5E";    //关于我们
 
     public static final String FEEDBACK = "http://120.25.88.41/feedback/index.html";  //用户反馈
+
+    public static final String APK_PATH = "http://120.25.88.41/apk/getApkInfo";       //在线升级APK的查询接口
 
 
     //    -----------------------------------------------------小工具部分----------------------------------------------------        //

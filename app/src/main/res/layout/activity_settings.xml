@@ -184,11 +184,12 @@
                             android:textSize="18sp" />
 
                         <TextView
+                            android:id="@+id/tv_checkInfo"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_weight="2"
-                            android:gravity="center"
-                            android:text="当前版本0.0.1"
+                            android:gravity="right|center"
+                            android:text="当前版本:0.0.1"
                             android:textColor="@color/material_blue_300"
                             android:textSize="18sp" />
 

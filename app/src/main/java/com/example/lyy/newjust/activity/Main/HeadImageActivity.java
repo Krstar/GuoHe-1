@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.lyy.newjust.R;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
@@ -87,7 +86,7 @@ public class HeadImageActivity extends DraggerActivity {
             }
         });
 
-        Glide.with(this).load(headPicUrl).diskCacheStrategy(DiskCacheStrategy.ALL).into(bg_imageview);
+        Glide.with(this).load(headPicUrl).into(bg_imageview);
     }
 
     private void shareImg(String dlgTitle, String subject, String content,

@@ -24,8 +24,10 @@ import com.bumptech.glide.Glide;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.adapter.Exercise;
 import com.example.lyy.newjust.adapter.ExerciseAdapter;
+import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
+import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.flyco.animation.BounceEnter.BounceBottomEnter;
@@ -99,13 +101,13 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         FloatingActionButton exercise_floating_btn = (FloatingActionButton) findViewById(R.id.exercise_floating_btn);
         exercise_floating_btn.setOnClickListener(this);
 
-        requestExerciseInfo();
-
         listView = (ListView) findViewById(R.id.exercise_list_view);
         tv_exercise_info = (TextView) findViewById(R.id.tv_exercise_info);
         tv_exercise_year = (TextView) findViewById(R.id.tv_exercise_year);
 
         initSwipeRefresh();
+
+        requestExerciseInfo();
     }
 
     private void initSwipeRefresh() {
@@ -172,14 +174,24 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                                 @Override
                                 public void onResponse(Call call, final Response response) throws IOException {
                                     if (response.isSuccessful()) {
-                                        Looper.prepare();
-                                        mProgressDialog.dismiss();
-                                        mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "验证成功,请稍后……", true, false);
-                                        mProgressDialog.setCancelable(true);
-                                        mProgressDialog.setCanceledOnTouchOutside(true);
-                                        request(username, editText.getText().toString());
-                                        SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
-                                        Looper.loop();
+                                        String data = response.body().string();
+                                        Res res = ResponseUtil.handleResponse(data);
+                                        if (res.getCode() == 200) {
+                                            Looper.prepare();
+                                            mProgressDialog.dismiss();
+                                            mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "验证成功,请稍后……", true, false);
+                                            mProgressDialog.setCancelable(true);
+                                            mProgressDialog.setCanceledOnTouchOutside(true);
+                                            request(username, editText.getText().toString());
+                                            SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
+                                            Looper.loop();
+                                        } else {
+                                            Looper.prepare();
+                                            if (mProgressDialog.isShowing())
+                                                mProgressDialog.dismiss();
+                                            Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                                            Looper.loop();
+                                        }
                                     } else {
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -199,6 +211,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
 
     private void request(String username, String pePass) {
         exerciseList.clear();
+        listView.setVisibility(View.GONE);
         String url = UrlUtil.EXERCISE_SCORE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
@@ -222,48 +235,65 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
-                    try {
-                        JSONArray array = new JSONArray(data);
-                        JSONObject object = array.getJSONObject(0);
-                        final String year = object.getString("year");
-                        String name = object.getString("name");
-                        final String total = object.getString("total");
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        try {
+                            JSONArray array = new JSONArray(res.getInfo());
+                            JSONObject object = array.getJSONObject(0);
+                            final String year = object.getString("year");
+                            String name = object.getString("name");
+                            final String total = object.getString("total");
 
-                        SpUtils.putString(mContext, "exercise_info", name + "\n" + total);
+                            SpUtils.putString(mContext, "exercise_info", name + "\n" + total);
 
-                        JSONArray innerArray = array.getJSONArray(1);
-                        for (int i = 0; i < innerArray.length(); i++) {
-                            JSONObject innerObject = innerArray.getJSONObject(i);
-                            String number = innerObject.getString("number");
-                            String date = innerObject.getString("date");
-                            String time = innerObject.getString("time");
+                            JSONArray innerArray = array.getJSONArray(1);
+                            for (int i = 0; i < innerArray.length(); i++) {
+                                JSONObject innerObject = innerArray.getJSONObject(i);
+                                String number = innerObject.getString("number");
+                                String date = innerObject.getString("date");
+                                String time = innerObject.getString("time");
 
-                            Exercise exercise = new Exercise(time, number, date);
-                            exerciseList.add(exercise);
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                String[] s = year.split(" ");
-                                tv_exercise_year.setText(s[1]);
-
-                                String[] s1 = total.split(" ");
-                                tv_exercise_info.setText(s1[1] + s1[2]);
-
-                                ExerciseAdapter exerciseAdapter = new ExerciseAdapter(ExerciseActivity.this, R.layout.item_exercise, exerciseList);
-                                listView.setAdapter(exerciseAdapter);
-                                mProgressDialog.dismiss();
+                                Exercise exercise = new Exercise(time, number, date);
+                                exerciseList.add(exercise);
                             }
-                        });
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String[] s = year.split(" ");
+                                    tv_exercise_year.setText(s[1]);
+
+                                    String[] s1 = total.split(" ");
+                                    tv_exercise_info.setText(s1[1] + s1[2]);
+
+                                    ExerciseAdapter exerciseAdapter = new ExerciseAdapter(ExerciseActivity.this, R.layout.item_exercise, exerciseList);
+                                    listView.setAdapter(exerciseAdapter);
+                                    listView.setVisibility(View.VISIBLE);
+                                    mProgressDialog.dismiss();
+                                    swipeRefreshLayout.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            swipeRefreshLayout.setRefreshing(false);
+                                        }
+                                    });
+                                }
+                            });
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
                         swipeRefreshLayout.post(new Runnable() {
                             @Override
                             public void run() {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {
