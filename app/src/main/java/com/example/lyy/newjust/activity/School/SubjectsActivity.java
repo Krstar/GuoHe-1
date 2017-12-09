@@ -1,11 +1,13 @@
 package com.example.lyy.newjust.activity.School;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -94,11 +96,12 @@ public class SubjectsActivity extends SwipeBackActivity {
         // 滑动退出的效果只能从边界滑动才有效果，如果要扩大touch的范围，可以调用这个方法
         mSwipeBackLayout.setEdgeSize(100);
 
-        searchPointRequest();
+        requestPoint();
 
         init();
     }
 
+    @SuppressLint("InflateParams")
     private void init() {
         adapter_list_kaoshi = new ArrayList<>();
         adapter_list_kaocha = new ArrayList<>();
@@ -175,7 +178,7 @@ public class SubjectsActivity extends SwipeBackActivity {
         });
     }
 
-    private void searchPointRequest() {
+    private void requestPoint() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -196,22 +199,23 @@ public class SubjectsActivity extends SwipeBackActivity {
                 .build();
         HttpUtil.sendPostHttpRequest(pointUrl, requestBody, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (mProgressDialog.isShowing())
                             mProgressDialog.dismiss();
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Res res = ResponseUtil.handleResponse(data);
+                    assert res != null;
                     if (res.getCode() == 200) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -220,8 +224,14 @@ public class SubjectsActivity extends SwipeBackActivity {
                                     mProgressDialog.dismiss();
                             }
                         });
-                        searchScoreRequest();
+                        requestScore();
                         showPointResult(res.getInfo());
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -237,35 +247,8 @@ public class SubjectsActivity extends SwipeBackActivity {
         });
     }
 
-    private void showPointResult(String responseText) {
-        try {
-            final List<Point> pointList = new ArrayList<>();
-            JSONArray jsonArray = new JSONArray(responseText);
-            JSONObject object = jsonArray.getJSONObject(0);
-            final String all_point = object.getString("point");
-            for (int i = 1; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String every_year = jsonObject.getString("year");
-                String every_point = jsonObject.getString("point");
-                pointList.add(new Point(every_year, every_point));
-            }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ListView list_every_year_point = (ListView) findViewById(R.id.list_every_year_point);
-                    PointAdapter adapter = new PointAdapter(SubjectsActivity.this, R.layout.item_point, pointList);
-                    list_every_year_point.setAdapter(adapter);
-                    tv_all_point.setText(all_point);
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     //发出分数查询的请求
-    private void searchScoreRequest() {
+    private void requestScore() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -286,22 +269,23 @@ public class SubjectsActivity extends SwipeBackActivity {
                 .build();
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (mProgressDialog.isShowing())
                             mProgressDialog.dismiss();
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     final String data = response.body().string();
                     final Res res = ResponseUtil.handleResponse(data);
+                    assert res != null;
                     if (res.getCode() == 200) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -365,6 +349,33 @@ public class SubjectsActivity extends SwipeBackActivity {
                 showLeftScoreResult();
             }
         });
+    }
+
+    private void showPointResult(String responseText) {
+        try {
+            final List<Point> pointList = new ArrayList<>();
+            JSONArray jsonArray = new JSONArray(responseText);
+            JSONObject object = jsonArray.getJSONObject(0);
+            final String all_point = object.getString("point");
+            for (int i = 1; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String every_year = jsonObject.getString("year");
+                String every_point = jsonObject.getString("point");
+                pointList.add(new Point(every_year, every_point));
+            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ListView list_every_year_point = (ListView) findViewById(R.id.list_every_year_point);
+                    PointAdapter adapter = new PointAdapter(SubjectsActivity.this, R.layout.item_point, pointList);
+                    list_every_year_point.setAdapter(adapter);
+                    tv_all_point.setText(all_point);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     //显示考试课结果
@@ -444,7 +455,7 @@ public class SubjectsActivity extends SwipeBackActivity {
     class MyPagerAdapter extends PagerAdapter {
         private List<View> mViewList;
 
-        public MyPagerAdapter(List<View> mViewList) {
+        MyPagerAdapter(List<View> mViewList) {
             this.mViewList = mViewList;
         }
 

@@ -4,6 +4,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="apk_introduction">Crafted with love by 果核开发小组</string>
+
     <string name="action_bg">更换背景</string>
     <string name="action_donate">支持捐赠</string>
     <string name="action_help">帮助反馈</string>

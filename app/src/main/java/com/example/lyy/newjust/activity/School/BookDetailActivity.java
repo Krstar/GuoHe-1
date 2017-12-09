@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -85,7 +86,7 @@ public class BookDetailActivity extends SwipeBackActivity {
                 .build();
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -95,16 +96,17 @@ public class BookDetailActivity extends SwipeBackActivity {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         });
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Res res = ResponseUtil.handleResponse(data);
+                    assert res != null;
                     if (res.getCode() == 200) {
                         try {
                             JSONArray array = new JSONArray(res.getInfo());

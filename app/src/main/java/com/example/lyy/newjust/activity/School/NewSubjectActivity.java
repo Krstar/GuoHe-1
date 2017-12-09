@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -116,19 +117,19 @@ public class NewSubjectActivity extends AppCompatActivity {
 
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (mProgressDialog.isShowing())
                             mProgressDialog.dismiss();
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Res res = ResponseUtil.handleResponse(data);
@@ -149,10 +150,59 @@ public class NewSubjectActivity extends AppCompatActivity {
                                     spinner_year.attachDataSource(all_year_list);
                                 }
                             });
-                            searchScoreRequest();
+                            requestScore();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    //发出分数查询的请求
+    private void requestScore() {
+        String url = UrlUtil.STU_SCORE;
+
+        RequestBody requestBody = new FormBody.Builder()
+                .add("username", stu_id)
+                .add("password", stu_pass)
+                .build();
+        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String data = response.body().string();
+                    Res res = ResponseUtil.handleResponse(data);
+                    if (res.getCode() == 200) {
+                        handleScoreResponse(res.getInfo());
+                    } else {
+                        Looper.prepare();
+                        if (mProgressDialog.isShowing())
+                            mProgressDialog.dismiss();
+                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -201,55 +251,6 @@ public class NewSubjectActivity extends AppCompatActivity {
             @Override
             public void run() {
                 listView.setAdapter(subjectAdapter);
-            }
-        });
-    }
-
-    //发出分数查询的请求
-    private void searchScoreRequest() {
-        String url = UrlUtil.STU_SCORE;
-
-        RequestBody requestBody = new FormBody.Builder()
-                .add("username", stu_id)
-                .add("password", stu_pass)
-                .build();
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mProgressDialog.isShowing())
-                            mProgressDialog.dismiss();
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Res res = ResponseUtil.handleResponse(data);
-                    if (res.getCode() == 200) {
-                        handleScoreResponse(res.getInfo());
-                    } else {
-                        Looper.prepare();
-                        if (mProgressDialog.isShowing())
-                            mProgressDialog.dismiss();
-                        Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                            Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
             }
         });
     }

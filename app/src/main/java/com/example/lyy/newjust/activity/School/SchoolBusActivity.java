@@ -36,8 +36,6 @@ public class SchoolBusActivity extends SwipeBackActivity {
 
     private ProgressBar progressBar;
 
-    private String checi;
-
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +79,6 @@ public class SchoolBusActivity extends SwipeBackActivity {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                // TODO 自动生成的方法存根
-
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);//加载完网页进度条消失
                 } else {
@@ -118,12 +114,13 @@ public class SchoolBusActivity extends SwipeBackActivity {
         Calendar calendar = Calendar.getInstance();
         //星期天从0开始
         int week = calendar.get(Calendar.DAY_OF_WEEK);
-        SimpleDateFormat f = new SimpleDateFormat("HH:mm");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat f = new SimpleDateFormat("HH:mm");
         Date c = new Date(System.currentTimeMillis());
         try {
             String str1 = f.format(c);
             //当前时间,格式为HH：mm
             Date d1 = f.parse(str1);
+            String checi;
             if (f.parse("21:55").compareTo(d1) == -1) {
                 //没有车了
                 checi = "目前没有车了";
@@ -215,7 +212,7 @@ public class SchoolBusActivity extends SwipeBackActivity {
             }
             MaterialDialogOneBtn(checi);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

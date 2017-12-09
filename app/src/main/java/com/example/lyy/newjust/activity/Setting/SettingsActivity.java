@@ -318,7 +318,7 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
 
     private void shareApp() {
         Intent intent1 = new Intent(Intent.ACTION_SEND);
-        intent1.putExtra(Intent.EXTRA_TEXT, "http://u5413978.viewer.maka.im/k/L3OW3S5E");
+        intent1.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + UrlUtil.APP);
         intent1.setType("text/plain");
         startActivity(Intent.createChooser(intent1, "果核"));
     }

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -52,8 +53,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ExerciseActivity extends SwipeBackActivity implements View.OnClickListener {
-
-    private static final String TAG = "exerciseActivity";
 
     private Context mContext;
 
@@ -160,19 +159,19 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                                     .build();
                             HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
                                 @Override
-                                public void onFailure(Call call, IOException e) {
+                                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             if (mProgressDialog.isShowing())
                                                 mProgressDialog.dismiss();
-                                            Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
 
                                 @Override
-                                public void onResponse(Call call, final Response response) throws IOException {
+                                public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                                     if (response.isSuccessful()) {
                                         String data = response.body().string();
                                         Res res = ResponseUtil.handleResponse(data);
@@ -220,19 +219,19 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
 
         HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (mProgressDialog.isShowing())
                             mProgressDialog.dismiss();
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Res res = ResponseUtil.handleResponse(data);

@@ -7,6 +7,8 @@ package com.example.lyy.newjust.util;
 //记录所有的接口
 public class UrlUtil {
 
+    public static final String APP = "http://106.14.220.63/";           //APP官网网址
+
     //    -----------------------------------------------------校园应用部分----------------------------------------------------        //
     public static final String USER_INFO = "http://120.25.88.41/vpnInfo";         //查询用户信息，登录时使用
 
@@ -44,7 +46,7 @@ public class UrlUtil {
 
     public static final String FEEDBACK = "http://120.25.88.41/feedback/index.html";  //用户反馈
 
-    public static final String APK_PATH = "http://120.25.88.41/apk/getApkInfo";       //在线升级APK的查询接口
+    public static final String APK_PATH = "http://123.207.182.24/apk/getApkInfo";       //在线升级APK的查询接口
 
 
     //    -----------------------------------------------------小工具部分----------------------------------------------------        //

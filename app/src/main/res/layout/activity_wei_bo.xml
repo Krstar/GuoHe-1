@@ -25,7 +25,7 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+    <com.example.lyy.newjust.base.ScrollSwipeRefreshLayout
         android:id="@+id/weibo_swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -53,7 +53,7 @@
         </LinearLayout>
 
 
-    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
+    </com.example.lyy.newjust.base.ScrollSwipeRefreshLayout>
 
 </LinearLayout>
 

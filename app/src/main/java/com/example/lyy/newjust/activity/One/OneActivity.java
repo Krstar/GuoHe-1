@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.example.lyy.newjust.R;
+import com.example.lyy.newjust.base.ScrollSwipeRefreshLayout;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
@@ -28,7 +29,7 @@ public class OneActivity extends SwipeBackActivity {
 
     private WebView webView;
 
-    private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
+    private ScrollSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
     private ProgressBar progressBar;
 
@@ -87,7 +88,8 @@ public class OneActivity extends SwipeBackActivity {
         });
         webView.loadUrl(url);
 
-        mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) findViewById(R.id.one_swipe);
+        mWaveSwipeRefreshLayout = (ScrollSwipeRefreshLayout) findViewById(R.id.one_swipe);
+        mWaveSwipeRefreshLayout.setViewGroup(webView);
         //设置转的圈的颜色
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         //设置水波纹的颜色
