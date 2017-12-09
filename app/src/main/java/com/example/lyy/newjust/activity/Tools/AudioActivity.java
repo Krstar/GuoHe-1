@@ -21,7 +21,6 @@ import com.example.lyy.newjust.activity.One.PopupActivity;
 import com.example.lyy.newjust.util.Audio;
 import com.githang.statusbar.StatusBarCompat;
 import com.shinelw.library.ColorArcProgressBar;
-import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.PermissionListener;
@@ -205,15 +204,5 @@ public class AudioActivity extends SwipeBackActivity implements View.OnClickList
         MyAudio.cancel();
         finish();
         super.onBackPressed();
-    }
-
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

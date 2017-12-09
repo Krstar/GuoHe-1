@@ -20,7 +20,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,7 +35,6 @@ import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.example.lyy.newjust.util.VersionUtils;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -335,15 +333,7 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-
         if (mProgressDialog.isShowing())
             mProgressDialog.dismiss();
-
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

@@ -1,10 +1,10 @@
 package com.example.lyy.newjust.activity.Setting;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +18,6 @@ import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.base.ScrollSwipeRefreshLayout;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -99,16 +98,5 @@ public class AboutUSActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

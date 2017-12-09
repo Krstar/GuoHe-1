@@ -47,7 +47,6 @@ import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
 import com.flyco.dialog.widget.MaterialDialog;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -653,7 +652,6 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     public void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
         bg_course_64 = SpUtils.getString(this, AppConstants.BG_COURSE_64);
         if (bg_course_64 != null) {
             byte[] byte64 = Base64.decode(bg_course_64, 0);
@@ -661,11 +659,6 @@ public class CourseTableActivity extends SwipeBackActivity {
             Bitmap bitmap = BitmapFactory.decodeStream(bais);
             iv_course_table.setImageBitmap(bitmap);
         }
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     @Override

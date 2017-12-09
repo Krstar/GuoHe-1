@@ -46,7 +46,6 @@ import com.example.lyy.newjust.activity.One.ConstellationActivity;
 import com.example.lyy.newjust.activity.One.HistoryActivity;
 import com.example.lyy.newjust.activity.One.OneActivity;
 import com.example.lyy.newjust.activity.One.WeiBoActivity;
-import com.example.lyy.newjust.activity.School.JobActivity;
 import com.example.lyy.newjust.activity.School.ClassRoomActivity;
 import com.example.lyy.newjust.activity.School.ClubActivity;
 import com.example.lyy.newjust.activity.School.CourseTableActivity;
@@ -64,22 +63,22 @@ import com.example.lyy.newjust.activity.Tools.EMSActivity;
 import com.example.lyy.newjust.activity.Tools.EipActivity;
 import com.example.lyy.newjust.activity.Tools.OCRActivity;
 import com.example.lyy.newjust.activity.Tools.TranslateActivity;
+import com.example.lyy.newjust.base.DonateDialog;
 import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.gson.Weather;
 import com.example.lyy.newjust.model.Res;
 import com.example.lyy.newjust.service.AlarmService;
 import com.example.lyy.newjust.util.AppConstants;
-import com.example.lyy.newjust.base.DonateDialog;
 import com.example.lyy.newjust.util.HttpUtil;
-import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.ResponseUtil;
+import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
-import com.umeng.analytics.MobclickAgent;
+import com.tencent.stat.StatService;
 import com.yalantis.taurus.PullToRefreshView;
 
 import org.json.JSONException;
@@ -919,7 +918,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
+        StatService.onResume(this);
         imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
@@ -930,10 +929,5 @@ public class MainActivity extends AppCompatActivity
 
         show_course_number();
         show_now_course();
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

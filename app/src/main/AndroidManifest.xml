@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
         android:name=".AndroidApplication"
@@ -49,26 +51,6 @@
         <activity android:name=".activity.One.ConstellationActivity" />
         <activity android:name=".activity.Memory.ModifyMemoryActivity" />
         <activity android:name=".activity.Memory.MemoryDetailActivity" />
-
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.lyy.newjust.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
-        <receiver
-            android:name=".util.AlarmReceiver"
-            android:process=":remote" />
-
-        <service
-            android:name=".service.AlarmService"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity android:name=".activity.Main.AvatarActivity" />
         <activity android:name=".activity.Setting.FeedBackActivity" />
         <activity android:name=".activity.School.SchoolBusActivity" />
@@ -76,21 +58,6 @@
         <activity android:name=".activity.School.SubjectsActivity" />
         <activity android:name=".activity.Main.LoginActivity" />
         <activity android:name=".activity.School.CourseTableActivity" />
-
-        <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="5a0bb1c5b27b0a09a1000057" />
-        <meta-data
-            android:name="UMENG_MESSAGE_SECRET"
-            android:value="4d869c324bbbff0ada86425167d408b1" />
-        <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="Wandoujia" />
-
-        <meta-data
-            android:name="android.max_aspect"
-            android:value="2.1" />
-
         <activity android:name=".activity.School.LibraryActivity" />
         <activity android:name=".activity.School.ClassRoomActivity" />
         <activity android:name=".activity.School.ClubActivity" />
@@ -109,6 +76,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.lyy.newjust.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5a0bb1c5b27b0a09a1000057" />
+        <meta-data
+            android:name="UMENG_MESSAGE_SECRET"
+            android:value="4d869c324bbbff0ada86425167d408b1" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Wandoujia" />
+
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
+
 
         <receiver android:name=".widget.todoWidget.ToDoListWidget">
             <intent-filter>
@@ -136,6 +129,14 @@
                 android:resource="@xml/widget_info_course_table" />
         </receiver>
 
+        <receiver
+            android:name=".util.AlarmReceiver"
+            android:process=":remote" />
+
+        <service
+            android:name=".service.AlarmService"
+            android:enabled="true"
+            android:exported="true" />
         <service
             android:name=".widget.memoryWidget.MemoryListService"
             android:exported="false"

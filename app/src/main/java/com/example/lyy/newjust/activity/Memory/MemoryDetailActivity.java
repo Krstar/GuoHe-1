@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.db.DBMemory;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
@@ -156,7 +155,6 @@ public class MemoryDetailActivity extends SwipeBackActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
         Time time = new Time("GMT+8");
         time.setToNow();
         int year = time.year;
@@ -169,10 +167,5 @@ public class MemoryDetailActivity extends SwipeBackActivity {
         tv_memory_date.setText(memory.getMemory_day());
         tv_memory_content.setText(memory.getMemory_content());
         tv_between.setText(daysBetween);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

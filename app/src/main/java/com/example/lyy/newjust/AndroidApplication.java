@@ -19,13 +19,12 @@ public class AndroidApplication extends Application {
 
     private PushAgent pushAgent;
 
-    private static final String TAG = "AndroidApplication";
-
     @Override
     public void onCreate() {
         super.onCreate();
         Shortbread.create(this);
         context = getApplicationContext();
+
         LitePalApplication.initialize(context);
 
         pushAgent = PushAgent.getInstance(this);

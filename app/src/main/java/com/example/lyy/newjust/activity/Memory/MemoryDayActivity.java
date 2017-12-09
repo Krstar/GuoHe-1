@@ -4,14 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.text.format.Time;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -26,7 +26,6 @@ import com.example.lyy.newjust.adapter.Memory;
 import com.example.lyy.newjust.adapter.MemoryAdapter;
 import com.example.lyy.newjust.db.DBMemory;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
@@ -306,14 +305,9 @@ public class MemoryDayActivity extends SwipeBackActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
         memoryList.clear();
         initData();
         initSwipeMenuList();
     }
 
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
-    }
 }

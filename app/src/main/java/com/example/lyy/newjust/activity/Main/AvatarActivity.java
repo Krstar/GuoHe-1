@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
-import com.umeng.analytics.MobclickAgent;
 
 import java.io.ByteArrayInputStream;
 
@@ -51,11 +50,9 @@ public class AvatarActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
     }
 
     public void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

@@ -27,7 +27,6 @@ import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.lyy.searchlibrary.searchbox.SearchFragment;
 import com.lyy.searchlibrary.searchbox.custom.IOnSearchClickListener;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -343,17 +342,5 @@ public class LibraryActivity extends SwipeBackActivity implements Toolbar.OnMenu
             }
         });
         listener.onRefresh();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

@@ -1,9 +1,9 @@
 package com.example.lyy.newjust.activity.School;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.webkit.WebSettings;
@@ -13,7 +13,6 @@ import android.webkit.WebViewClient;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
@@ -86,16 +85,5 @@ public class JobActivity extends SwipeBackActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

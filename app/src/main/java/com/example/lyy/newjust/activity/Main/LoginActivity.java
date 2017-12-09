@@ -3,12 +3,11 @@ package com.example.lyy.newjust.activity.Main;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,9 +21,7 @@ import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
-import com.umeng.analytics.MobclickAgent;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -197,11 +194,5 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

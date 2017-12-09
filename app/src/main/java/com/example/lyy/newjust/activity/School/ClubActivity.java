@@ -5,14 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -35,7 +34,6 @@ import com.example.lyy.newjust.util.UrlUtil;
 import com.flyco.animation.BounceEnter.BounceBottomEnter;
 import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.widget.MaterialDialog;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -359,17 +357,6 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     @Override

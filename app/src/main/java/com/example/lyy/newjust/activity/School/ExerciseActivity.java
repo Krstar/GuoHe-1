@@ -34,7 +34,6 @@ import com.example.lyy.newjust.util.UrlUtil;
 import com.flyco.animation.BounceEnter.BounceBottomEnter;
 import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.widget.MaterialDialog;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -350,17 +349,6 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     @Override

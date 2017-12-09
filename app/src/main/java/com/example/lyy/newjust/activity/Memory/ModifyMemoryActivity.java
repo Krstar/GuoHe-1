@@ -24,7 +24,6 @@ import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.Setting.CropViewActivity;
 import com.example.lyy.newjust.db.DBMemory;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
@@ -159,12 +158,6 @@ public class ModifyMemoryActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -229,8 +222,4 @@ public class ModifyMemoryActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
-    }
 }

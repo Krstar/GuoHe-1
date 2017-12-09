@@ -19,7 +19,6 @@ import com.flyco.animation.BounceEnter.BounceBottomEnter;
 import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.widget.MaterialDialog;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -224,16 +223,5 @@ public class SchoolBusActivity extends SwipeBackActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

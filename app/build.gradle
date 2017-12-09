@@ -11,6 +11,12 @@ android {
         versionName "0.0.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+        manifestPlaceholders = [
+                MTA_APPKEY:"A28UBH2TE8IT",
+                MTA_CHANNEL:"tecent"
+        ]
+
     }
     buildTypes {
         release {
@@ -71,12 +77,13 @@ dependencies {
     implementation 'com.github.ppamorim:dragger:1.2'
     implementation 'com.github.shem8:material-login:2.1.1'
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
-    implementation 'com.umeng.analytics:analytics:6.1.2'
     implementation 'com.github.f0ris.sweetalert:library:1.5.1'
     implementation 'com.github.matthiasrobbers:shortbread:1.0.2'
     implementation 'com.github.YueYongDev:SearchView:v1.0'
     implementation 'com.github.arcadefire:nice-spinner:1.3.1'
     implementation 'com.teprinciple:updateapputils:1.4'
+    implementation 'com.qq.mta:mta:3.2.1-release'
+    implementation 'com.tencent.mid:mid:3.73-release'
     annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.0.2'
     testCompile 'junit:junit:4.12'
 }

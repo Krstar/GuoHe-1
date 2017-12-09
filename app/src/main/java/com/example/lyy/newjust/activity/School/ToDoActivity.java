@@ -13,10 +13,9 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.lyy.newjust.model.Goal;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.db.ToDo;
-import com.umeng.analytics.MobclickAgent;
+import com.example.lyy.newjust.model.Goal;
 import com.yalantis.beamazingtoday.interfaces.AnimationType;
 import com.yalantis.beamazingtoday.interfaces.BatModel;
 import com.yalantis.beamazingtoday.listeners.BatListener;
@@ -42,8 +41,6 @@ public class ToDoActivity extends SwipeBackActivity implements BatListener, OnIt
     private BatAdapter mAdapter;
     private List<BatModel> mGoals;
     private BatItemAnimator mAnimator;
-
-    private static final String TAG = "MainActivity";
 
     private List<ToDo> toDos;
 
@@ -178,16 +175,5 @@ public class ToDoActivity extends SwipeBackActivity implements BatListener, OnIt
             todo.save();
         }
         refreshWidget();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

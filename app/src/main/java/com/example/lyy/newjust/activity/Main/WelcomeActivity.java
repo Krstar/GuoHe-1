@@ -11,7 +11,6 @@ import com.example.lyy.newjust.activity.MainActivity;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.SpUtils;
 import com.github.paolorotolo.appintro.AppIntro;
-import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.PermissionListener;
@@ -68,17 +67,6 @@ public class WelcomeActivity extends AppIntro {
     @Override
     public void onSlideChanged() {
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     //权限获取

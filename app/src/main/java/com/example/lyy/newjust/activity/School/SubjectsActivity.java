@@ -14,7 +14,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +38,6 @@ import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -403,17 +401,6 @@ public class SubjectsActivity extends SwipeBackActivity {
             ListView listView = (ListView) findViewById(R.id.right_subject_list_item);
             listView.setAdapter(subjectAdapter);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     @Override

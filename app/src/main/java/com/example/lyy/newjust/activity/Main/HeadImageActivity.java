@@ -18,7 +18,6 @@ import com.flyco.dialog.widget.ActionSheetDialog;
 import com.github.ppamorim.dragger.DraggerActivity;
 import com.github.ppamorim.dragger.DraggerPosition;
 import com.github.ppamorim.dragger.DraggerView;
-import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 
@@ -67,7 +66,7 @@ public class HeadImageActivity extends DraggerActivity {
                                 bg_imageview.setDrawingCacheEnabled(true);
                                 Bitmap bitmap = bg_imageview.getDrawingCache();//获取imageview中的图像
                                 Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "这是title", "这是description"));
-                                shareImg("果核 - 每日一图", "我的主题", "我的分享内容",uri);
+                                shareImg("果核 - 每日一图", "我的主题", "我的分享内容", uri);
                                 break;
                             case 1:
                                 saveImage(bg_imageview);
@@ -132,12 +131,10 @@ public class HeadImageActivity extends DraggerActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
     }
 
     public void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     @Override

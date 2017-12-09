@@ -34,7 +34,6 @@ import com.example.lyy.newjust.util.SpUtils;
 import com.flyco.dialog.listener.OnOperItemClickL;
 import com.flyco.dialog.widget.ActionSheetDialog;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.PermissionListener;
@@ -388,7 +387,6 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
         imageBase64 = SpUtils.getString(this, AppConstants.IMAGE_BASE_64);
         if (imageBase64 != null) {
             byte[] byte64 = Base64.decode(imageBase64, 0);
@@ -398,8 +396,4 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
         }
     }
 
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
-    }
 }

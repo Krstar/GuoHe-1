@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,7 +25,6 @@ import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import org.angmarch.views.NiceSpinner;
 import org.json.JSONArray;
@@ -464,17 +462,6 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     @Override

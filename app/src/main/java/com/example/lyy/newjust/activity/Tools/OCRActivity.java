@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.ocr.sdk.OCR;
@@ -28,7 +27,6 @@ import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.util.FileUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.roger.catloadinglibrary.CatLoadingView;
-import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -197,15 +195,5 @@ public class OCRActivity extends SwipeBackActivity {
             cursor.close();
         }
         return result;
-    }
-
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }

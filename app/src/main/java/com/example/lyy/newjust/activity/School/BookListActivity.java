@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +23,6 @@ import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.githang.statusbar.StatusBarCompat;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -225,17 +223,5 @@ public class BookListActivity extends SwipeBackActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 }
