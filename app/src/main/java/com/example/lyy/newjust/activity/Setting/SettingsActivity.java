@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -17,7 +18,6 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.lyy.newjust.BuildConfig;
 import com.example.lyy.newjust.R;
 import com.example.lyy.newjust.activity.Memory.MemoryDayActivity;
 import com.example.lyy.newjust.model.Res;
@@ -36,6 +35,7 @@ import com.example.lyy.newjust.util.ResponseUtil;
 import com.example.lyy.newjust.util.SpUtils;
 import com.example.lyy.newjust.util.UrlUtil;
 import com.example.lyy.newjust.util.VersionUtils;
+import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
@@ -51,8 +51,6 @@ import okhttp3.Response;
 import util.UpdateAppUtils;
 
 public class SettingsActivity extends SwipeBackActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
-
-    private static final String TAG = "SettingsActivity";
 
     private Context mContext;
 
@@ -76,8 +74,9 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
         SettingActivity = this;
         mContext = SettingsActivity.this;
 
-        //去掉Activity上面的状态栏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        //去掉Activity上面的状态栏
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        StatusBarCompat.setStatusBarColor(this, Color.rgb(255, 255, 255));
         setContentView(R.layout.activity_settings);
 
         setSwipeBackEnable(true);   // 可以调用该方法，设置是否允许滑动退出
@@ -156,9 +155,9 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
                 .setContentTitle(today)
                 .setContentText("记住今天重要的事情")
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_guohe)
                 .setContentIntent(contextIntent)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_guohe))
                 .build();
         notification.flags = Notification.FLAG_ONGOING_EVENT; // 设置常驻 Flag
         notificationManager.notify(2, notification);
@@ -305,7 +304,6 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
     private void updateApp() {
         if (mProgressDialog.isShowing())
             mProgressDialog.dismiss();
-        Log.d(TAG, "updateApp: " + serverVersion + " " + updateInfo);
         UpdateAppUtils.from(SettingsActivity.this)
                 .checkBy(UpdateAppUtils.CHECK_BY_VERSION_NAME) //更新检测方式，默认为VersionCode
 //                .serverVersionCode(2)  //服务器versionCode
