@@ -1,5 +1,9 @@
 [
     {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-v21\\abc_edit_text_material.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\abc_edit_text_material.xml"
+    },
+    {
         "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-v21\\abc_btn_colored_material.xml",
         "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\abc_btn_colored_material.xml"
     },
@@ -8,11 +12,23 @@
         "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\abc_edit_text_material.xml"
     },
     {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-v21\\abc_btn_colored_material.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\abc_btn_colored_material.xml"
+    },
+    {
         "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-v21\\notification_action_background.xml",
         "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\notification_action_background.xml"
     },
     {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-v21\\notification_action_background.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\notification_action_background.xml"
+    },
+    {
         "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-v21\\abc_action_bar_item_background_material.xml",
+        "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-v21\\abc_action_bar_item_background_material.xml",
         "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\drawable-v21\\abc_action_bar_item_background_material.xml"
     }
 ]

@@ -1,17 +1,22 @@
 package com.example.lyy.newjust.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -67,7 +72,6 @@ import com.example.lyy.newjust.base.DonateDialog;
 import com.example.lyy.newjust.db.DBCourse;
 import com.example.lyy.newjust.gson.Weather;
 import com.example.lyy.newjust.model.Res;
-import com.example.lyy.newjust.service.AlarmService;
 import com.example.lyy.newjust.util.AppConstants;
 import com.example.lyy.newjust.util.HttpUtil;
 import com.example.lyy.newjust.util.ResponseUtil;
@@ -86,6 +90,7 @@ import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -586,17 +591,18 @@ public class MainActivity extends AppCompatActivity
 
     //发送加载首页图片的请求
     private void loadHeadPic() {
-        String requestHeadPic = "http://120.25.88.41/just/img";
+        // TODO: 2017/12/11  更改图片地址和接口方式
+        String requestHeadPic = UrlUtil.HEAD_PIC;
         HttpUtil.sendHttpRequest(requestHeadPic, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Looper.prepare();
-                Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 final String headPic = response.body().string();
                 SpUtils.putString(MainActivity.this, AppConstants.HEAD_PIC_URL, headPic);
                 headPicUrl = headPic;
@@ -654,10 +660,47 @@ public class MainActivity extends AppCompatActivity
 
     //分享此应用
     private void shareApp() {
-        Intent intent1 = new Intent(Intent.ACTION_SEND);
-        intent1.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + UrlUtil.APP);
-        intent1.setType("text/plain");
-        startActivity(Intent.createChooser(intent1, "果核"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + UrlUtil.APP);
+            intent.setType("text/plain");
+            startActivity(Intent.createChooser(intent, "果核"));
+        } else {
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(MainActivity.this);
+            normalDialog.setTitle("果核");
+            normalDialog.setMessage("请选择分享方式");
+            normalDialog.setPositiveButton("分享应用",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //...To-do
+                            try {
+                                File apkFile = new File(getPackageManager().getPackageInfo("com.example.lyy.newjust", 0).applicationInfo.sourceDir);
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_SEND);
+                                intent.setType("*/*");
+                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(apkFile));
+                                startActivity(intent);
+                            } catch (PackageManager.NameNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+            normalDialog.setNegativeButton("分享链接",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //...To-do
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + UrlUtil.APP);
+                            intent.setType("text/plain");
+                            startActivity(Intent.createChooser(intent, "果核"));
+                        }
+                    });
+            // 显示
+            normalDialog.show();
+        }
     }
 
     @Override
@@ -689,7 +732,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
 
         mDrawer.closeMenu();
@@ -893,9 +936,6 @@ public class MainActivity extends AppCompatActivity
             tv_stu_id.setText(stu_id);
             tv_stu_name.setText(stu_name);
         }
-
-        Intent alarmService = new Intent(this, AlarmService.class);
-        startService(alarmService);
 
         init();             //初始化相关控件
 

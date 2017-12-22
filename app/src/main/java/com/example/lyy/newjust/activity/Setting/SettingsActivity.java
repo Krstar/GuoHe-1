@@ -8,8 +8,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -39,6 +42,7 @@ import com.githang.statusbar.StatusBarCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
@@ -313,10 +317,47 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
     }
 
     private void shareApp() {
-        Intent intent1 = new Intent(Intent.ACTION_SEND);
-        intent1.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + UrlUtil.APP);
-        intent1.setType("text/plain");
-        startActivity(Intent.createChooser(intent1, "果核"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + UrlUtil.APP);
+            intent.setType("text/plain");
+            startActivity(Intent.createChooser(intent, "果核"));
+        } else {
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(SettingsActivity.this);
+            normalDialog.setTitle("果核");
+            normalDialog.setMessage("请选择分享方式");
+            normalDialog.setPositiveButton("分享应用",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //...To-do
+                            try {
+                                File apkFile = new File(getPackageManager().getPackageInfo("com.example.lyy.newjust", 0).applicationInfo.sourceDir);
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_SEND);
+                                intent.setType("*/*");
+                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(apkFile));
+                                startActivity(intent);
+                            } catch (PackageManager.NameNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+            normalDialog.setNegativeButton("分享链接",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //...To-do
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, "我发现了一个不错的应用哦：" + UrlUtil.APP);
+                            intent.setType("text/plain");
+                            startActivity(Intent.createChooser(intent, "果核"));
+                        }
+                    });
+            // 显示
+            normalDialog.show();
+        }
     }
 
     @Override

@@ -1,6 +1,21 @@
 {
     "logs": [
         {
+            "outputFile": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\values-v18\\values-v18.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\values-v18\\values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        },
+        {
             "outputFile": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\values-v18\\values-v18.xml",
             "map": [
                 {
@@ -17,6 +32,21 @@
         },
         {
             "outputFile": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values-v18\\values-v18.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\values-v18\\values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values-v18\\values-v18.xml",
             "map": [
                 {
                     "source": "C:\\Users\\lyy\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-25.1.1.aar\\7a9493374db10ed2673e9734e573c305\\res\\values-v18\\values-v18.xml",

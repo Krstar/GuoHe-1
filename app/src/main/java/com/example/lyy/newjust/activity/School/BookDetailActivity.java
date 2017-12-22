@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -78,6 +79,7 @@ public class BookDetailActivity extends SwipeBackActivity {
 
     private void requestBookDetail(String book_url) {
         bookDetailList.clear();
+        lv_book_detail.setVisibility(View.GONE);
         String url = UrlUtil.BOOK_DETAIL;
         RequestBody requestBody = new FormBody.Builder()
                 .add("bookUrl", book_url)
@@ -124,6 +126,7 @@ public class BookDetailActivity extends SwipeBackActivity {
                                     public void run() {
                                         BookDetailAdapter bookDetailAdapter = new BookDetailAdapter(BookDetailActivity.this, R.layout.item_book_detail, bookDetailList);
                                         lv_book_detail.setAdapter(bookDetailAdapter);
+                                        lv_book_detail.setVisibility(View.VISIBLE);
                                     }
                                 });
                             }

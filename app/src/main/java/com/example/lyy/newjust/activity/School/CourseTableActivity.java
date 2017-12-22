@@ -1,5 +1,6 @@
 package com.example.lyy.newjust.activity.School;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -106,7 +107,15 @@ public class CourseTableActivity extends SwipeBackActivity {
             R.drawable.course_info_purple,
             R.drawable.course_info_red,
             R.drawable.course_info_teal,
-            R.drawable.course_info_yellow
+            R.drawable.course_info_yellow,
+            R.drawable.course_info_blue,
+            R.drawable.course_info_brown,
+            R.drawable.course_info_cyan,
+            R.drawable.course_info_orange,
+            R.drawable.course_info_pink,
+            R.drawable.course_info_purple,
+            R.drawable.course_info_red,
+            R.drawable.course_info_teal
     };
 
     private TextView tv_course_table_toolbar;
@@ -119,6 +128,7 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     private String server_week;     //服务器当前周
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,22 +207,18 @@ public class CourseTableActivity extends SwipeBackActivity {
                 //判断是否第一次导入课表，默认false，没有导入课表
                 boolean first_open_course = SpUtils.getBoolean(mContext, AppConstants.FIRST_OPEN_COURSE);
                 if (first_open_course) {
-                    Log.d(TAG, "onCreate: " + first_open_course);
                     requestXiaoLi();
                     SpUtils.putBoolean(mContext, AppConstants.FIRST_OPEN_COURSE, false);
                 } else {
-                    Log.d(TAG, "onCreate: " + first_open_course);
                     showCourseTable(server_week);
                 }
             } else {
                 //判断是否第一次导入课表，默认false，没有导入课表
                 boolean first_open_course = SpUtils.getBoolean(mContext, AppConstants.FIRST_OPEN_COURSE);
                 if (first_open_course) {
-                    Log.d(TAG, "onCreate: " + first_open_course);
                     requestXiaoLi();
                     SpUtils.putBoolean(mContext, AppConstants.FIRST_OPEN_COURSE, false);
                 } else {
-                    Log.d(TAG, "onCreate: " + first_open_course);
                     showCourseTable(server_week);
                 }
             }
@@ -231,27 +237,34 @@ public class CourseTableActivity extends SwipeBackActivity {
 
     private void showCourseDialog(String courseMesg) {
         String[] courseInfo = courseMesg.split("@");
+        String courseNum = "";
         String courseClassroom = "";
         String courseName = "";
         String courseTeacher = "";
         if (courseInfo.length == 1) {
-            courseName = courseInfo[0];
+            courseNum = courseInfo[0];
         }
         if (courseInfo.length == 2) {
-            courseName = courseInfo[0];
-            courseTeacher = courseInfo[1];
+            courseNum = courseInfo[0];
+            courseName = courseInfo[1];
         }
         if (courseInfo.length == 3) {
-            courseName = courseInfo[0];
-            courseTeacher = courseInfo[1];
-            courseClassroom = courseInfo[2];
+            courseNum = courseInfo[0];
+            courseName = courseInfo[1];
+            courseTeacher = courseInfo[2];
+        }
+        if (courseInfo.length == 4) {
+            courseNum = courseInfo[0];
+            courseName = courseInfo[1];
+            courseTeacher = courseInfo[2];
+            courseClassroom = courseInfo[3];
         }
 
         final MaterialDialog dialog = new MaterialDialog(mContext);
 
         dialog.isTitleShow(false)//
                 .btnNum(1)
-                .content("课程信息为：\n" + "课程名：\t" + courseName + "\n课程教师：\t" + courseTeacher + "\n教室：\t" + courseClassroom)
+                .content("课程信息为：\n" + "课程号：\t" + courseNum + "\n课程名：\t" + courseName + "\n课程教师：\t" + courseTeacher + "\n教室：\t" + courseClassroom)
                 .btnText("确定")//
                 .showAnim(new BounceBottomEnter())
                 .show();
@@ -299,6 +312,7 @@ public class CourseTableActivity extends SwipeBackActivity {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Res res = ResponseUtil.handleResponse(data);
+                    assert res != null;
                     if (res.getCode() == 200) {
                         SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
                         try {
@@ -510,6 +524,11 @@ public class CourseTableActivity extends SwipeBackActivity {
             if (dbCourse.getDes().length() > 3) {
                 course.setDay(dbCourse.getDay());
                 course.setJieci(dbCourse.getJieci());
+//                String Des[] = dbCourse.getDes().split("@");
+//                StringBuilder courseDes = new StringBuilder();
+//                for (int i = 1; i < Des.length; i++) {
+//                    courseDes.append(Des[i]);
+//                }
                 course.setDes(dbCourse.getDes());
                 course.setBg_Color(color[listWithoutDup.indexOf(dbCourse.getDes())]);
                 list.add(course);
@@ -637,6 +656,7 @@ public class CourseTableActivity extends SwipeBackActivity {
                         // 4.4及以上系统使用这个方法处理图片
                         Uri uri = data.getData();
                         Intent cropIntent = new Intent(CourseTableActivity.this, CropViewActivity.class);
+                        assert uri != null;
                         cropIntent.putExtra("uri", uri.toString());
                         cropIntent.putExtra("flag", "course");
                         startActivity(cropIntent);

@@ -207,8 +207,6 @@ public class CourseTableView extends RelativeLayout {
             tv.setLines(7);
             tv.setTextColor(Color.rgb(255, 255, 255));
             tv.setBackgroundResource(c.getBg_Color());
-//            tv.setBackgroundResource(COURSE_BG[day - 1]);
-//            tv.setBackgroundColor(c.getBg_Color());
             tv.setLayoutParams(flp);
             tv.setOnClickListener(new OnClickListener() {
                 @Override

@@ -179,6 +179,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                     if (response.isSuccessful()) {
                                         String data = response.body().string();
                                         Res res = ResponseUtil.handleResponse(data);
+                                        assert res != null;
                                         if (res.getCode() == 200) {
                                             runOnUiThread(new Runnable() {
                                                 @Override

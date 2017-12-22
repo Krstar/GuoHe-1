@@ -126,6 +126,7 @@ public class BookListActivity extends SwipeBackActivity {
     //查询图书列表
     private void requestBookList(String bookName) {
         bookList.clear();
+        lv_book_list.setVisibility(View.GONE);
         String url = UrlUtil.BOOK_LIST;
 
         RequestBody requestBody = new FormBody.Builder()
@@ -174,15 +175,14 @@ public class BookListActivity extends SwipeBackActivity {
                                     BookAdapter bookAdapter = new BookAdapter(BookListActivity.this, R.layout.item_book_list, bookList);
                                     lv_book_list.setAdapter(bookAdapter);
                                     lv_book_list.setVisibility(View.VISIBLE);
+                                    swipeRefreshLayout.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            swipeRefreshLayout.setRefreshing(false);
+                                        }
+                                    });
                                 }
                             });
-                            swipeRefreshLayout.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeRefreshLayout.setRefreshing(false);
-                                }
-                            });
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

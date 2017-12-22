@@ -11,16 +11,14 @@ import android.util.Log;
 public class Audio {
     private static final String TAG = "Audio";
 
-    static final int SAMPLE_RATE_IN_HZ = 8000;
-    static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ,
+    private static final int SAMPLE_RATE_IN_HZ = 8000;
+    private static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ,
             AudioFormat.CHANNEL_IN_DEFAULT, AudioFormat.ENCODING_PCM_16BIT);
-    AudioRecord mAudioRecord;//用于获取数据
-    Object mLock;//为了使用wait函数
-    Handler myHandler;//用于向主线程传递数据
+    private AudioRecord mAudioRecord;//用于获取数据
+    private final Object mLock;//为了使用wait函数
+    private Handler myHandler;//用于向主线程传递数据
 
-    boolean isGetVoiceRun;
-
-    private Thread thread;
+    private boolean isGetVoiceRun;
 
     public Audio(Handler handler) {
         /*
@@ -41,13 +39,10 @@ public class Audio {
                 SAMPLE_RATE_IN_HZ, AudioFormat.CHANNEL_IN_DEFAULT,
                 AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
 
-        if (mAudioRecord == null) {
-            Log.e("sound", "mAudioRecord初始化失败");
-        }
         isGetVoiceRun = true;
 
         //新建一个线程，录音并处理数据
-        thread = new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 mAudioRecord.startRecording();
@@ -57,8 +52,8 @@ public class Audio {
                     int r = mAudioRecord.read(buffer, 0, BUFFER_SIZE);
                     long v = 0;
                     // 将 buffer 内容取出，进行平方和运算
-                    for (int i = 0; i < buffer.length; i++) {
-                        v += buffer[i] * buffer[i];
+                    for (short aBuffer : buffer) {
+                        v += aBuffer * aBuffer;
                     }
                     // 平方和除以数据总长度，得到音量大小。
                     double mean = v / (double) r;
@@ -81,9 +76,6 @@ public class Audio {
                         }
                     }
                 }
-//                mAudioRecord.stop();
-//                mAudioRecord.release();
-//                mAudioRecord = null;
             }
         });
         thread.start();

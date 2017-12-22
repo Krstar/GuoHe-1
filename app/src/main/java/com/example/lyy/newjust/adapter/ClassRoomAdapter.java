@@ -35,6 +35,7 @@ public class ClassRoomAdapter extends ArrayAdapter<ClassRoom> {
         TextView tv_classroom = (TextView) view.findViewById(R.id.tv_classroom);
         TextView tv_time = (TextView) view.findViewById(R.id.tv_time);
 
+        assert classRoom != null;
         tv_time.setText(classRoom.getTime());
         tv_classroom.setText(classRoom.getPlace());
 

@@ -1,5 +1,9 @@
 [
     {
+        "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxhdpi-v4\\ic_launcher.png",
+        "source": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\GuoHe\\ocr_ui\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxhdpi-v4\\ic_launcher.png"
+    },
+    {
         "merged": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxhdpi-v4\\ic_launcher.png",
         "source": "E:\\YueYongDEV\\Android\\AndroidProjects\\MyDevProjects\\NewJUST\\ocr_ui\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxhdpi-v4\\ic_launcher.png"
     }

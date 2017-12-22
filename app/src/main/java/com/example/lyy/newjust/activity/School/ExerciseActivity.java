@@ -122,7 +122,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                 //TODO
                 String username = SpUtils.getString(mContext, AppConstants.STU_ID);
                 String pePass = SpUtils.getString(mContext, AppConstants.STU_PE_PASS);
-                request(username, pePass);
+                requestExerciseScore(username, pePass);
             }
         };
 
@@ -136,7 +136,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         mProgressDialog.setCancelable(true);
         mProgressDialog.setCanceledOnTouchOutside(true);
         if (pePass != null) {
-            request(username, pePass);
+            requestExerciseScore(username, pePass);
         } else {
             mProgressDialog.dismiss();
             final EditText editText = new EditText(ExerciseActivity.this);
@@ -174,15 +174,19 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                                     if (response.isSuccessful()) {
                                         String data = response.body().string();
                                         Res res = ResponseUtil.handleResponse(data);
+                                        assert res != null;
                                         if (res.getCode() == 200) {
-                                            Looper.prepare();
-                                            mProgressDialog.dismiss();
-                                            mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "验证成功,请稍后……", true, false);
-                                            mProgressDialog.setCancelable(true);
-                                            mProgressDialog.setCanceledOnTouchOutside(true);
-                                            request(username, editText.getText().toString());
-                                            SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
-                                            Looper.loop();
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mProgressDialog.dismiss();
+                                                    mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "验证成功,请稍后……", true, false);
+                                                    mProgressDialog.setCancelable(true);
+                                                    mProgressDialog.setCanceledOnTouchOutside(true);
+                                                    requestExerciseScore(username, editText.getText().toString());
+                                                    SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
+                                                }
+                                            });
                                         } else {
                                             Looper.prepare();
                                             if (mProgressDialog.isShowing())
@@ -207,7 +211,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         }
     }
 
-    private void request(String username, String pePass) {
+    private void requestExerciseScore(String username, String pePass) {
         exerciseList.clear();
         listView.setVisibility(View.GONE);
         String url = UrlUtil.EXERCISE_SCORE;

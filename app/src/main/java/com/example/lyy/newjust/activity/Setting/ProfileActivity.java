@@ -52,8 +52,6 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class ProfileActivity extends SwipeBackActivity implements View.OnClickListener {
 
-    private static final String TAG = "ProfileActivity";
-
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
 
@@ -172,12 +170,26 @@ public class ProfileActivity extends SwipeBackActivity implements View.OnClickLi
                     SpUtils.remove(getApplicationContext(), AppConstants.FIRST_OPEN_COURSE);
                     SpUtils.remove(getApplicationContext(), AppConstants.SERVER_WEEK);
                     SpUtils.remove(getApplicationContext(), AppConstants.XIAO_LI);
+                    SpUtils.remove(getApplicationContext(), "year");
+                    SpUtils.remove(getApplicationContext(), "month");
+                    SpUtils.remove(getApplicationContext(), "day");
+                    SpUtils.remove(getApplicationContext(), "birthday");
+                    SpUtils.remove(getApplicationContext(), "constellation");
+                    SpUtils.remove(getApplicationContext(), "constellation_en");
+
                     DataSupport.deleteAll(DBCourse.class);
                     DataSupport.deleteAll(DBCurrentCourse.class);
 
+                    if (SettingsActivity.SettingActivity != null) {
+                        if (!SettingsActivity.SettingActivity.isFinishing())
+                            SettingsActivity.SettingActivity.finish();
+                    }
+                    if (SettingsActivity.SettingActivity != null) {
+                        if (!MainActivity.mainActivity.isFinishing())
+                            MainActivity.mainActivity.finish();
+                    }
+
                     finish();
-                    SettingsActivity.SettingActivity.finish();
-                    MainActivity.mainActivity.finish();
 
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//关掉所要到的界面中间的activity

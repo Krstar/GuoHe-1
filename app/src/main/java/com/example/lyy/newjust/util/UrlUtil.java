@@ -65,4 +65,6 @@ public class UrlUtil {
     public static final String ONE_DAY = "http://120.25.88.41/oneDay/one/index.html";                     //one day模块的首页
 
     public static final String DI_QI = "http://120.25.88.41/oneDay/diqi/index.html";                      //one day模块中的地气部分
+
+    public static final String HEAD_PIC = "http://120.25.88.41/just/img";                                 //每日一图地址
 }

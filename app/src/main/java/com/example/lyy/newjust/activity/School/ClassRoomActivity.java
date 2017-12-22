@@ -342,6 +342,7 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
 
     private void requestClassroom() {
         classRoomList.clear();
+        lv_classroom.setVisibility(View.GONE);
         String user = SpUtils.getString(mContext, AppConstants.STU_ID);
         String pass = SpUtils.getString(mContext, AppConstants.STU_PASS);
         String url = UrlUtil.CLASSROOM;
@@ -376,6 +377,7 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Res res = ResponseUtil.handleResponse(data);
+                    assert res != null;
                     if (res.getCode() == 200) {
                         try {
                             JSONArray array = new JSONArray(res.getInfo());
@@ -395,12 +397,13 @@ public class ClassRoomActivity extends SwipeBackActivity implements View.OnClick
                                 public void run() {
                                     ClassRoomAdapter classRoomAdapter = new ClassRoomAdapter(ClassRoomActivity.this, R.layout.item_classroom, classRoomList);
                                     lv_classroom.setAdapter(classRoomAdapter);
-                                }
-                            });
-                            swipeRefreshLayout.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeRefreshLayout.setRefreshing(false);
+                                    lv_classroom.setVisibility(View.VISIBLE);
+                                    swipeRefreshLayout.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            swipeRefreshLayout.setRefreshing(false);
+                                        }
+                                    });
                                 }
                             });
                         } catch (JSONException e) {
