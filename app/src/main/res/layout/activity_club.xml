@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.lyy.newjust.activity.School.SchoolBusActivity">
+    tools:context="com.example.lyy.newjust.com.lyy.newjust.activity.School.SchoolBusActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

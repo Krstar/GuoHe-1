@@ -16,4 +16,6 @@
     <color name="material_login_register_color">#64B5F6</color>
     <color name="material_login_login_error_color">#FF9E80</color>
     <color name="material_login_register_error_color">#FF6E40</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

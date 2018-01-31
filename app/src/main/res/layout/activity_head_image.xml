@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.lyy.newjust.activity.Main.HeadImageActivity">
+    tools:context="com.example.lyy.newjust.com.lyy.newjust.activity.Main.HeadImageActivity">
 
     <ImageView
         android:id="@+id/bg_imageView"

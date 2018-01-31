@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.lyy.newjust">
+    package="com.lyy.guohe">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
@@ -27,7 +26,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.Main.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -36,17 +35,14 @@
         <activity android:name=".activity.School.ToDoActivity" />
         <activity android:name=".activity.Setting.SettingsActivity" />
         <activity android:name=".activity.Setting.ProfileActivity" />
-        <activity android:name=".activity.Tools.EMSActivity" />
         <activity android:name=".activity.Tools.OCRActivity" />
-        <activity android:name=".activity.Tools.EipActivity" />
-        <activity android:name=".activity.Tools.TranslateActivity" />
+        <activity android:name=".activity.Tools.WebToolsActivity" />
         <activity android:name=".activity.Tools.AudioActivity" />
         <activity android:name=".activity.One.HistoryActivity" />
-        <activity android:name=".activity.Main.WelcomeActivity" />
         <activity android:name=".activity.One.WeiBoActivity" />
         <activity android:name=".activity.One.OneActivity" />
         <activity android:name=".activity.Setting.CropViewActivity" />
-        <activity android:name=".activity.One.PopupActivity" />
+        <activity android:name=".base.PopupActivity" />
         <activity android:name=".activity.Memory.MemoryDayActivity" />
         <activity android:name=".activity.One.ConstellationActivity" />
         <activity android:name=".activity.Memory.ModifyMemoryActivity" />
@@ -54,7 +50,6 @@
         <activity android:name=".activity.Main.AvatarActivity" />
         <activity android:name=".activity.Setting.FeedBackActivity" />
         <activity android:name=".activity.School.SchoolBusActivity" />
-        <activity android:name=".activity.Setting.AboutUSActivity" />
         <activity android:name=".activity.School.SubjectsActivity" />
         <activity android:name=".activity.Main.LoginActivity" />
         <activity android:name=".activity.School.CourseTableActivity" />
@@ -76,10 +71,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.lyy.newjust.fileprovider"
+            android:authorities="com.lyy.guohe.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -87,26 +86,24 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="5a0bb1c5b27b0a09a1000057" />
+            android:value="5a5f2950b27b0a5ac10001a1" />
         <meta-data
             android:name="UMENG_MESSAGE_SECRET"
-            android:value="4d869c324bbbff0ada86425167d408b1" />
+            android:value="06fd6e97984b6ed5a8a9b039d3511bb4" />
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="Wandoujia" />
-
+            android:value="kuan" />
         <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />
-
 
         <receiver android:name=".widget.todoWidget.ToDoListWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info_todo" />
@@ -115,15 +112,16 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info_memory" />
         </receiver>
-
-        <receiver android:name=".widget.coursetableWidget.CourseListWidget">
+        <receiver android:name=".widget.courseListWidget.CourseListWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info_course_table" />
@@ -138,9 +136,28 @@
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name=".widget.coursetableWidget.CourseListViewService"
+            android:name=".widget.courseListWidget.CourseListViewService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity android:name=".activity.School.X5WebViewActivity" />
+        <activity
+            android:name=".activity.Game.GameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game"
+            android:theme="@style/FullscreenTheme" />
+
+        <receiver android:name=".widget.fullCourseWidget.FullCourseWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.lyy.widget.UPDATE_ALL" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/full_course_widget_info" />
+        </receiver>
+
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.lyy.newjust.activity.Tools.AudioActivity">
+    tools:context="com.example.lyy.newjust.com.lyy.newjust.activity.Tools.AudioActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/audio_appbar"

@@ -14,16 +14,31 @@
             android:id="@+id/course_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary">
+            android:background="@color/colorPrimary"
+            android:gravity="center">
 
-            <TextView
-                android:id="@+id/tv_course_table_toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="课 程 表"
-                android:textColor="@color/material_white_1000"
-                android:textSize="20sp" />
+            <LinearLayout
+                android:id="@+id/ll_week"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_course_table_toolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="课 程 表"
+                    android:textColor="@color/material_white_1000"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_menu_down" />
+            </LinearLayout>
+
         </android.support.v7.widget.Toolbar>
 
         <FrameLayout
@@ -36,21 +51,10 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-            <com.example.lyy.newjust.views.CourseTableView
+            <com.lyy.guohe.base.CourseTableView
                 android:id="@+id/ctv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_course"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
-                app:srcCompat="@drawable/ic_menu_week_change"
-                app:backgroundTint="@color/material_white_1000"
-                app:borderWidth="0dp"
-                app:elevation="8dp" />
 
         </FrameLayout>
 

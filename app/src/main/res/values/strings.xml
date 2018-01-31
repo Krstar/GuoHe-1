@@ -14,6 +14,7 @@
     <string name="action_update_course">更新课表</string>
     <string name="action_change_year">更改学期</string>
     <string name="action_change_week">更改周次</string>
+    <string name="action_current_week">更改当前周</string>
     <string name="action_change_background">更换背景</string>
 
     <string name="action_add">添加纪念日</string>
@@ -24,15 +25,20 @@
     <string name="Save">Save</string>
     <string name="Complete">Complete</string>
 
-    <string name="menu_group_1">校园</string>
+    <string name="menu_group_1">应用</string>
     <string name="menu_group_2">更多</string>
 
-    <string name="item_theme">皮肤</string>
+    <string name="item_change_account">切换账号</string>
     <string name="item_setting">设置</string>
     <string name="item_share">分享此应用</string>
 
+    <string name="item_jiaowu">教务系统</string>
+    <string name="item_lab">实验系统</string>
+    <string name="item_aolan">奥兰系统</string>
     <string name="item_job">就业信息</string>
     <string name="item_todo">待办事项</string>
+    <string name="item_entertainment">娱乐视频</string>
+    <string name="item_game">小游戏</string>
     <string name="item_library">馆藏查询</string>
     <string name="item_classroom">空教室查询</string>
     <string name="item_grade">成绩查询</string>
@@ -120,5 +126,9 @@
 
     <string name="course_widget_text">课程表</string>
     <string name="appwidget_text">EXAMPLE</string>
+
+    <string name="title_activity_game">GameActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

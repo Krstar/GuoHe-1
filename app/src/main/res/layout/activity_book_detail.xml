@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.lyy.newjust.activity.School.BookDetailActivity">
+    tools:context="com.example.lyy.newjust.com.lyy.newjust.activity.School.BookDetailActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/book_detail_toolbar"
@@ -39,12 +39,12 @@
 
                 <include layout="@layout/card_book_detail" />
 
-                <com.example.lyy.newjust.base.MyListView
+                <com.lyy.guohe.base.MyListView
                     android:id="@+id/lv_book_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                </com.example.lyy.newjust.base.MyListView>
+                </com.lyy.guohe.base.MyListView>
 
             </LinearLayout>
 

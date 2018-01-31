@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.lyy.newjust.activity.School.SchoolBusActivity">
+    android:background="@color/material_white_1000"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/new_subject_toolbar"
@@ -23,60 +23,120 @@
             android:textSize="25sp" />
     </android.support.v7.widget.Toolbar>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <org.angmarch.views.NiceSpinner
-            android:id="@+id/spinner_year"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/material_white_1000">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/subject_name"
-                android:layout_width="0dp"
+                android:id="@+id/tv_GPA_ALL"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="marquee"
                 android:gravity="center"
-                android:text="课程名" />
+                android:padding="2dp"
+                android:textSize="15sp" />
+
+            <lecho.lib.hellocharts.view.LineChartView
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@color/material_white_1000"
+                android:padding="5dp" />
 
             <TextView
-                android:id="@+id/subject_credit"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
+                android:background="@color/material_white_1000"
                 android:gravity="center"
-                android:text="学分" />
+                android:padding="5dp"
+                android:text="GPA走向图"
+                android:textColor="@color/material_black_1000" />
 
-            <TextView
-                android:id="@+id/subject_score"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="成绩" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/spinner_year"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/material_white_1000">
+
+                    <TextView
+                        android:id="@+id/subject_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/material_blue_200"
+                        android:ellipsize="marquee"
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:text="课程名"
+                        android:textColor="@color/material_white_1000"
+                        android:textSize="17sp" />
+
+                    <ImageView
+                        android:layout_width="0.5dp"
+                        android:layout_height="match_parent"
+                        tools:ignore="Suspicious0dp" />
+
+                    <TextView
+                        android:id="@+id/subject_credit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:background="@color/material_blue_200"
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:text="学分"
+                        android:textColor="@color/material_white_1000"
+                        android:textSize="17sp" />
+
+                    <ImageView
+                        android:layout_width="0.5dp"
+                        android:layout_height="match_parent"
+                        tools:ignore="Suspicious0dp" />
+
+                    <TextView
+                        android:id="@+id/subject_score"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:background="@color/material_blue_200"
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:text="成绩"
+                        android:textColor="@color/material_white_1000"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <com.lyy.guohe.base.MyListView
+                    android:id="@+id/lv_subject_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </com.lyy.guohe.base.MyListView>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/lv_subject_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    </ScrollView>
 
-
-        </ListView>
-
-    </LinearLayout>
 
 </LinearLayout>

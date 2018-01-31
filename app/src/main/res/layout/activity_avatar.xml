@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/material_black_1000"
     android:gravity="center"
-    tools:context="com.example.lyy.newjust.activity.Main.AvatarActivity">
+    tools:context="com.example.lyy.newjust.com.lyy.newjust.activity.Main.AvatarActivity">
 
     <ImageView
         android:id="@+id/iv_avator"

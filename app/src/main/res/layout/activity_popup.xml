@@ -16,6 +16,7 @@
             android:background="@color/colorPrimary">
 
             <TextView
+                android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -25,34 +26,27 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <com.example.lyy.newjust.base.ScrollSwipeRefreshLayout
-        android:id="@+id/detail_swipe"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ProgressBar
+            android:id="@+id/pop_progress"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="3dip"
+            android:progressDrawable="@drawable/bg_progress"
+            android:visibility="gone" />
 
-            <ProgressBar
-                android:id="@+id/pop_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="3dip"
-                android:progressDrawable="@drawable/bg_progress"
-                android:visibility="gone" />
+        <com.tencent.smtt.sdk.WebView
+            android:id="@+id/detail_web_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <WebView
-                android:id="@+id/detail_web_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        </com.tencent.smtt.sdk.WebView>
 
-            </WebView>
-
-        </LinearLayout>
-
-    </com.example.lyy.newjust.base.ScrollSwipeRefreshLayout>
+    </LinearLayout>
 
 </LinearLayout>
 
