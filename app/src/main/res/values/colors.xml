@@ -18,4 +18,7 @@
     <color name="material_login_register_error_color">#FF6E40</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="color_bg_selected">#e0301e</color>
+    <color name="color_bg_normal">#e7e7e8</color>
 </resources>

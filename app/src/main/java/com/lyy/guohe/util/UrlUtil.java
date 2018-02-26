@@ -1,4 +1,4 @@
-package com.example.lyy.newjust.util;
+package com.lyy.guohe.util;
 
 /**
  * Created by lyy on 2017/11/25.
@@ -10,7 +10,7 @@ public class UrlUtil {
     public static final String APP = "http://106.14.220.63/";           //APP官网网址
 
     //    -----------------------------------------------------校园应用部分----------------------------------------------------        //
-    public static final String USER_INFO = "http://120.25.88.41/vpnInfo";         //查询用户信息，登录时使用
+    public static final String USER_INFO = "https://guohe3.com/api/studentInfo";         //查询用户信息，登录时使用
 
     public static final String CLASSROOM = "http://120.25.88.41/vpnClassroom";    //查询空教室
 
@@ -26,19 +26,27 @@ public class UrlUtil {
 
     public static final String XIAO_LI = "http://120.25.88.41/xiaoli";            //查询校历
 
-    public static final String CURRENT_COURSE = "http://120.25.88.41/currentKebiao";  //查询当前周的课表
-
-    public static final String ALL_COURSE = "http://120.25.88.41/vpnKebiao";          //查询所有课表的信息
+    public static final String ALL_COURSE = "https://guohe3.com/api/kb";          //查询所有课表的信息
 
     public static final String SCHOOL_BUS = "http://120.25.88.41/oneDay/shikebiao.html";      //查询校车
 
-    public static final String STU_GPA = "http://120.25.88.41/vpnJidian";         //查询学生绩点
+    public static final String STU_GPA = "https://guohe3.com/api/gradePoint";         //查询学生绩点
 
-    public static final String STU_SCORE = "http://120.25.88.41/vpnScore";          //查询学生成绩
+    public static final String STU_SCORE = "https://guohe3.com/api/score";          //查询学生成绩
 
     public static final String BOOK_TOP = "http://120.25.88.41/vpnBookTop100";        //查询前100的热门图书
 
     public static final String JOB_URL = "";                    //查询就业信息的url
+
+    public static final String AOLAN_URL = "https://vpn.just.edu.cn/,DanaInfo=202.195.195.238,Port=866+LOGIN.ASPX"; //奥兰系统url
+
+    public static final String LAB_URL = "https://vpn.just.edu.cn/sy/,DanaInfo=202.195.195.198+";      //实验系统url
+
+    public static final String JIAOWU_URL = "https://vpn.just.edu.cn/,DanaInfo=jwgl.just.edu.cn,Port=8080+";       //教务系统url
+
+    public static final String FUWU_URL = "http://my.just.edu.cn";                      //师生服务中心
+
+    public static final String CET_BACK_URL="https://guohe3.com/cet";               //四六级准考证找回
 
 
     //    -----------------------------------------------------设置部分----------------------------------------------------        //
@@ -46,8 +54,7 @@ public class UrlUtil {
 
     public static final String FEEDBACK = "http://120.25.88.41/feedback/index.html";  //用户反馈
 
-    public static final String APK_PATH = "http://123.207.182.24/apk/getApkInfo";       //在线升级APK的查询接口
-
+    public static final String UPDATE_INFO="https://www.jianshu.com/p/8095b6e733e5";  //版本更新说明
 
     //    -----------------------------------------------------小工具部分----------------------------------------------------        //
     public static final String EIP = "https://www.jiuwa.net/";        //表情包制作
@@ -56,9 +63,11 @@ public class UrlUtil {
 
     public static final String TRANSLATE = "http://m.iciba.com";      //翻译
 
+    public static final String WEATHER="https://free-api.heweather.com/v5/weather?city=CN101190301&key=38c845e8310644ee83a8a7bba9b9be64";  //天气
+
 
     //    ----------------------------------------------------one day部分------------------------------------------------------       //
-    public static final String CONSTELLATION = "http://120.25.88.41/oneDay/xingzuo/index.html?select=";   //根据用户星座查询星座运势，后接用户的星座
+    public static final String CONSTELLATION = "https://m.xzw.com/fortune/";   //根据用户星座查询星座运势，后接用户的星座
 
     public static final String TODAY_IN_HISTORY = "http://120.25.88.41/oneDay/history/index.html";        //历史上的今天
 
@@ -66,5 +75,5 @@ public class UrlUtil {
 
     public static final String DI_QI = "http://120.25.88.41/oneDay/diqi/index.html";                      //one day模块中的地气部分
 
-    public static final String HEAD_PIC = "http://120.25.88.41/just/img";                                 //每日一图地址
+    public static final String HEAD_PIC = "http://guolin.tech/api/bing_pic";                                 //每日一图地址
 }

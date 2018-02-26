@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -23,7 +22,6 @@ import com.lyy.guohe.util.HttpUtil;
 import com.lyy.guohe.util.ResponseUtil;
 import com.lyy.guohe.util.SpUtils;
 import com.lyy.guohe.util.UrlUtil;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.json.JSONObject;
@@ -31,7 +29,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import es.dmoral.toasty.Toasty;
-import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -206,32 +203,22 @@ public class LoginActivity extends AppCompatActivity {
 
     //权限获取
     private void obtain_permission() {
-        RxPermissions rxPermission = new RxPermissions(this);
-        rxPermission
-                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_CALENDAR,
-                        Manifest.permission.READ_CALL_LOG,
-                        Manifest.permission.READ_CONTACTS,
-                        Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.READ_SMS,
-                        Manifest.permission.RECORD_AUDIO,
+        RxPermissions rxPermissions = new RxPermissions(LoginActivity.this);
+        rxPermissions
+                .request(
                         Manifest.permission.CAMERA,
-                        Manifest.permission.CALL_PHONE,
-                        Manifest.permission.SEND_SMS)
-                .subscribe(new Consumer<Permission>() {
-                    @Override
-                    public void accept(Permission permission) throws Exception {
-                        if (permission.granted) {
-                            // 用户已经同意该权限
-                            Log.d(TAG, permission.name + " is granted.");
-                        } else if (permission.shouldShowRequestPermissionRationale) {
-                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                            Log.d(TAG, permission.name + " is denied. More info should be provided.");
-                        } else {
-                            // 用户拒绝了该权限，并且选中『不再询问』
-                            Log.d(TAG, permission.name + " is denied.");
-                        }
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.SET_WALLPAPER,
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.VIBRATE,
+                        Manifest.permission.READ_PHONE_STATE
+                )
+                .subscribe(granted -> {
+                    if (granted) {
+                        Toast.makeText(LoginActivity.this, "同意权限", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "拒绝权限", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

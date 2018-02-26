@@ -244,7 +244,7 @@ public class SettingsActivity extends SwipeBackActivity implements View.OnClickL
                         public void onClick(DialogInterface dialog, int which) {
                             //...To-do
                             try {
-                                File apkFile = new File(getPackageManager().getPackageInfo("com.example.lyy.newjust", 0).applicationInfo.sourceDir);
+                                File apkFile = new File(getPackageManager().getPackageInfo("com.lyy.guohe", 0).applicationInfo.sourceDir);
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_SEND);
                                 intent.setType("*/*");

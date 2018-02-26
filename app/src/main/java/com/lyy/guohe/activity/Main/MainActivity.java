@@ -44,6 +44,7 @@ import com.lyy.guohe.activity.One.ConstellationActivity;
 import com.lyy.guohe.activity.One.HistoryActivity;
 import com.lyy.guohe.activity.One.OneActivity;
 import com.lyy.guohe.activity.One.WeiBoActivity;
+import com.lyy.guohe.activity.School.CETActivity;
 import com.lyy.guohe.activity.School.ClassRoomActivity;
 import com.lyy.guohe.activity.School.ClubActivity;
 import com.lyy.guohe.activity.School.CourseTableActivity;
@@ -61,6 +62,7 @@ import com.lyy.guohe.activity.Tools.AudioActivity;
 import com.lyy.guohe.activity.Tools.OCRActivity;
 import com.lyy.guohe.activity.Tools.WebToolsActivity;
 import com.lyy.guohe.base.DonateDialog;
+import com.lyy.guohe.base.PopupActivity;
 import com.lyy.guohe.db.DBCourse;
 import com.lyy.guohe.db.DBCurrentCourse;
 import com.lyy.guohe.gson.Weather;
@@ -75,7 +77,6 @@ import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.tencent.stat.StatService;
 import com.yalantis.taurus.PullToRefreshView;
@@ -96,7 +97,6 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
-import io.reactivex.functions.Consumer;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -156,28 +156,25 @@ public class MainActivity extends AppCompatActivity
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 1) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 2) {
-                                courseName = courseInfo[0];
+                            if (courseInfo.length == 2) {
+                                courseName = courseInfo[1];
                             } else if (courseInfo.length == 3) {
-                                courseName = courseInfo[0];
-                                courseClassRoom = courseInfo[2];
+                                courseName = courseInfo[1];
+                                courseClassRoom = courseInfo[3];
                             }
                             now_course_1_1.setText(courseName);
                             now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 3) {
                             now_course_jieci_2.setText("3-4");
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 1) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 2) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 3) {
-                                courseName = courseInfo[0];
-                                courseClassRoom = courseInfo[2];
+                            if (courseInfo.length == 2) {
+                                courseName = courseInfo[1];
+                            } else if (courseInfo.length == 4) {
+                                courseName = courseInfo[1];
+                                courseClassRoom = courseInfo[3];
                             }
                             now_course_2_1.setText(courseName);
                             now_course_2_2.setText(courseClassRoom);
@@ -188,13 +185,11 @@ public class MainActivity extends AppCompatActivity
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 1) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 2) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 3) {
-                                courseName = courseInfo[0];
-                                courseClassRoom = courseInfo[2];
+                            if (courseInfo.length == 2) {
+                                courseName = courseInfo[1];
+                            } else if (courseInfo.length == 4) {
+                                courseName = courseInfo[1];
+                                courseClassRoom = courseInfo[3];
                             }
                             now_course_1_1.setText(courseName);
                             now_course_1_2.setText(courseClassRoom);
@@ -203,13 +198,11 @@ public class MainActivity extends AppCompatActivity
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 1) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 2) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 3) {
-                                courseName = courseInfo[0];
-                                courseClassRoom = courseInfo[2];
+                            if (courseInfo.length == 2) {
+                                courseName = courseInfo[1];
+                            } else if (courseInfo.length == 4) {
+                                courseName = courseInfo[1];
+                                courseClassRoom = courseInfo[3];
                             }
                             now_course_2_1.setText(courseName);
                             now_course_2_2.setText(courseClassRoom);
@@ -220,13 +213,11 @@ public class MainActivity extends AppCompatActivity
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 1) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 2) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 3) {
-                                courseName = courseInfo[0];
-                                courseClassRoom = courseInfo[2];
+                            if (courseInfo.length == 2) {
+                                courseName = courseInfo[1];
+                            } else if (courseInfo.length == 4) {
+                                courseName = courseInfo[1];
+                                courseClassRoom = courseInfo[3];
                             }
                             now_course_1_1.setText(courseName);
                             now_course_1_2.setText(courseClassRoom);
@@ -235,13 +226,11 @@ public class MainActivity extends AppCompatActivity
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 1) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 2) {
-                                courseName = courseInfo[0];
-                            } else if (courseInfo.length == 3) {
-                                courseName = courseInfo[0];
-                                courseClassRoom = courseInfo[2];
+                            if (courseInfo.length == 2) {
+                                courseName = courseInfo[1];
+                            } else if (courseInfo.length == 4) {
+                                courseName = courseInfo[1];
+                                courseClassRoom = courseInfo[3];
                             }
                             now_course_2_1.setText(courseName);
                             now_course_2_2.setText(courseClassRoom);
@@ -295,8 +284,6 @@ public class MainActivity extends AppCompatActivity
 
     //初始化相关控件
     private void init() {
-
-
         //设置和toolbar相关的
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -377,6 +364,7 @@ public class MainActivity extends AppCompatActivity
         LinearLayout nav_classroom = (LinearLayout) findViewById(R.id.nav_classroom);
         LinearLayout nav_pe = (LinearLayout) findViewById(R.id.nav_pe);
         LinearLayout nav_system = (LinearLayout) findViewById(R.id.nav_system);
+        LinearLayout nav_cet = (LinearLayout) findViewById(R.id.nav_cet);
 
         ll_schedule.setOnClickListener(this);
 
@@ -386,6 +374,7 @@ public class MainActivity extends AppCompatActivity
         nav_classroom.setOnClickListener(this);
         nav_pe.setOnClickListener(this);
         nav_system.setOnClickListener(this);
+        nav_cet.setOnClickListener(this);
 
         //设置底部弹窗
         showBoomMenu();
@@ -491,33 +480,22 @@ public class MainActivity extends AppCompatActivity
 
     //权限获取
     private void obtain_permission() {
-        RxPermissions rxPermission = new RxPermissions(this);
-        rxPermission
-                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_CALENDAR,
-                        Manifest.permission.READ_CALL_LOG,
-                        Manifest.permission.READ_CONTACTS,
-                        Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.READ_SMS,
-                        Manifest.permission.RECORD_AUDIO,
+        RxPermissions rxPermissions = new RxPermissions(MainActivity.this);
+        rxPermissions
+                .request(
                         Manifest.permission.CAMERA,
-                        Manifest.permission.CALL_PHONE,
-                        Manifest.permission.SYSTEM_ALERT_WINDOW,
-                        Manifest.permission.SEND_SMS)
-                .subscribe(new Consumer<Permission>() {
-                    @Override
-                    public void accept(Permission permission) throws Exception {
-                        if (permission.granted) {
-                            // 用户已经同意该权限
-                            Log.d(TAG, "权限" + permission.name + " is granted.");
-                        } else if (permission.shouldShowRequestPermissionRationale) {
-                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                            Log.d(TAG, permission.name + " is denied. More info should be provided.");
-                        } else {
-                            // 用户拒绝了该权限，并且选中『不再询问』
-                            Log.d(TAG, permission.name + " is denied.");
-                        }
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.SET_WALLPAPER,
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.VIBRATE,
+                        Manifest.permission.READ_PHONE_STATE
+                )
+                .subscribe(granted -> {
+                    if (granted) {
+//                        Toast.makeText(MainActivity.this, "同意权限", Toast.LENGTH_SHORT).show();
+                    } else {
+//                        Toast.makeText(MainActivity.this, "拒绝权限", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -545,18 +523,27 @@ public class MainActivity extends AppCompatActivity
                 public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                     if (response.isSuccessful()) {
                         String data = response.body().string();
-                        Res res = ResponseUtil.handleResponse(data);
-                        assert res != null;
-                        if (res.getCode() == 200) {
-                            SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
-                            try {
-                                JSONObject object = new JSONObject(res.getInfo());
-                                //获取当前周数
-                                String server_week = object.getString("weekNum");
-                                if (Integer.parseInt(local_week) < Integer.parseInt(server_week))
-                                    SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        if (data.length() > 3) {
+                            Res res = ResponseUtil.handleResponse(data);
+                            assert res != null;
+                            if (res.getCode() == 200) {
+                                SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
+                                try {
+                                    JSONObject object = new JSONObject(res.getInfo());
+                                    //获取当前周数
+                                    String server_week = object.getString("weekNum");
+                                    if (Integer.parseInt(local_week) < Integer.parseInt(server_week))
+                                        SpUtils.putString(mContext, AppConstants.SERVER_WEEK, server_week);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toasty.error(mContext, "服务器异常，请稍后", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         } else {
                             runOnUiThread(new Runnable() {
@@ -581,10 +568,10 @@ public class MainActivity extends AppCompatActivity
 
     //发送查询天气的请求
     private void requestWeather() {
-        String weatherUrl = "https://free-api.heweather.com/v5/weather?city=CN101190301&key=38c845e8310644ee83a8a7bba9b9be64";
+        String weatherUrl = UrlUtil.WEATHER;
         HttpUtil.sendHttpRequest(weatherUrl, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Looper.prepare();
                 Toasty.error(mContext, "天气请求失败", Toast.LENGTH_SHORT).show();
                 Looper.loop();
@@ -594,10 +581,18 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseText = response.body().string();
-                    Weather weather = ResponseUtil.handleWeatherResponse(responseText);
-                    parseWeatherData(weather);
+                    if (responseText != null) {
+                        Weather weather = ResponseUtil.handleWeatherResponse(responseText);
+                        parseWeatherData(weather);
+                    } else {
+                        Looper.prepare();
+                        Toasty.error(mContext, "服务器错误", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
                 } else {
+                    Looper.prepare();
                     Toasty.error(mContext, "服务器错误", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }
         });
@@ -704,7 +699,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //选择进入哪一个系统
-    private void showListDialog() {
+    private void showSystemDialog() {
         final String[] items = {"教务系统", "奥兰系统", "实验系统", "师生服务中心"};
         AlertDialog.Builder listDialog =
                 new AlertDialog.Builder(MainActivity.this);
@@ -735,6 +730,33 @@ public class MainActivity extends AppCompatActivity
                         intent.putExtra("url", UrlUtil.FUWU_URL);
                         intent.putExtra("title", "师生服务中心");
                         startActivity(intent);
+                        break;
+                }
+            }
+        });
+        listDialog.show();
+    }
+
+    //选择查询六级还是四级
+    private void showCETDialog() {
+        final String[] items = {"四六级成绩查询", "四六级准考证找回"};
+        AlertDialog.Builder listDialog =
+                new AlertDialog.Builder(MainActivity.this);
+        listDialog.setTitle("请选择");
+        listDialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // which 下标从0开始
+                switch (which) {
+                    case 0:
+                        String cetUrl = "http://cet.neea.edu.cn/cet/";
+                        Intent intent = new Intent(MainActivity.this, PopupActivity.class);
+                        intent.putExtra("URL", cetUrl);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        Intent cetIntent = new Intent(MainActivity.this, CETActivity.class);
+                        startActivity(cetIntent);
                         break;
                 }
             }
@@ -943,9 +965,6 @@ public class MainActivity extends AppCompatActivity
                 Intent oneIntent = new Intent(MainActivity.this, OneActivity.class);
                 startActivity(oneIntent);
                 break;
-//            case R.id.iv_health:
-//                Toast.makeText(MainActivity.this, "该功能暂未上线，敬请期待！", Toast.LENGTH_SHORT).show();
-//                break;
             case R.id.nav_library:
                 Intent libraryIntent = new Intent(MainActivity.this, LibraryActivity.class);
                 startActivity(libraryIntent);
@@ -972,7 +991,10 @@ public class MainActivity extends AppCompatActivity
                 showPEDialog();
                 break;
             case R.id.nav_system:
-                showListDialog();
+                showSystemDialog();
+                break;
+            case R.id.nav_cet:
+                showCETDialog();
                 break;
         }
     }

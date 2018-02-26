@@ -1,4 +1,4 @@
-package com.example.lyy.newjust;
+package com.lyy.guohe;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

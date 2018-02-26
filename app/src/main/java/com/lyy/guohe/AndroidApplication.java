@@ -62,6 +62,7 @@ public class AndroidApplication extends Application {
         // 设置是否为上报进程
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
         strategy.setUploadProcess(processName == null || processName.equals(packageName));
+        Bugly.init(this, APP_ID, false);
 
 //        友盟推送
         pushAgent = PushAgent.getInstance(this);
@@ -95,8 +96,6 @@ public class AndroidApplication extends Application {
         };
         //x5内核初始化接口
         QbSdk.initX5Environment(getApplicationContext(), cb);
-
-        Bugly.init(this, APP_ID, false);
 
         UmengMessageHandler messageHandler = new UmengMessageHandler() {
             @Override

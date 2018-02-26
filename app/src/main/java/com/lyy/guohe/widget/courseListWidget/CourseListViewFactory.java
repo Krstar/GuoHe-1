@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -80,20 +81,21 @@ public class CourseListViewFactory implements RemoteViewsService.RemoteViewsFact
         final RemoteViews rv = new RemoteViews(mContext.getPackageName(),
                 R.layout.item_widget_course);
 
+        Log.d(TAG, "getViewAt: "+content);
         String courseInfo[] = content.split("@");
         String jieci = "";
         String name = "";
         String teacher = "";
         String classroom = "";
-        if (courseInfo.length == 3) {
+        if (courseInfo.length == 4) {
             jieci = courseInfo[0];
-            name = courseInfo[1];
-            teacher = courseInfo[2];
-        } else if (courseInfo.length == 4) {
+            name = courseInfo[2];
+            teacher = courseInfo[3];
+        } else if (courseInfo.length == 5) {
             jieci = courseInfo[0];
-            name = courseInfo[1];
-            teacher = courseInfo[2];
-            classroom = courseInfo[3];
+            name = courseInfo[2];
+            teacher = courseInfo[3];
+            classroom = courseInfo[4];
         }
 
         // 设置要显示的内容

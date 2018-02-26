@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
-    <dbname value="NewJUST"></dbname>
-    <version value="8"></version>
+    <dbname value="GuoHe"></dbname>
+    <version value="9"></version>
 
     <list>
         <mapping class="com.lyy.guohe.db.ToDo"></mapping>

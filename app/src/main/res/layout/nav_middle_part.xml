@@ -9,23 +9,48 @@
     android:paddingBottom="10dp">
 
     <TextView
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:paddingLeft="30dp"
         android:text="校园"
         android:textColor="@color/material_black_1000"
         android:textSize="15sp" />
 
     <HorizontalScrollView
-        android:scrollbars="none"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/nav_cet"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:padding="25dp"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/ic_menu_cet" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="四六级" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/nav_grade"
@@ -202,35 +227,9 @@
 
             <!--</LinearLayout>-->
 
-            <LinearLayout
-                android:id="@+id/nav_cet"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="4"
-                    android:padding="25dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/ic_menu_cet" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="四六级" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
     </HorizontalScrollView>
-
 
 
 </LinearLayout>

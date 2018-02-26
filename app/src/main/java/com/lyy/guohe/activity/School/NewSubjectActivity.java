@@ -223,64 +223,76 @@ public class NewSubjectActivity extends SwipeBackActivity {
             }
         });
         String url = UrlUtil.XIAO_LI;
-        final RequestBody requestBody = new FormBody.Builder()
-                .add("username", stu_id)
-                .add("password", stu_pass)
-                .build();
+        if (stu_id != null && stu_pass != null) {
+            final RequestBody requestBody = new FormBody.Builder()
+                    .add("username", stu_id)
+                    .add("password", stu_pass)
+                    .build();
 
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mProgressDialog.isShowing())
-                            mProgressDialog.dismiss();
-                        Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Res res = ResponseUtil.handleResponse(data);
-                    assert res != null;
-                    if (res.getCode() == 200 && res.getInfo() != null) {
-                        SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
-                        try {
-                            JSONObject object = new JSONObject(res.getInfo());
-                            //获取当前周数
-                            //获取这个学生所有的学年
-                            JSONArray jsonArray = object.getJSONArray("all_year");
-                            all_year_list.add("请选择学年");
-                            for (int i = 1; i < jsonArray.length(); i++) {
-                                all_year_list.add(jsonArray.get(i).toString());
-                            }
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    spinner_year.attachDataSource(all_year_list);
-                                }
-                            });
-                            requestScore();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
+            HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (mProgressDialog.isShowing() && !isFinishing())
+                            if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
-                            Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                            Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String data = response.body().string();
+                        Res res = ResponseUtil.handleResponse(data);
+                        assert res != null;
+                        if (res.getCode() == 200 && res.getInfo() != null) {
+                            SpUtils.putString(mContext, AppConstants.XIAO_LI, res.getInfo());
+                            try {
+                                JSONObject object = new JSONObject(res.getInfo());
+                                //获取当前周数
+                                //获取这个学生所有的学年
+                                JSONArray jsonArray = object.getJSONArray("all_year");
+                                all_year_list.add("请选择学年");
+                                for (int i = 1; i < jsonArray.length(); i++) {
+                                    all_year_list.add(jsonArray.get(i).toString());
+                                }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        spinner_year.attachDataSource(all_year_list);
+                                    }
+                                });
+                                requestScore();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mProgressDialog.isShowing() && !isFinishing())
+                                    mProgressDialog.dismiss();
+                                Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mProgressDialog.isShowing())
+                        mProgressDialog.dismiss();
+                    Toasty.error(mContext, "发生错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     //发出分数查询的请求

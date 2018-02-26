@@ -172,7 +172,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                         public void run() {
                                             if (mProgressDialog.isShowing())
                                                 mProgressDialog.dismiss();
-                                            Toast.makeText(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                                            Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -199,7 +199,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                             Looper.prepare();
                                             if (mProgressDialog.isShowing())
                                                 mProgressDialog.dismiss();
-                                            Toast.makeText(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                                            Toasty.error(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
                                             Looper.loop();
                                         }
                                     } else {
@@ -208,7 +208,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                             public void run() {
                                                 if (mProgressDialog.isShowing())
                                                     mProgressDialog.dismiss();
-                                                Toast.makeText(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                                                Toasty.error(mContext, "服务器发生异常，请稍后重试", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
@@ -236,7 +236,7 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                     public void run() {
                         if (mProgressDialog.isShowing())
                             mProgressDialog.dismiss();
-                        Toast.makeText(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Toasty.error(mContext, "服务器异常，请稍后重试", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

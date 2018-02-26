@@ -94,6 +94,7 @@ public class GameActivity extends AppCompatActivity {
     private WebView webView;
     private ProgressBar progressBar;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

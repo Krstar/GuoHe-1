@@ -192,58 +192,70 @@ public class SubjectsActivity extends SwipeBackActivity {
         String pointUrl = UrlUtil.STU_GPA;
         String username = SpUtils.getString(mContext, AppConstants.STU_ID);
         String password = SpUtils.getString(mContext, AppConstants.STU_PASS);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("username", username)
-                .add("password", password)
-                .build();
-        HttpUtil.sendPostHttpRequest(pointUrl, requestBody, new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mProgressDialog.isShowing())
-                            mProgressDialog.dismiss();
-                        Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Res res = ResponseUtil.handleResponse(data);
-                    assert res != null;
-                    if (res.getCode() == 200) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mProgressDialog.isShowing())
-                                    mProgressDialog.dismiss();
-                            }
-                        });
-                        requestScore();
-                        showPointResult(res.getInfo());
-                    } else {
-                        Looper.prepare();
-                        if (mProgressDialog.isShowing())
-                            mProgressDialog.dismiss();
-                        Toasty.error(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                } else {
+        if (username != null && password != null) {
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("username", username)
+                    .add("password", password)
+                    .build();
+            HttpUtil.sendPostHttpRequest(pointUrl, requestBody, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
-                            Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                            Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String data = response.body().string();
+                        Res res = ResponseUtil.handleResponse(data);
+                        assert res != null;
+                        if (res.getCode() == 200) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mProgressDialog.isShowing())
+                                        mProgressDialog.dismiss();
+                                }
+                            });
+                            requestScore();
+                            showPointResult(res.getInfo());
+                        } else {
+                            Looper.prepare();
+                            if (mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                            Toasty.error(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
+                                Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mProgressDialog.isShowing())
+                        mProgressDialog.dismiss();
+                    Toasty.error(mContext, "发生错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     //发出分数查询的请求

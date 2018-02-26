@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,6 +54,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ExerciseActivity extends SwipeBackActivity implements View.OnClickListener {
+
+    private static final String TAG = "ExerciseActivity";
 
     private Context mContext;
 
@@ -141,8 +144,7 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         } else {
             mProgressDialog.dismiss();
             final EditText editText = new EditText(ExerciseActivity.this);
-            AlertDialog.Builder inputDialog =
-                    new AlertDialog.Builder(ExerciseActivity.this);
+            AlertDialog.Builder inputDialog = new AlertDialog.Builder(ExerciseActivity.this);
             inputDialog.setTitle("请输入你的体育学院密码(默认姓名首字母大写)").setView(editText);
             inputDialog.setPositiveButton("确定",
                     new DialogInterface.OnClickListener() {
@@ -153,60 +155,84 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
                             mProgressDialog.setCanceledOnTouchOutside(true);
                             final String username = SpUtils.getString(mContext, AppConstants.STU_ID);
                             String url = UrlUtil.EXERCISE_SCORE;
-                            RequestBody requestBody = new FormBody.Builder()
-                                    .add("username", username)
-                                    .add("password", editText.getText().toString())
-                                    .build();
-                            HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-                                @Override
-                                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (mProgressDialog.isShowing())
-                                                mProgressDialog.dismiss();
-                                            Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
-                                    if (response.isSuccessful()) {
-                                        String data = response.body().string();
-                                        Res res = ResponseUtil.handleResponse(data);
-                                        assert res != null;
-                                        if (res.getCode() == 200) {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    mProgressDialog.dismiss();
-                                                    mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "验证成功,请稍后……", true, false);
-                                                    mProgressDialog.setCancelable(true);
-                                                    mProgressDialog.setCanceledOnTouchOutside(true);
-                                                    requestExerciseScore(username, editText.getText().toString());
-                                                    SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
-                                                }
-                                            });
-                                        } else {
-                                            Looper.prepare();
-                                            if (mProgressDialog.isShowing())
-                                                mProgressDialog.dismiss();
-                                            Toasty.error(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
-                                            Looper.loop();
-                                        }
-                                    } else {
+                            if (username != null && editText.getText() != null) {
+                                RequestBody requestBody = new FormBody.Builder()
+                                        .add("username", username)
+                                        .add("password", editText.getText().toString())
+                                        .build();
+                                HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+                                    @Override
+                                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 if (mProgressDialog.isShowing())
                                                     mProgressDialog.dismiss();
-                                                Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                                                Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
-                                }
-                            });
+
+                                    @Override
+                                    public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                                        if (response.isSuccessful()) {
+                                            String data = response.body().string();
+                                            if (data.length() > 3) {
+                                                Res res = ResponseUtil.handleResponse(data);
+                                                Log.d(TAG, "onResponse: " + data);
+                                                assert res != null;
+                                                if (res.getCode() == 200) {
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            mProgressDialog.dismiss();
+                                                            mProgressDialog = ProgressDialog.show(ExerciseActivity.this, null, "验证成功,请稍后……", true, false);
+                                                            mProgressDialog.setCancelable(true);
+                                                            mProgressDialog.setCanceledOnTouchOutside(true);
+                                                            requestExerciseScore(username, editText.getText().toString());
+                                                            SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
+                                                        }
+                                                    });
+                                                } else {
+                                                    Looper.prepare();
+                                                    if (mProgressDialog.isShowing())
+                                                        mProgressDialog.dismiss();
+                                                    Toasty.error(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                                                    Looper.loop();
+                                                }
+                                            } else {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (mProgressDialog.isShowing())
+                                                            mProgressDialog.dismiss();
+                                                        Toasty.error(mContext, "发生错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        } else {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (mProgressDialog.isShowing())
+                                                        mProgressDialog.dismiss();
+                                                    Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mProgressDialog.isShowing())
+                                            mProgressDialog.dismiss();
+                                        Toasty.error(mContext, "出现错误,请稍后重试", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
                         }
                     }).show();
         }
@@ -216,111 +242,125 @@ public class ExerciseActivity extends SwipeBackActivity implements View.OnClickL
         exerciseList.clear();
         listView.setVisibility(View.GONE);
         String url = UrlUtil.EXERCISE_SCORE;
-        RequestBody requestBody = new FormBody.Builder()
-                .add("username", username)
-                .add("password", pePass)
-                .build();
+        if (username != null && pePass != null) {
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("username", username)
+                    .add("password", pePass)
+                    .build();
 
-        HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mProgressDialog.isShowing())
-                            mProgressDialog.dismiss();
-                        Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Res res = ResponseUtil.handleResponse(data);
-                    assert res != null;
-                    if (res.getCode() == 200) {
-                        try {
-                            JSONArray array = new JSONArray(res.getInfo());
-                            JSONObject object = array.getJSONObject(0);
-                            final String year = object.getString("year");
-                            String name = object.getString("name");
-                            final String total = object.getString("total");
-
-                            SpUtils.putString(mContext, "exercise_info", name + "\n" + total);
-
-                            JSONArray innerArray = array.getJSONArray(1);
-                            for (int i = 0; i < innerArray.length(); i++) {
-                                JSONObject innerObject = innerArray.getJSONObject(i);
-                                String number = innerObject.getString("number");
-                                String date = innerObject.getString("date");
-                                String time = innerObject.getString("time");
-
-                                Exercise exercise = new Exercise(time, number, date);
-                                exerciseList.add(exercise);
-                            }
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    String[] s = year.split(" ");
-                                    tv_exercise_year.setText(s[1]);
-
-                                    String[] s1 = total.split(" ");
-                                    tv_exercise_info.setText(s1[1] + s1[2]);
-
-                                    ExerciseAdapter exerciseAdapter = new ExerciseAdapter(ExerciseActivity.this, R.layout.item_exercise, exerciseList);
-                                    if (exerciseList.size() == 0) {
-                                        Toasty.warning(mContext, "列表数据为空", Toast.LENGTH_SHORT).show();
-                                    }
-                                    listView.setAdapter(exerciseAdapter);
-                                    listView.setVisibility(View.VISIBLE);
-                                    mProgressDialog.dismiss();
-                                    swipeRefreshLayout.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            swipeRefreshLayout.setRefreshing(false);
-                                        }
-                                    });
-                                }
-                            });
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Looper.prepare();
-                        if (mProgressDialog.isShowing())
-                            mProgressDialog.dismiss();
-                        swipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-                        Toasty.error(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                } else {
+            HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (mProgressDialog.isShowing())
                                 mProgressDialog.dismiss();
-                            Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                            Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String data = response.body().string();
+                        if (data.length() > 3) {
+                            Res res = ResponseUtil.handleResponse(data);
+                            assert res != null;
+                            if (res.getCode() == 200) {
+                                try {
+                                    JSONArray array = new JSONArray(res.getInfo());
+                                    JSONObject object = array.getJSONObject(0);
+                                    final String year = object.getString("year");
+                                    String name = object.getString("name");
+                                    final String total = object.getString("total");
+
+                                    SpUtils.putString(mContext, "exercise_info", name + "\n" + total);
+
+                                    JSONArray innerArray = array.getJSONArray(1);
+                                    for (int i = 0; i < innerArray.length(); i++) {
+                                        JSONObject innerObject = innerArray.getJSONObject(i);
+                                        String number = innerObject.getString("number");
+                                        String date = innerObject.getString("date");
+                                        String time = innerObject.getString("time");
+
+                                        Exercise exercise = new Exercise(time, number, date);
+                                        exerciseList.add(exercise);
+                                    }
+
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            String[] s = year.split(" ");
+                                            tv_exercise_year.setText(s[1]);
+
+                                            String[] s1 = total.split(" ");
+                                            tv_exercise_info.setText(s1[1] + s1[2]);
+
+                                            ExerciseAdapter exerciseAdapter = new ExerciseAdapter(ExerciseActivity.this, R.layout.item_exercise, exerciseList);
+                                            if (exerciseList.size() == 0) {
+                                                Toasty.warning(mContext, "列表数据为空", Toast.LENGTH_SHORT).show();
+                                            }
+                                            listView.setAdapter(exerciseAdapter);
+                                            listView.setVisibility(View.VISIBLE);
+                                            mProgressDialog.dismiss();
+                                            swipeRefreshLayout.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    swipeRefreshLayout.setRefreshing(false);
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Looper.prepare();
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
+                                swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(false);
+                                    }
+                                });
+                                Toasty.error(mContext, res.getMsg(), Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
+                        }
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mProgressDialog.isShowing())
+                                    mProgressDialog.dismiss();
+                                Toasty.error(mContext, "错误" + response.code() + "，请稍后重试", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mProgressDialog.isShowing())
+                        mProgressDialog.dismiss();
+                    Toasty.error(mContext, "发生错误,请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     private void showMaterialDialogDefault(String msg) {
         final MaterialDialog dialog = new MaterialDialog(ExerciseActivity.this);
-        dialog.content(msg)//
-                .btnText("取消", "确定")//
-                .showAnim(new BounceBottomEnter())//
+        dialog.content(msg)
+                .btnText("取消", "确定")
+                .showAnim(new BounceBottomEnter())
                 .show();
 
         dialog.setOnBtnClickL(

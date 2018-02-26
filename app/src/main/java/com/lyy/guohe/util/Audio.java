@@ -35,16 +35,19 @@ public class Audio {
             Log.e(TAG, "还在录着呢");
             return;
         }
-        mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                SAMPLE_RATE_IN_HZ, AudioFormat.CHANNEL_IN_DEFAULT,
-                AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
 
-        isGetVoiceRun = true;
 
         //新建一个线程，录音并处理数据
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+
+                mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                        SAMPLE_RATE_IN_HZ, AudioFormat.CHANNEL_IN_DEFAULT,
+                        AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
+
+                isGetVoiceRun = true;
+
                 mAudioRecord.startRecording();
                 short[] buffer = new short[BUFFER_SIZE];
                 while (isGetVoiceRun) {
