@@ -151,26 +151,30 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < courseList.size(); i++) {
                 if (courseList.get(i).getDes().length() > 5 && courseList.get(i).getDay() == a[weekday]) {
                     if (hour < 12 && hour > 0) {
+                        now_course_jieci_1.setText("1-2");
+                        now_course_jieci_2.setText("3-4");
                         if (courseList.get(i).getJieci() == 1) {
-                            now_course_jieci_1.setText("1-2");
+//                            now_course_jieci_1.setText("1-2");
                             String courseInfo[] = courseList.get(i).getDes().split("@");
+                            Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 2) {
+                            if (courseInfo.length == 2 || courseInfo.length == 3) {
                                 courseName = courseInfo[1];
-                            } else if (courseInfo.length == 3) {
+                            } else if (courseInfo.length == 4) {
                                 courseName = courseInfo[1];
                                 courseClassRoom = courseInfo[3];
                             }
                             now_course_1_1.setText(courseName);
+                            Log.d(TAG, "show_now_course: " + courseName);
                             now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 3) {
-                            now_course_jieci_2.setText("3-4");
+//                            now_course_jieci_2.setText("3-4");
                             Log.d(TAG, "show_now_course: " + courseList.get(i).getDes());
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 2) {
+                            if (courseInfo.length == 2 || courseInfo.length == 3) {
                                 courseName = courseInfo[1];
                             } else if (courseInfo.length == 4) {
                                 courseName = courseInfo[1];
@@ -180,12 +184,14 @@ public class MainActivity extends AppCompatActivity
                             now_course_2_2.setText(courseClassRoom);
                         }
                     } else if (hour > 12 && hour < 18) {
+                        now_course_jieci_1.setText("5-6");
+                        now_course_jieci_2.setText("7-8");
                         if (courseList.get(i).getJieci() == 5) {
-                            now_course_jieci_1.setText("5-6");
+//                            now_course_jieci_1.setText("5-6");
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 2) {
+                            if (courseInfo.length == 2 || courseInfo.length == 3) {
                                 courseName = courseInfo[1];
                             } else if (courseInfo.length == 4) {
                                 courseName = courseInfo[1];
@@ -194,11 +200,11 @@ public class MainActivity extends AppCompatActivity
                             now_course_1_1.setText(courseName);
                             now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 7) {
-                            now_course_jieci_2.setText("7-8");
+//                            now_course_jieci_2.setText("7-8");
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 2) {
+                            if (courseInfo.length == 2 || courseInfo.length == 3) {
                                 courseName = courseInfo[1];
                             } else if (courseInfo.length == 4) {
                                 courseName = courseInfo[1];
@@ -208,12 +214,14 @@ public class MainActivity extends AppCompatActivity
                             now_course_2_2.setText(courseClassRoom);
                         }
                     } else if (hour > 19 && hour < 24) {
+                        now_course_jieci_1.setText("9-10");
+                        now_course_jieci_2.setText("11-12");
                         if (courseList.get(i).getJieci() == 9) {
-                            now_course_jieci_1.setText("9-10");
+//                            now_course_jieci_1.setText("9-10");
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 2) {
+                            if (courseInfo.length == 2 || courseInfo.length == 3) {
                                 courseName = courseInfo[1];
                             } else if (courseInfo.length == 4) {
                                 courseName = courseInfo[1];
@@ -222,11 +230,11 @@ public class MainActivity extends AppCompatActivity
                             now_course_1_1.setText(courseName);
                             now_course_1_2.setText(courseClassRoom);
                         } else if (courseList.get(i).getJieci() == 11) {
-                            now_course_jieci_2.setText("11-12");
+//                            now_course_jieci_2.setText("11-12");
                             String courseInfo[] = courseList.get(i).getDes().split("@");
                             String courseName = "";
                             String courseClassRoom = "";
-                            if (courseInfo.length == 2) {
+                            if (courseInfo.length == 2 || courseInfo.length == 3) {
                                 courseName = courseInfo[1];
                             } else if (courseInfo.length == 4) {
                                 courseName = courseInfo[1];

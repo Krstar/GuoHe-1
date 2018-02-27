@@ -167,13 +167,10 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                             HttpUtil.sendPostHttpRequest(url, requestBody, new Callback() {
                                 @Override
                                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (mProgressDialog.isShowing())
-                                                mProgressDialog.dismiss();
-                                            Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                                        }
+                                    runOnUiThread(() -> {
+                                        if (mProgressDialog.isShowing())
+                                            mProgressDialog.dismiss();
+                                        Toasty.error(mContext, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
                                     });
                                 }
 
@@ -184,16 +181,13 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                         Res res = ResponseUtil.handleResponse(data);
                                         assert res != null;
                                         if (res.getCode() == 200) {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    mProgressDialog.dismiss();
-                                                    mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
-                                                    mProgressDialog.setCancelable(true);
-                                                    mProgressDialog.setCanceledOnTouchOutside(true);
-                                                    requestClubScore(username, editText.getText().toString());
-                                                    SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
-                                                }
+                                            runOnUiThread(() -> {
+                                                mProgressDialog.dismiss();
+                                                mProgressDialog = ProgressDialog.show(ClubActivity.this, null, "验证成功,请稍后……", true, false);
+                                                mProgressDialog.setCancelable(true);
+                                                mProgressDialog.setCanceledOnTouchOutside(true);
+                                                requestClubScore(username, editText.getText().toString());
+                                                SpUtils.putString(mContext, AppConstants.STU_PE_PASS, editText.getText().toString());
                                             });
                                         } else {
                                             Looper.prepare();
@@ -203,13 +197,10 @@ public class ClubActivity extends SwipeBackActivity implements View.OnClickListe
                                             Looper.loop();
                                         }
                                     } else {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (mProgressDialog.isShowing())
-                                                    mProgressDialog.dismiss();
-                                                Toasty.error(mContext, "服务器发生异常，请稍后重试", Toast.LENGTH_SHORT).show();
-                                            }
+                                        runOnUiThread(() -> {
+                                            if (mProgressDialog.isShowing())
+                                                mProgressDialog.dismiss();
+                                            Toasty.error(mContext, "服务器发生异常，请稍后重试", Toast.LENGTH_SHORT).show();
                                         });
                                     }
                                 }
